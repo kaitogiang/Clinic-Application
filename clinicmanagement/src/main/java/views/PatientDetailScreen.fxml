@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="631.0" prefWidth="703.0" styleClass="main-form-background" stylesheets="@../../resources/css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PatientDetailController">
+   <children>
+      <Label fx:id="asideBarTitle" layoutX="34.0" layoutY="25.0" prefHeight="30.0" prefWidth="284.0" styleClass="title-tab" text="Thông tin chi tiết bệnh nhân">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Separator layoutX="30.0" layoutY="73.0" prefHeight="12.0" prefWidth="643.0" style="-fx-background-color: #ECF1F6;" />
+      <Label layoutX="287.0" layoutY="232.0" styleClass="form-title" text="Số điện thoại:" />
+      <Label layoutX="284.0" layoutY="138.0" styleClass="form-title" text="Họ tên:" />
+      <TextField fx:id="patientNameField" editable="false" focusTraversable="false" layoutX="440.0" layoutY="134.0" prefHeight="38.0" prefWidth="234.0" styleClass="form-field" text="Nguyễn Phú Dinh" />
+      <Label layoutX="284.0" layoutY="186.0" styleClass="form-title" text="Tuổi:" />
+      <TextField fx:id="patientAgeField" editable="false" focusTraversable="false" layoutX="440.0" layoutY="181.0" prefHeight="38.0" prefWidth="234.0" styleClass="form-field" text="21" />
+      <Label layoutX="286.0" layoutY="327.0" styleClass="form-title" text="Địa chỉ:" wrapText="true" />
+      <TextArea fx:id="patientAddressField" editable="false" focusTraversable="false" layoutX="441.0" layoutY="333.0" prefHeight="66.0" prefWidth="234.0" promptText="Nhập địa chỉ bệnh nhân" styleClass="form-field" text="Ngã Năm" wrapText="true" />
+      <TextField fx:id="patientPhoneField" editable="false" focusTraversable="false" layoutX="440.0" layoutY="227.0" prefHeight="38.0" prefWidth="234.0" styleClass="form-field" text="0938475618" />
+      <Button layoutX="581.0" layoutY="549.0" mnemonicParsing="false" onAction="#close" styleClass="clear-button" text="Thoát">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Button>
+      <Label layoutX="286.0" layoutY="276.0" styleClass="form-title" text="Cân nặng:" />
+      <TextField fx:id="patientWeightField" editable="false" focusTraversable="false" layoutX="440.0" layoutY="276.0" prefHeight="38.0" prefWidth="234.0" promptText="Nhập cân nặng bệnh nhân" styleClass="form-field" text="52" />
+      <ImageView fitHeight="215.0" fitWidth="242.0" layoutX="31.0" layoutY="106.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@/images/patient.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="268.0" layoutY="100.0" style="-fx-font-weight: bold;" styleClass="form-title" text="Thông tin cá nhân" />
+      <Label layoutX="37.0" layoutY="351.0" style="-fx-font-weight: bold;" styleClass="form-title" text="Lịch sử khám bệnh" />
+      <ListView fx:id="historyFieldList" layoutX="35.0" layoutY="399.0" prefHeight="200.0" prefWidth="324.0" styleClass="form-field" />
+   </children>
+</AnchorPane>

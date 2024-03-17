@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1500.0" styleClass="background" stylesheets="@/css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginController">
+   
+   <children>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="71.0" layoutY="49.0" prefHeight="139.0" prefWidth="799.0" styleClass="brand-title" stylesheets="@/css/style.css" text="Hệ thống quản lý phòng khám&#10;Tai - Mũi - Họng" textAlignment="CENTER">
+         <font>
+            <Font size="43.0" />
+         </font>
+      </Label>
+      <AnchorPane layoutX="294.0" layoutY="267.0" prefHeight="406.0" prefWidth="368.0" styleClass="login-form-background" stylesheets="@/css/style.css">
+         <children>
+            <StackPane prefHeight="406.0" prefWidth="368.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <AnchorPane fx:id="loginForm" prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <Label alignment="CENTER" layoutY="-6.0" prefHeight="76.0" prefWidth="368.0" style="-fx-font-weight: 500;" styleClass="login-title-color" text="Đăng nhập">
+                           <font>
+                              <Font size="28.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="28.0" layoutY="92.0" styleClass="login-title-color" text="Tên đăng nhập:">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="loginTextField" layoutX="28.0" layoutY="129.0" prefHeight="40.0" prefWidth="312.0" promptText="Nhập tên đăng nhập" styleClass="login-field">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="28.0" layoutY="178.0" styleClass="login-title-color" text="Mật khẩu:">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="loginButton" layoutX="32.0" layoutY="319.0" mnemonicParsing="false" onAction="#login" prefHeight="40.0" prefWidth="312.0" styleClass="login-button" text="Đăng nhập">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Button>
+                        <Hyperlink fx:id="loginForgetPasswordLink" layoutX="34.0" layoutY="268.0" onAction="#switchForm" styleClass="login-forget-link" text="Quên mật khẩu?">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Hyperlink>
+                        <PasswordField fx:id="loginPasswordField" layoutX="29.0" layoutY="214.0" prefHeight="40.0" prefWidth="312.0" promptText="Nhập vào mật khẩu" styleClass="login-field">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </PasswordField>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane fx:id="otpForm" prefHeight="200.0" prefWidth="200.0" styleClass="login-form-background" visible="false">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="76.0" prefWidth="368.0" style="-fx-font-weight: 500;" styleClass="login-title-color" text="Khôi phục mật khẩu">
+                           <font>
+                              <Font size="28.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="23.0" layoutY="86.0" styleClass="login-title-color" text="Email:">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="emailField" layoutX="14.0" layoutY="124.0" prefHeight="40.0" prefWidth="234.0" promptText="Nhập địa chỉ email" styleClass="login-field">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="18.0" layoutY="174.0" styleClass="login-title-color" text="Mã OTP">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="otpField" layoutX="14.0" layoutY="212.0" prefHeight="40.0" prefWidth="234.0" promptText="Nhập mã OTP" styleClass="login-field">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </TextField>
+                        <Button fx:id="verifyButton" layoutX="265.0" layoutY="212.0" mnemonicParsing="false" onAction="#verify" prefHeight="40.0" prefWidth="94.0" styleClass="login-button" text="Xác thực">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="sendOTPButton" layoutX="264.0" layoutY="124.0" mnemonicParsing="false" onAction="#send" prefHeight="40.0" prefWidth="94.0" styleClass="login-button" text="Gửi">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="18.0" layoutY="275.0" styleClass="login-title-color" text="Lưu ý: &#10;Mã OTP sẽ được gửi vào email của bạn.&#10;Hãy kiểm tra mail để nhận mã OTP">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <FontAwesomeIconView fx:id="back" glyphName="ARROW_LEFT" layoutX="22.0" layoutY="47.0" onMouseClicked="#backToLoginForm" size="25" styleClass="back-button">
+                           <fill>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="1.0" green="1.0" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </fill>
+                        </FontAwesomeIconView>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane fx:id="resetForm" prefHeight="200.0" prefWidth="200.0" visible="false">
+                     <children>
+                        <Label alignment="CENTER" layoutY="-6.0" prefHeight="76.0" prefWidth="368.0" style="-fx-font-weight: 500;" styleClass="login-title-color" text="Khôi phục mật khẩu">
+                           <font>
+                              <Font size="28.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="28.0" layoutY="92.0" styleClass="login-title-color" text="Mật khẩu mới:">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="28.0" layoutY="178.0" styleClass="login-title-color">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="resetButton" layoutX="32.0" layoutY="299.0" mnemonicParsing="false" onAction="#resetPassword" prefHeight="40.0" prefWidth="312.0" styleClass="login-button" text="Đặt lại mật khẩu">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="29.0" layoutY="178.0" styleClass="login-title-color" text="Xác nhận mật khẩu mới:">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <FontAwesomeIconView fx:id="home" glyphName="HOME" layoutX="169.0" layoutY="383.0" onMouseClicked="#backToLoginForm" size="30" styleClass="back-button">
+                           <fill>
+                              <LinearGradient endX="1.0" endY="1.0">
+                                 <stops>
+                                    <Stop>
+                                       <color>
+                                          <Color />
+                                       </color>
+                                    </Stop>
+                                    <Stop offset="1.0">
+                                       <color>
+                                          <Color red="1.0" green="1.0" blue="1.0" />
+                                       </color>
+                                    </Stop>
+                                 </stops>
+                              </LinearGradient>
+                           </fill>
+                        </FontAwesomeIconView>
+                        <PasswordField fx:id="newPassword" layoutX="29.0" layoutY="129.0" prefHeight="40.0" prefWidth="312.0" promptText="Nhập mật khẩu mới" styleClass="login-field">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </PasswordField>
+                        <PasswordField fx:id="repeatNewPassword" layoutX="29.0" layoutY="215.0" prefHeight="40.0" prefWidth="312.0" promptText="Nhập lại mật khẩu mới" styleClass="login-field">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </PasswordField>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </StackPane>
+         </children></AnchorPane>
+   </children>
+</AnchorPane>
