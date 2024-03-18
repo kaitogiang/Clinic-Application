@@ -1,0 +1,546 @@
+/*---------------------------- Style cho login form -------------------------------------*/
+.background {
+	-fx-background-image: url("/images/medical_clinic.jpg");
+	-fx-background-size: cover;
+}
+.brand-title {
+	-fx-text-fill: #17606D;
+	-fx-font-weight: 700;
+}
+.login-form-background {
+	-fx-background-color: #F2F2F2;
+	-fx-background-radius: 10%;
+}
+.login-title-color {
+	-fx-text-fill: #525460;
+}
+.login-button {
+	-fx-text-fill: white;
+	-fx-background-color: #37CA5F;
+}
+.login-button:hover {
+	-fx-background-color: #79DB94;
+}
+.login-field {
+	-fx-background-radius: 10px;
+}
+.login-forget-link {
+	-fx-border-color: transparent;
+	-fx-underline: false;
+}
+.back-button {
+	-fx-fill: #088408;
+}
+.back-button:hover {
+	-fx-fill: #91C891;
+}
+/*-----------------------style cho receptionist main screen----------------------------- */
+.initial-background {
+	-fx-background-color: #E1E1E1;
+}
+/*Style cho navbar*/
+.navbar {
+	-fx-background-color: #3C8DBC;
+}
+.brand-title-background {
+	-fx-background-color: #2474A6;
+}
+.username-text {
+	-fx-font-weight: 900;
+	-fx-text-fill: white;
+	-fx-font-size: 20px;
+}
+.username-pane {
+	-fx-background-color: transparent;
+}
+.username-pane:hover {
+	-fx-background-color: #2474A6;
+}
+.logout-button {
+	-fx-background-radius: 20px;
+	-fx-background-color: #EF4243;
+	-fx-text-fill: white;
+}
+.logout-button:hover {
+	-fx-background-color: #F15F60;
+}
+/*Style cho aside bar*/
+.avatar {
+	-fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+}
+
+.aside-bar {
+	-fx-background-color: #005CAB;
+}
+.aside-button {
+	-fx-background-color: transparent;
+}
+.icons {
+	-fx-fill: white;
+}
+.aside-button-title {
+	-fx-text-fill: white;
+}
+.aside-selection-background {
+	-fx-background-color: transparent;
+}
+.aside-selection-background:hover{
+	-fx-background-color: #F4F8F9;
+	-fx-background-radius: 10px 0 0 10px;
+}
+.aside-selection-background:hover .aside-button-title {
+	-fx-text-fill: #005CAB;
+}
+.aside-selection-background:hover .icons {
+	-fx-fill: #005CAB;
+}
+.active-selection-button-title {
+	-fx-text-fill: #005CAB
+}
+.active-selection-icons {
+	-fx-fill: #005CAB;
+}
+.active-selection-background {
+	-fx-background-color: #F4F8F9;
+	-fx-background-radius: 10px 0 0 10px;
+}
+/* Tạo kiểu cho main receptionist */
+
+#roundedContainer {
+	-fx-background-image: url("/images/main_receptionist_image.jpg");
+	-fx-background-position: center;
+	-fx-shape:"M 0 0 L 0 100 Q 0 118 20 118 L 1146 118 Q 1166 118 1166 100 L 1166 0 Z";
+}
+
+#roundedMainContainer {
+	-fx-background-color:  #F5F9FA;
+	-fx-background-radius: 20px;
+}
+/*tạo style cho tab đăng ký khám bệnh */
+.title-tab {
+	-fx-font-size: 20px;
+	-fx-text-fill: #283034;
+	-fx-font-weight: bold;
+}
+.action-button {
+	-fx-background-color: #0074D9;
+	-fx-background-radius: 20px;
+	-fx-text-fill: white;
+}
+.action-button:hover {
+	-fx-background-color: #0057D9;
+}
+.column {
+	-fx-font-size: 20px;
+}
+
+.table-view {
+	-fx-background-color: transparent;
+}
+
+.table-view .column-header-background .filler {
+	-fx-background-color: transparent;
+}
+.table-view .corner {
+	-fx-background-color: transparent;
+}
+.table-view .column-header-background {
+	-fx-background-color: linear-gradient(to bottom, #1dbbdd44, #93f9b944);
+	-fx-background-radius: 10px 10px 0px 0px;
+    -fx-padding: 0 0 5px 0;	
+}
+.table-view .column-header {
+	-fx-background-color: transparent;	
+}
+.table-view .table-cell {
+	-fx-border-color: transparent;
+	-fx-padding: 2 0 2 10px;
+	-fx-alignment: center ;
+}
+
+.table-row-cell:hover {
+    -fx-border-color: #78EEED;
+    -fx-background-color: #CCEEF1 !important;
+}
+
+.table-row-cell:odd {
+	-fx-background-color: #93f9b911;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+.table-row-cell:even{
+    -fx-background-color: #1dbbdd11;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+.table-row-cell:selected {
+	-fx-background-color: #CCEEF1;
+}
+.table-row-cell:selected .table-cell {
+	-fx-text-fill: black;
+}
+
+.table-view .virtual-flow .scroll-bar:vertical,
+.table-view .virtual-flow .scroll-bar:vertical .track,
+.table-view .virtual-flow .scroll-bar:vertical .track-background,
+.table-view .virtual-flow .scroll-bar:horizontal,
+.table-view .virtual-flow .scroll-bar:horizontal .track,
+.table-view .virtual-flow .scroll-bar:horizontal .track-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .virtual-flow .scroll-bar .increment-button,
+.table-view .virtual-flow .scroll-bar .decrement-button {
+    -fx-opacity: 0;
+    -fx-padding: 2;
+}
+
+.table-view .virtual-flow .scroll-bar:vertical .thumb{
+    -fx-background-color:  linear-gradient(to bottom, #1dbbdd44, #93f9b944);
+}
+.table-view .virtual-flow .scroll-bar:horizontal .thumb {
+    -fx-background-color:  linear-gradient(to right, #1dbbdd44, #93f9b944);
+}
+
+/*Tạo kiểu cho Patient Form  */
+.main-form-background {
+	-fx-background-color: #F5F9FA;
+}
+.form-title {
+	-fx-font-size: 20px;
+}
+.form-field {
+	-fx-font-size: 15px;
+	-fx-background-radius: 5px;
+}
+.clear-button {
+	-fx-background-color: #E34D4D;
+	-fx-text-fill: white;
+	-fx-background-radius: 20px;
+}
+.clear-button:hover {
+	-fx-background-color: #DD354B;
+}
+.rotate-icons-background {
+	-fx-background-color: transparent;
+}
+.rotate-icons {
+	-fx-fill: #1c79e6;
+}
+.rotate-icons:hover {
+	-fx-fill: #67A5EE;
+}
+/*Tạo kiểu cho thanh tìm kiếm */
+.search-bar-background {
+	-fx-background-color: #45E7BC;
+	-fx-background-radius: 5px;
+}
+.search-bar-textfield {
+	-fx-border-color: white;
+}
+.search-bar-textfield:focused {
+	-fx-border-color: #79D0B9;
+}
+.search-bar-button {
+	-fx-background-color: #45E7BC;
+}
+.search-bar-button:hover {
+	-fx-background-color: #3FD4AD;
+}
+/* Tạo kiểu cho sort by */
+.sort-container {
+	-fx-background-color: linear-gradient(to bottom, #DBDBDD, #E7E7E8);
+	-fx-background-radius: 6px;
+}
+.choice-box-background {
+	-fx-background-color: transparent;
+	-fx-font-size: 17px;
+}
+/*Tạo kiểu cho personal user */
+.personal-container {
+	-fx-background-color: #FFFFFF;
+}
+.icons-container {
+	-fx-background-color: #0799c9;
+}
+.icons-fill {
+	-fx-fill: white;
+}
+
+.icons-fill-in-title {
+	-fx-fill: #0799c9;
+}
+.icons-fill-in-title:hover {
+	-fx-fill: #0C75AC;
+}
+.personal-title {
+	-fx-text-fill: #0799c9;
+	-fx-font-weight: bold;
+}
+.save-button {
+	-fx-background-color: #0799c9;
+	-fx-background-radius: 10px;
+}
+.save-button:hover {
+	-fx-background-color: #0C75AC;
+}
+.text-field-effect {
+	-fx-effect: dropshadow(gaussian, #0799C9, 10, 0.4, 0, 0);
+}
+/* Tạo kiểu cho chức năng Khám và Chuẩn đoán */
+/* Tạo kiểu cho tabpane */
+.tab-pane {
+  -fx-background-color: #EDF5FB;
+  -fx-background-radius: 20px;
+  -fx-border-width: 1px;
+  -fx-border-radius: 5px;
+}
+
+.tab-pane:selected {
+  -fx-background-color: #DEDEDE;
+}
+
+/* Tạo kiểu cho tab-header */
+/* màu ban đầu là #A0BCED */
+.tab-header-background {
+	-fx-background-color: #3C8DBC;
+	-fx-background-radius: 20px 20px 0 0;
+	-fx-border-color: transparent transparent #A0BCED transparent;
+}
+
+
+.tab-pane > .tab-header-area > .headers-region > .tab > .tab-container > .tab-label {
+    -fx-alignment: CENTER;
+    -fx-pref-width: 180.0;
+}
+
+/*#DEDEDE */
+
+.tab {
+  -fx-background-color: transparent; 
+  -fx-text-fill: #37728C;
+  -fx-border-width: 1px;
+  -fx-border-radius: 5px;
+  -fx-pref-width: 200;
+  -fx-pref-height: 50;
+}
+
+
+/* #EDF5FB */
+.tab:selected {
+  -fx-border-width: 2px 2px 0 2px;
+  -fx-font-weight: bold;
+  -fx-background-color: #EDF5FB;
+  -fx-background-radius: 15px 15px 0 0;
+}
+
+.icon-in-tab {
+	-fx-fill: #F5FCFF;
+}
+
+/* Tạo kiểu cho icon của tab khi được chọn */
+/* màu ban đầu là  7A91B6*/
+.tab:selected > .tab-container > .tab-label > .icon-in-tab {
+	-fx-fill: #3C8DBC;
+}
+/* Tạo kiểu cho nhãn của mỗi tab */
+/* Màu ban đầu là #F5FCFF */
+.tab > .tab-container > .tab-label {
+	-fx-text-fill: #F5FCFF;
+	-fx-font-weight: bold;
+}
+/* Tạo kiểu cho nhãn của tab khi được chọn */
+/* Màu ban đầu là 7A91B6 */
+.tab:selected > .tab-container > .tab-label {
+	-fx-text-fill: #3C8DBC;
+}
+.tab-pane:focused .tab-header-area .headers-region .tab:selected .focus-indicator {
+    -fx-opacity: 0;
+}
+
+.column-text-size {
+	-fx-font-size: 17px;
+}
+
+/* Tạo kiểu cho pane chuẩn đoán bệnh và ghi chú */
+.diagnostic-pane {
+	-fx-background-color: #EDF5FB;
+	-fx-background-radius: 20px;
+}
+.diagnostic-title-container {
+	-fx-background-color: #3C8DBC;
+	-fx-background-radius: 20px 20px 0 0;
+}
+.diagnostic-title {
+	-fx-font-size: 17px;
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+.diagnostic-label {
+	-fx-font-size: 17px;
+}
+
+/* Tạo kiểu cho bảng trong tabpane */
+/* Tạo kiểu cho nút chọn khám */
+
+.selection-button {
+	-fx-background-color: #D0E7FE;
+	-fx-text-fill: black;
+	-fx-background-radius: 10px;
+	-fx-border-color: #5B9FE5;
+	-fx-border-radius: 10px;
+}
+
+.selection-button:hover {
+	-fx-border-color: #1876D6;
+	-fx-border-radius: 10px;
+}
+.cancel-button {
+	-fx-background-color: transparent;
+	-fx-text-fill: #EA3A4B;
+	-fx-background-radius: 10px;
+	-fx-border-color: #EA3A4B;
+	-fx-border-radius: 10px;
+}
+.cancel-button:hover {
+	-fx-border-color: #D50808;
+	-fx-border-radius: 10px;
+}
+
+/* Tạo kiểu cho tab tình trạng bệnh #B3D8F3 */
+.vertial-navigation-background {
+	-fx-background-color: transparent;
+	
+}
+.record-container {
+	-fx-background-color: #EDF5FB;
+}
+.vertical-navigation-item {
+	-fx-background-color: transparent;
+	-fx-font-weight: bold;
+	-fx-font-size: 17px;
+}
+.vertical-navigation-item-label {
+	-fx-text-fill: #5A6A76;
+}
+.vertical-navigation-item-icon {
+	-fx-fill: #5A6A76;
+}
+.vertical-navigation-item:hover {
+	-fx-background-color: #DEE5EB;
+	-fx-background-radius: 10px;
+	-fx-text-fill: #8CA9BE;
+}
+
+.veritcal-navigation-item-active {
+	-fx-background-color: #DEE5EB;
+	-fx-background-radius: 10px;
+	-fx-text-fill: #8CA9BE;
+}
+
+.content-pane-label-title {
+	-fx-font-size: 17px;
+	-fx-text-fill: gray;
+	-fx-font-weight: bold;
+}
+.content-pane-label-primary {
+	-fx-font-size: 17px;
+	-fx-text-fill: gray;
+}
+
+/* Tạo kiểu cho scroll bar */
+
+/* styles.css */
+
+.scroll-pane > .scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .scroll-bar > .track {
+    -fx-background-color: #f0f0f0; /* Track color */
+}
+
+.scroll-pane > .scroll-bar > .thumb {
+    -fx-background-color: #B3D8F3; /* Thumb color */
+}
+
+.scroll-pane > .scroll-bar > .increment-button,
+.scroll-pane > .scroll-bar > .decrement-button {
+    -fx-background-color: #d3d3d3; /* Arrow button color */
+}
+
+.scroll-pane > .scroll-bar > .increment-arrow,
+.scroll-pane > .scroll-bar > .decrement-arrow {
+    -fx-background-color: #333; /* Arrow color */
+}
+
+.scroll-pane > .scroll-bar > .increment-arrow:hover,
+.scroll-pane > .scroll-bar > .decrement-arrow:hover {
+    -fx-background-color: #555; /* Hovered arrow color */
+}
+
+.scroll-pane > .scroll-bar > .thumb:hover {
+    -fx-background-color: #6cace4; /* Hovered thumb color */
+}
+
+.scroll-pane > .scroll-bar > .thumb:pressed {
+    -fx-background-color: #6398D5; /* Pressed thumb color */
+}
+
+/* Tạo kiểu cho hiện thị chi tiết khám bệnh */
+.medical-detail-info {
+	-fx-background-color: #F5F9FA;
+	-fx-background-radius: 10px;
+	-fx-border-color: #CBCBDA;
+	-fx-border-radius: 10px;
+	-fx-font-size: 18px;
+	-fx-padding: 5px 0 0 10px;
+	-fx-text-fill: #5A6A76;
+}
+
+.diagnosis-title {
+	-fx-text-fill: #5A6A76;
+	-fx-font-weight: bold;
+	-fx-font-size: 20px;
+}
+.diagnosis-content {
+	-fx-text-fill: #5A6A76;
+}
+
+.medicin-column-style {
+	-fx-font-size: 17px;
+}
+
+.table-view .column-header.medicin-column-style .label{
+    -fx-text-fill: #5A6A76; /* Change 'red' to any color you want */
+}
+.prescription-button {
+	-fx-background-color: #42C3BC;
+	-fx-font-size: 17px;
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+.prescription-button:hover {
+	-fx-background-color: #339091; 
+	-fx-font-size: 17px;
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+}
+.remove-button {
+	-fx-background-color: #F75555;
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+	-fx-font-size: 17px;
+}
+.remove-button:hover {
+	-fx-background-color: #D04747;
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+	-fx-font-size: 17px;
+}
+
+/* Tạo kiểu cho popup hiển thị gợi ý */
+.custom-popup-style {
+    -fx-font-size: 17px;
+}
