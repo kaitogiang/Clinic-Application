@@ -344,6 +344,8 @@ public class DoctorController implements Initializable{
     BackgroundService<Void> setPatientListService;
     
     private Medicine choosedMedicine;
+    
+    private String uniquePrescriptionId;
         
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -1326,9 +1328,17 @@ public class DoctorController implements Initializable{
   		String prescriptionId;
   		String prescriptionNote = medicineNoteField.getText();
   		String currendPatientId = choosingPatientList.getLast().getPatientIdValue();
-  		do {
-  			prescriptionId = generateUniqueId();
-  		} while(isExistedPrescription(prescriptionId));
+  		if (uniquePrescriptionId != null) {
+  			while(isExistedPrescription(uniquePrescriptionId)) {
+  				uniquePrescriptionId = generateUniqueId();
+  			}
+  			prescriptionId = uniquePrescriptionId;
+  		} else {
+  			do {
+  	  			prescriptionId = generateUniqueId();
+  	  		} while(isExistedPrescription(prescriptionId));
+  		}
+
   		//Thêm đơn thuốc vào bảng prescription
   		String prescriptionSql = "INSERT INTO prescription VALUES(?,NOW(),?)";
   		try(Connection con = Database.connectDB()) {
@@ -1461,7 +1471,10 @@ public class DoctorController implements Initializable{
 			String savedPath = path.getAbsolutePath();
 			Patient patient = choosingPatientList.getLast();
 			String diagnosis = getPatientDiagnosis(patient.getPatientIdValue());
-			PdfGeneratorUtil.exportPrescriptionPDF(savedPath, patient, "abc123123", doctor.getDoctorId(), doctor.getDoctorName(), diagnosis, prescription);
+			do {
+	  			uniquePrescriptionId = generateUniqueId();
+	  		} while(isExistedPrescription(uniquePrescriptionId));
+			PdfGeneratorUtil.exportPrescriptionPDF(savedPath, patient, uniquePrescriptionId, doctor.getDoctorId(), doctor.getDoctorName(), diagnosis, prescription);
 			Message.showMessage("Xuất đơn thuốc thành công", AlertType.INFORMATION);
 		} else {
 			return;
