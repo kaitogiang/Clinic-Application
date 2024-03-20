@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="669.0" prefWidth="693.0" styleClass="main-form-background" stylesheets="@../../resources/css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MedicineFormController">
+   <children>
+      <Label fx:id="asideBarTitle" layoutX="52.0" layoutY="25.0" prefHeight="30.0" prefWidth="201.0" styleClass="title-tab" text="Thêm thuốc mới">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Separator layoutX="55.0" layoutY="73.0" prefHeight="12.0" prefWidth="594.0" style="-fx-background-color: #ECF1F6;" />
+      <Label layoutX="55.0" layoutY="380.0" styleClass="form-title" text="Số lượng:" />
+      <Label layoutX="61.0" layoutY="105.0" styleClass="form-title" text="Tên thuốc:" />
+      <TextField fx:id="medicineNameField" layoutX="58.0" layoutY="143.0" prefHeight="38.0" prefWidth="234.0" promptText="Nhập tên thuốc" styleClass="form-field" />
+      <Label layoutX="64.0" layoutY="190.0" styleClass="form-title" text="Mô tả:" />
+      <TextArea fx:id="descriptionField" layoutX="56.0" layoutY="230.0" prefHeight="141.0" prefWidth="234.0" promptText="Nhập mô tả thuốc" styleClass="form-field" wrapText="true" />
+      <TextField fx:id="stockQuantityField" layoutX="53.0" layoutY="419.0" prefHeight="38.0" prefWidth="234.0" promptText="Nhập số lượng" styleClass="form-field" />
+      <Label layoutX="390.0" layoutY="190.0" styleClass="form-title" text="Đơn vị:" />
+      <Button fx:id="removeAllBtn" layoutX="493.0" layoutY="513.0" mnemonicParsing="false" onAction="#resetAllField" styleClass="clear-button" text="Xóa bỏ tất cả">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Button>
+      <Button layoutX="407.0" layoutY="593.0" mnemonicParsing="false" onAction="#exit" styleClass="clear-button" text="Thoát">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Button>
+      <Label layoutX="389.0" layoutY="104.0" styleClass="form-title" text="Liều lượng:" />
+      <TextField fx:id="dosageField" layoutX="384.0" layoutY="143.0" prefHeight="38.0" prefWidth="234.0" promptText="Nhập liều lượng thuốc" styleClass="form-field" />
+      <TextField fx:id="dosageUnitField" layoutX="385.0" layoutY="230.0" prefHeight="38.0" prefWidth="234.0" promptText="Nhập đơn vị" styleClass="form-field" />
+      <Label layoutX="390.0" layoutY="283.0" styleClass="form-title" text="Đơn giá:" />
+      <TextField fx:id="unitPriceField" layoutX="385.0" layoutY="327.0" prefHeight="38.0" prefWidth="234.0" promptText="Nhập đơn giá" styleClass="form-field" />
+      <Label layoutX="390.0" layoutY="375.0" styleClass="form-title" text="Ngày hết hạn:" />
+      <DatePicker fx:id="expirationField" layoutX="385.0" layoutY="418.0" prefHeight="38.0" prefWidth="234.0" styleClass="form-field" />
+      <Label layoutX="55.0" layoutY="470.0" styleClass="form-title" text="Nhà sản xuất:" />
+      <TextField fx:id="manufacturerField" layoutX="53.0" layoutY="514.0" prefHeight="38.0" prefWidth="234.0" promptText="Nhập nhà sản xuất" styleClass="form-field" />
+      <StackPane layoutX="184.0" layoutY="585.0" prefHeight="60.0" prefWidth="202.0">
+         <children>
+            <Button fx:id="addingBtn" mnemonicParsing="false" onAction="#addMedicine" prefHeight="43.0" prefWidth="202.0" styleClass="action-button" text="Thêm thuốc">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button fx:id="updatingBtn" mnemonicParsing="false" onAction="#updateMedicine" prefHeight="43.0" prefWidth="202.0" style="-fx-background-radius: 20;" styleClass="login-button" text="Cập nhật thuốc" visible="false">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>

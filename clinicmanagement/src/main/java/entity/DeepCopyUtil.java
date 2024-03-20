@@ -13,4 +13,14 @@ public class DeepCopyUtil {
 		}
 		return copyOb;
 	}
+	
+	public static ObservableList<Medicine> createDeepMedicineListCopy(ObservableList<Medicine> obj) {
+		ObservableList<Medicine> copyOb = FXCollections.observableArrayList();
+		for(Medicine e : obj) {
+			Medicine copiedMedicine = new Medicine(e); 
+			copyOb.add(copiedMedicine);
+		}
+		return copyOb;
+	}
+	
 }

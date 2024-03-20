@@ -17,6 +17,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import entity.Doctor;
 import entity.Message;
 import entity.PasswordEncryptor;
+import entity.Pharmacist;
 import entity.Receptionist;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
@@ -210,6 +211,9 @@ public class LoginController implements Initializable{
         		loadStage("/views/ReceptionistMainScreen.fxml",roles, username, "Receptionist");
     		} else if (roles == Role.DOCTOR) {
     			loadStage("/views/DoctorMainScreen.fxml", roles, username, "Doctor");
+    		} else if (roles == Role.PHARMACIST) {
+    			loadStage("/views/PharmacistMainScreen.fxml", roles, username, "Pharmacist");
+    			System.out.println("Nhan vien ban thuoc");
     		}
     	}
     }
@@ -239,6 +243,14 @@ public class LoginController implements Initializable{
 //					controller.stopExecutorService();
 					controller.stopBackgroundService();
 				});
+			} else if (roles == Role.PHARMACIST) {
+				PharmacistController controller = loader.getController();
+				scene.setUserData(getUserInfo(username));
+				controller.setCurrentStage(currentStage);
+				controller.setMyScene(scene);
+//				currentStage.setOnCloseRequest(e->{
+//					controller.stopBackgroundService();
+//				});
 			}
 			currentStage.setMaximized(false);
 			currentStage.setTitle(title);
@@ -351,6 +363,20 @@ public class LoginController implements Initializable{
     				+ "acc.account_id = doc.account_id "
     				+ "JOIN roles ro ON acc.role_id = ro.role_id "
     				+ "WHERE username = ?";
+    	} else if (roles == Role.PHARMACIST) {
+    		sql = "SELECT pharmacist_id, "
+    			+ "pharmacist_name, "
+    			+ "pharmacist_email, "
+    			+ "phone_number, "
+    			+ "address, "
+    			+ "experience_year, "
+    			+ "ro.role_name, "
+    			+ "ro.description, "
+    			+ "ro.permissions, "
+    			+ "pha.image_id FROM accounts acc "
+    			+ "JOIN pharmacists pha ON acc.account_id = pha.account_id "
+    			+ "JOIN roles ro ON acc.role_id = ro.role_id "
+    			+ "WHERE username = ?";
     	}
     	String id = "";
 		String name = "";
@@ -388,6 +414,17 @@ public class LoginController implements Initializable{
     				description = rs.getString(8);
     				permission = rs.getString(9);
     				imageId = rs.getInt(10);
+    			} else if (roles == Role.PHARMACIST) {
+    				id = rs.getString(1);
+    				name = rs.getString(2);
+    				email = rs.getString(3);
+    				phone = rs.getString(4);
+    				address = rs.getString(5);
+    				experienceYear = rs.getFloat(6);
+    				role = rs.getString(7);
+    				description = rs.getString(8);
+    				permission = rs.getString(9);
+    				imageId = rs.getInt(10);
     			}
     		}
     	} catch(Exception e) {
@@ -397,6 +434,8 @@ public class LoginController implements Initializable{
         	return new Receptionist(id, name, email, phone, address, role, description, permission, imageId);
     	} else if (roles == Role.DOCTOR) {
     		return new Doctor(id, name, email, phone, address, experienceYear, role, description, permission, imageId);
+    	} else if (roles == Role.PHARMACIST) {
+    		return new Pharmacist(id, name, email, phone, address, experienceYear, role, description, permission, imageId);
     	}
     	return null;
     }

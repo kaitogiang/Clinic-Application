@@ -41,6 +41,19 @@ public class Medicine {
 		this.quantity = new SimpleIntegerProperty(quantity);
 	}
 
+	public Medicine(Medicine obj) {
+		this.medicineId = new SimpleStringProperty(obj.getMedicineIdValue());
+		this.orderNumber = new SimpleIntegerProperty(obj.getOrderNumberVaue());
+		this.medicineName = new SimpleStringProperty(obj.getMedicineNameValue());
+		this.description = new SimpleStringProperty(obj.getDescriptionValue());
+		this.manufacturer = new SimpleStringProperty(obj.getManufacturerValue());
+		this.dosage = new SimpleIntegerProperty(obj.getDosageValue());
+		this.dosage_unit = new SimpleStringProperty(obj.getDosageUnitValue());
+		this.unit_price = new SimpleFloatProperty(obj.getUnitPriceValue());
+		this.expiration_date = new SimpleStringProperty(obj.getExpirationDateValue());
+		this.quantity = new SimpleIntegerProperty(obj.getQuantityValue());
+	}
+	
 	public SimpleIntegerProperty getQuantity() {
 		return quantity;
 	}
@@ -161,8 +174,20 @@ public class Medicine {
 		return quantity.get();
 	}
 	
-	public String toString() {
-		return medicineName.get();
+	public void setExpirationDate(String expiration) {
+		expiration_date.set(expiration);
 	}
+	
+	public void setOrderNumber(int orderNumber) {
+		this.orderNumber.set(orderNumber);
+	}
+	
+	public String toString() {
+		return medicineName.get() + " - " + " - " + manufacturer.get() 
+		+ " - " + dosage.get() + " - " + dosage_unit.get() + " - " + unit_price.get()
+		+ " - " +expiration_date.get() + " - " + quantity.get();
+	}
+	
+	
 }
 
