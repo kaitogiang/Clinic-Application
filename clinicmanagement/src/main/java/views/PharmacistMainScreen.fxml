@@ -142,19 +142,19 @@
                   </HBox>
                </graphic>
             </Button>
-            <Button fx:id="patientDiagnosticTab" mnemonicParsing="false" prefHeight="59.0" prefWidth="307.0" styleClass="aside-button">
+            <Button fx:id="prescriptionTab" mnemonicParsing="false" onAction="#switchTab" prefHeight="59.0" prefWidth="307.0" styleClass="aside-button">
                <padding>
                   <Insets left="20.0" />
                </padding>
                <graphic>
                   <HBox alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="294.0" spacing="7.0" styleClass="aside-selection-background">
                      <children>
-                        <FontAwesomeIconView glyphName="USER_MD" size="25" styleClass="icons">
+                        <FontAwesomeIconView glyphName="MEDKIT" size="25" styleClass="icons">
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>
                         </FontAwesomeIconView>
-                        <Label prefHeight="65.0" prefWidth="247.0" styleClass="aside-button-title" stylesheets="@../../resources/css/style.css" text="Khám và chuẩn đoán" textFill="#e42323">
+                        <Label prefHeight="65.0" prefWidth="247.0" styleClass="aside-button-title" stylesheets="@../../resources/css/style.css" text="Quản lý đơn thuốc" textFill="#e42323">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -192,7 +192,6 @@
             </Button>
          </children>
       </VBox>
-      <AnchorPane id="roundedContainer" layoutX="314.4" layoutY="82.0" prefHeight="118.0" prefWidth="1166.0" AnchorPane.leftAnchor="314.0" AnchorPane.rightAnchor="20.0" />
       <AnchorPane id="roundedMainContainer" layoutX="314.0" layoutY="222.0" prefHeight="530.0" prefWidth="1166.0" AnchorPane.bottomAnchor="15.600000000000023" AnchorPane.leftAnchor="314.39999999999986" AnchorPane.rightAnchor="19.59999999999991" AnchorPane.topAnchor="221.60000000000002">
          <children>
             <Label fx:id="asideBarTitle" layoutX="22.0" layoutY="21.0" prefHeight="30.0" prefWidth="283.0" styleClass="title-tab" text="Quản lý thuốc">
@@ -201,22 +200,46 @@
                </font>
             </Label>
             <Separator layoutX="24.0" layoutY="69.0" prefHeight="5.0" prefWidth="1118.0" style="-fx-background-color: #ECF1F6;" AnchorPane.leftAnchor="23.999999999999773" AnchorPane.rightAnchor="23.999999999999773" />
-            <StackPane alignment="CENTER_RIGHT" layoutX="697.3999999999999" layoutY="14.0" prefHeight="43.0" prefWidth="286.0" AnchorPane.rightAnchor="182.60000000000002">
+            <StackPane alignment="CENTER_RIGHT" layoutX="700.7999999999997" layoutY="13.0" prefHeight="45.0" prefWidth="443.0" AnchorPane.rightAnchor="22.40000000000009">
                <children>
-                  <HBox fx:id="searchBarContainer" alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="51.0" prefWidth="282.0" styleClass="search-bar-background">
+                  <HBox fx:id="searchAndAddContainer" alignment="CENTER" prefHeight="52.0" prefWidth="443.0" spacing="10.0">
                      <children>
-                        <TextField fx:id="searchTextField" maxWidth="-Infinity" onAction="#findPatient" prefHeight="38.0" prefWidth="232.0" promptText="Tìm kiếm" styleClass="search-bar-textfield">
+                        <HBox fx:id="searchBarContainer" alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="55.0" prefWidth="282.0" styleClass="search-bar-background">
+                           <children>
+                              <TextField fx:id="searchTextField" maxWidth="-Infinity" onAction="#findPatient" prefHeight="23.0" prefWidth="232.0" promptText="Tìm kiếm" styleClass="search-bar-textfield">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </TextField>
+                              <Button fx:id="searchButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#findPatient" prefHeight="41.0" prefWidth="47.0" styleClass="search-bar-button" textAlignment="CENTER">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="WHITE" glyphName="SEARCH" size="25" text="" wrappingWidth="30.41423797607422" />
+                                 </graphic>
+                                 <padding>
+                                    <Insets left="5.0" />
+                                 </padding>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <Button fx:id="addMedicineButton" mnemonicParsing="false" onAction="#openAddingMedicineForm" prefHeight="42.0" prefWidth="150.0" styleClass="save-button" text="Thêm thuốc" textFill="WHITE">
                            <font>
-                              <Font size="17.0" />
+                              <Font size="18.0" />
                            </font>
-                        </TextField>
-                        <Button fx:id="searchButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#findPatient" prefHeight="41.0" prefWidth="47.0" styleClass="search-bar-button" textAlignment="CENTER">
                            <graphic>
-                              <FontAwesomeIconView fill="WHITE" glyphName="SEARCH" size="25" text="" wrappingWidth="30.41423797607422" />
+                              <FontAwesomeIconView fill="WHITE" glyphName="PLUS" size="25" text="" />
                            </graphic>
-                           <padding>
-                              <Insets left="5.0" />
-                           </padding>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="findPrescriptionContainer" alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button fx:id="searchPrescriptionButton" mnemonicParsing="false" prefHeight="43.0" prefWidth="213.0" styleClass="action-button" text="Tìm kiếm đơn thuốc" visible="false">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
                         </Button>
                      </children>
                   </HBox>
@@ -391,17 +414,16 @@
                         </TextArea>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="prescriptionContainer" prefHeight="200.0" prefWidth="200.0" visible="false">
+                  <AnchorPane fx:id="prescriptionContainer" prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <VBox layoutX="9.0" layoutY="3.2" prefHeight="418.0" prefWidth="716.0" styleClass="diagnostic-pane" AnchorPane.bottomAnchor="-3.0" AnchorPane.topAnchor="3.0">
+                        <VBox layoutX="1.0" layoutY="3.2" prefHeight="418.0" prefWidth="724.0" styleClass="diagnostic-pane" AnchorPane.bottomAnchor="-3.0" AnchorPane.topAnchor="3.0">
                            <children>
-                              <TableView fx:id="prescriptionTable" prefHeight="343.0" prefWidth="716.0" stylesheets="@../../resources/css/style.css">
+                              <TableView fx:id="prescriptionTable" prefHeight="330.0" prefWidth="724.0" stylesheets="@../../resources/css/style.css">
                                  <columns>
-                                    <TableColumn fx:id="medicineOrderColumn" editable="false" prefWidth="53.60000419616699" sortable="false" styleClass="column-text-size" text="STT" />
-                                    <TableColumn fx:id="medicineNameColumn" editable="false" prefWidth="196.00006866455078" sortable="false" styleClass="column-text-size" text="Tên thuốc" />
-                                    <TableColumn id="lastColumn" fx:id="medicineQuantityColumn" editable="false" prefWidth="96.7999267578125" sortable="false" styleClass="column-text-size" text="Số lượng" />
-                                    <TableColumn fx:id="usageColumn" editable="false" prefWidth="240.79995727539062" sortable="false" styleClass="column-text-size" text="Cách dùng" />
-                                    <TableColumn fx:id="actionColumn" editable="false" prefWidth="117.5999755859375" sortable="false" styleClass="column-text-size" text="Hành động" />
+                                    <TableColumn fx:id="orderColumn" editable="false" prefWidth="53.60000419616699" sortable="false" styleClass="column-text-size" text="STT" />
+                                    <TableColumn fx:id="nameColumn" editable="false" prefWidth="196.00006866455078" sortable="false" styleClass="column-text-size" text="Tên thuốc" />
+                                    <TableColumn id="lastColumn" fx:id="quantityColumn" editable="false" prefWidth="133.5999755859375" sortable="false" styleClass="column-text-size" text="Số lượng" />
+                                    <TableColumn fx:id="usageColumn" editable="false" prefWidth="320.8000793457031" sortable="false" styleClass="column-text-size" text="Cách dùng" />
                                  </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -409,17 +431,12 @@
                               </TableView>
                               <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                                  <children>
-                                    <Button mnemonicParsing="false" prefHeight="38.0" prefWidth="104.0" styleClass="prescription-button" text="Tạo đơn">
+                                    <Button mnemonicParsing="false" onAction="#payPrescription" prefHeight="38.0" prefWidth="121.0" styleClass="prescription-button" text="Thanh toán">
                                        <font>
                                           <Font size="17.0" />
                                        </font>
                                     </Button>
-                                    <Button layoutX="338.0" layoutY="34.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="104.0" styleClass="prescription-button" text="In đơn">
-                                       <font>
-                                          <Font size="17.0" />
-                                       </font>
-                                    </Button>
-                                    <Button layoutX="383.0" layoutY="34.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="104.0" styleClass="remove-button" text="Xóa tất cả">
+                                    <Button layoutX="338.0" layoutY="34.0" mnemonicParsing="false" onAction="#exportPrescription" prefHeight="38.0" prefWidth="104.0" styleClass="prescription-button" text="In đơn">
                                        <font>
                                           <Font size="17.0" />
                                        </font>
@@ -428,79 +445,60 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <VBox alignment="TOP_CENTER" layoutX="756.0" layoutY="2.4" prefHeight="418.0" prefWidth="350.0" styleClass="diagnostic-pane" AnchorPane.bottomAnchor="-2.0" AnchorPane.leftAnchor="756.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="2.0">
+                        <VBox alignment="TOP_CENTER" layoutX="756.0" layoutY="2.4" prefHeight="244.0" prefWidth="364.0" styleClass="diagnostic-pane" AnchorPane.bottomAnchor="172.0" AnchorPane.leftAnchor="756.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="2.0">
                            <children>
-                              <Label style="-fx-font-weight: bold;" styleClass="diagnostic-label" text="Chọn thuốc">
-                                 <VBox.margin>
-                                    <Insets top="10.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <VBox alignment="CENTER_LEFT" prefHeight="52.0" prefWidth="310.0">
-                                 <children>
-                                    <Label styleClass="diagnostic-label" text="Chọn tên thuốc:" />
-                                    <TextField fx:id="medicineSearchField" prefHeight="39.0" prefWidth="330.0" styleClass="search-bar-textfield">
-                                       <font>
-                                          <Font size="17.0" />
-                                       </font>
-                                    </TextField>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets left="20.0" right="20.0" />
-                                 </VBox.margin>
-                              </VBox>
-                              <VBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="310.0">
-                                 <children>
-                                    <Label styleClass="diagnostic-label" text="Số lượng:" />
-                                    <TextField fx:id="medicineQuantityField" prefHeight="39.0" prefWidth="330.0" styleClass="search-bar-textfield">
-                                       <font>
-                                          <Font size="17.0" />
-                                       </font>
-                                    </TextField>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets left="20.0" right="20.0" />
-                                 </VBox.margin>
-                              </VBox>
-                              <VBox alignment="CENTER_LEFT" prefHeight="82.0" prefWidth="310.0">
-                                 <children>
-                                    <Label styleClass="diagnostic-label" text="Cách uống:" />
-                                    <TextField fx:id="medicineUsageField" prefHeight="39.0" prefWidth="330.0" styleClass="search-bar-textfield">
-                                       <font>
-                                          <Font size="17.0" />
-                                       </font>
-                                    </TextField>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets left="20.0" right="20.0" />
-                                 </VBox.margin>
-                              </VBox>
-                              <VBox alignment="CENTER_LEFT" prefHeight="96.0" prefWidth="310.0">
-                                 <children>
-                                    <Label styleClass="diagnostic-label" text="Ghi chú dành cho bệnh nhân:" />
-                                    <TextArea fx:id="medicineNoteField" prefHeight="200.0" prefWidth="200.0" styleClass="search-bar-textfield">
-                                       <font>
-                                          <Font size="17.0" />
-                                       </font>
-                                    </TextArea>
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets left="20.0" right="20.0" />
-                                 </VBox.margin>
-                              </VBox>
-                              <Button mnemonicParsing="false" prefHeight="38.0" prefWidth="126.0" styleClass="prescription-button" text="Thêm thuốc">
-                                 <font>
-                                    <Font size="17.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="27.0" />
-                                 </VBox.margin>
-                              </Button>
+                              <TableView fx:id="prescriptionListTable" prefHeight="244.0" prefWidth="370.0">
+                                <columns>
+                                  <TableColumn prefWidth="349.6000732421875" resizable="false" styleClass="column-text-size" text="Tiếp nhận đơn thuốc">
+                                       <columns>
+                                        <TableColumn fx:id="prescriptionOrder" editable="false" prefWidth="75.199951171875" sortable="false" style="-fx-font-size: 17px;" styleClass="column-text-size" text="STT" />
+                                          <TableColumn fx:id="prescriptionId" editable="false" prefWidth="152.7999267578125" sortable="false" styleClass="column-text-size" text="Id đơn thuốc" />
+                                          <TableColumn fx:id="prescriptionAction" editable="false" prefWidth="121.60009765625" sortable="false" styleClass="column-text-size" text="Hành động" />
+                                       </columns>
+                                    </TableColumn>
+                                </columns>
+                              </TableView>
                            </children>
                         </VBox>
                         <Separator layoutX="738.0" layoutY="3.0" orientation="VERTICAL" prefHeight="411.0" prefWidth="6.0" AnchorPane.bottomAnchor="4.199999999999989" AnchorPane.topAnchor="3.1999999999999886" />
+                        <VBox alignment="TOP_CENTER" layoutX="756.0" layoutY="264.0" prefHeight="158.0" prefWidth="364.0" styleClass="diagnostic-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="756.0" AnchorPane.rightAnchor="-1.0">
+                           <children>
+                              <HBox alignment="CENTER" prefHeight="42.0" prefWidth="350.0" styleClass="header-background">
+                                 <children>
+                                    <Label alignment="CENTER" prefHeight="31.0" prefWidth="362.0" style="-fx-font-weight: bold;" styleClass="diagnostic-label" text="Thông tin bệnh nhân" />
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="29.0" prefWidth="350.0">
+                                 <children>
+                                    <Label prefHeight="26.0" prefWidth="74.0" styleClass="diagnostic-label" text="Họ tên:" />
+                                    <Label fx:id="patientName" prefHeight="26.0" prefWidth="283.0" styleClass="diagnostic-label" text="Nguyễn Phú Dinh" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox layoutX="10.0" layoutY="36.0" prefHeight="47.0" prefWidth="350.0" spacing="5.0">
+                                 <children>
+                                    <Label prefHeight="26.0" prefWidth="70.0" styleClass="diagnostic-label" text="Địa chỉ: " />
+                                    <Label fx:id="patientAddress" alignment="TOP_LEFT" prefHeight="53.0" prefWidth="283.0" styleClass="diagnostic-label" text="Sóc Trăng" wrapText="true" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <HBox layoutX="10.0" layoutY="66.0" prefHeight="47.0" prefWidth="350.0" spacing="5.0">
+                                 <children>
+                                    <Label prefHeight="26.0" prefWidth="108.0" styleClass="diagnostic-label" text="Tổng tiền: " />
+                                    <Label fx:id="totalPrice" alignment="TOP_LEFT" prefHeight="53.0" prefWidth="283.0" styleClass="diagnostic-label" text="80.000 VND" wrapText="true" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                           </children></VBox>
                      </children>
                   </AnchorPane>
-                  <TableView fx:id="medicineTable" prefHeight="418.0" prefWidth="1119.0" stylesheets="@../../resources/css/style.css">
+                  <TableView fx:id="medicineTable" prefHeight="418.0" prefWidth="1119.0" stylesheets="@../../resources/css/style.css" visible="false">
                      <columns>
                         <TableColumn fx:id="orderNumberColumn" editable="false" prefWidth="47.99996757507324" sortable="false" styleClass="column-text-size" text="STT" />
                         <TableColumn id="lastColumn" fx:id="medicineNameColumn" editable="false" prefWidth="162.39997100830078" sortable="false" styleClass="column-text-size" text="Tên thuốc" />
@@ -519,7 +517,7 @@
                   </TableView>
                </children>
             </StackPane>
-            <HBox fx:id="filterByContainer" alignment="CENTER" layoutX="475.0" layoutY="14.0" prefHeight="43.0" prefWidth="263.0" styleClass="sort-container" AnchorPane.rightAnchor="476.0">
+            <HBox fx:id="sortByContainer" alignment="CENTER" layoutX="475.0" layoutY="14.0" prefHeight="43.0" prefWidth="263.0" styleClass="sort-container" AnchorPane.rightAnchor="476.0">
                <children>
                   <Label text="Sắp Xếp Theo:">
                      <font>
@@ -563,15 +561,8 @@
                   </HBox>
                </children>
             </HBox>
-            <Button layoutX="993.5999999999998" layoutY="14.0" mnemonicParsing="false" onAction="#openAddingMedicineForm" prefHeight="42.0" prefWidth="150.0" styleClass="save-button" text="Thêm thuốc" textFill="WHITE" AnchorPane.rightAnchor="22.40000000000009">
-               <font>
-                  <Font size="18.0" />
-               </font>
-               <graphic>
-                  <FontAwesomeIconView fill="WHITE" glyphName="PLUS" size="25" text="" />
-               </graphic>
-            </Button>
          </children>
       </AnchorPane>
+      <AnchorPane id="roundedContainer" layoutX="314.4" layoutY="82.0" prefHeight="118.0" prefWidth="1166.0" AnchorPane.leftAnchor="314.0" AnchorPane.rightAnchor="20.0" />
    </children>
 </AnchorPane>

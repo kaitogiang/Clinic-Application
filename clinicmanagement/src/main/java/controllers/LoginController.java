@@ -248,9 +248,9 @@ public class LoginController implements Initializable{
 				scene.setUserData(getUserInfo(username));
 				controller.setCurrentStage(currentStage);
 				controller.setMyScene(scene);
-//				currentStage.setOnCloseRequest(e->{
-//					controller.stopBackgroundService();
-//				});
+				currentStage.setOnCloseRequest(e->{
+					controller.stopBackgroundService();
+				});
 			}
 			currentStage.setMaximized(false);
 			currentStage.setTitle(title);

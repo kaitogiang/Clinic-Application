@@ -95,7 +95,7 @@ public class DiagnosisDetailController implements Initializable{
     			+ "FROM prescription p JOIN prescriptiondetail pd "
     			+ "ON p.prescription_id = pd.prescription_id "
     			+ "JOIN medicine m ON pd.medicine_id = m.medicine_id "
-    			+ "WHERE p.prescription_id = ? AND DATE(p.creation_date) = DATE(NOW())";
+    			+ "WHERE p.prescription_id = ?";
     	try(Connection con = Database.connectDB()) {
     		PreparedStatement ps = con.prepareStatement(sql);
     		ps.setString(1, diagnosis.getPrescriptionIdValue());

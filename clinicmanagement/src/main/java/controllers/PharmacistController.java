@@ -8,8 +8,13 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +26,12 @@ import entity.ImageUtils;
 import entity.Medicine;
 import entity.MedicineButton;
 import entity.Message;
+import entity.Patient;
+import entity.PdfGeneratorUtil;
 import entity.Pharmacist;
+import entity.Prescription;
+import entity.PrescriptionDetail;
+import entity.SelectionPrescriptionButton;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -46,12 +56,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import services.BackgroundService;
 import services.Database;
 
 public class PharmacistController implements Initializable{
@@ -79,6 +92,9 @@ public class PharmacistController implements Initializable{
 	
     @FXML
     private Button medicineTab;
+    
+    @FXML
+    private Button prescriptionTab;
     
     //Hiển thị danh sách thuốc và các thao tác
     @FXML
@@ -122,6 +138,65 @@ public class PharmacistController implements Initializable{
 
     @FXML
     private ChoiceBox<String> sortByBox;
+    
+    @FXML
+    private HBox sortByContainer;
+
+    @FXML
+    private Button addMedicineButton;
+
+    @FXML
+    private HBox searchBarContainer;
+    
+    //Chức năng quản lý đơn thuốc
+    @FXML
+    private AnchorPane prescriptionContainer;
+    
+    @FXML
+    private TableView<PrescriptionDetail> prescriptionTable;
+    
+    @FXML
+    private TableColumn<PrescriptionDetail, Integer> orderColumn;
+    
+    @FXML
+    private TableColumn<PrescriptionDetail, String> nameColumn;
+
+    @FXML
+    private TableColumn<PrescriptionDetail, Integer> quantityColumn;
+    
+    @FXML
+    private TableColumn<PrescriptionDetail, String> usageColumn;
+    
+    //--------------------------------
+    @FXML
+    private TableColumn<Prescription, String> prescriptionId;
+
+    @FXML
+    private TableView<Prescription> prescriptionListTable;
+
+    @FXML
+    private TableColumn<Prescription, Integer> prescriptionOrder;
+
+    @FXML
+    private TableColumn<Prescription, Void> prescriptionAction;
+    
+    @FXML
+    private Label patientName;
+    
+    @FXML
+    private Label patientAddress;
+
+    @FXML
+    private Label totalPrice;
+
+    @FXML
+    private Button searchPrescriptionButton;
+    
+    @FXML
+    private HBox searchAndAddContainer;
+    
+    @FXML
+    private HBox findPrescriptionContainer;
     
     //Thông tin cá nhân
     @FXML
@@ -172,6 +247,8 @@ public class PharmacistController implements Initializable{
 	
 	private String[] sortString = {"   Không có","Tên thuốc A-Z", "Tên thuốc Z-A", "Nhà sản xuất", "Ngày hết hạn", "Số lượng tăng", "Số lượng giảm"};
 	
+	private ObservableList<Prescription> prescriptionList;
+	
 	enum SortConditionName {
 		NONE,
 		MEDICINE_NAME_A_Z,
@@ -183,6 +260,12 @@ public class PharmacistController implements Initializable{
 	}
 	
 	private SortConditionName selectedCondition;
+	
+	private BackgroundService<Void> updatePrescriptionService;
+	
+	private ObservableList<PrescriptionDetail> prescriptionDetailList; 
+	
+	private List<Prescription> prescriptionQueue;
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -295,7 +378,27 @@ public class PharmacistController implements Initializable{
 			sortByCondition(choosedCondition);
 		});
 		
+		Label initalPrescription = new Label("Chưa có đơn thuốc nào");
+		initalPrescription.setFont(new Font(20));
+		prescriptionTable.setPlaceholder(initalPrescription);
 		
+		Label initialPrescriptionList = new Label("Chưa có đơn thuốc nào");
+		initialPrescriptionList.setFont(new Font(17));
+		prescriptionListTable.setPlaceholder(initialPrescriptionList);
+		
+		//Gán giá trị đầu tiên cho prescriptionIdList;
+		prescriptionList = fetchPrescriptionData();
+		//Cập nhật lại prescriptonList theo thời gian thực mỗi 5 giây
+		updatePrescriptionService = new BackgroundService<>(()->updatePrescriptionList(),5);
+		updatePrescriptionService.start();
+		//Hiển thị danh sách các đơn thuốc được bác sĩ chỉ định
+		displayPrescriptionTable();
+		//Hiển thị thông tin bệnh nhân của đơn thuốc được chon
+		setInitialPatientInfo();
+		//Khởi tạo danh sách hiển thị prescriptionDetailList
+		prescriptionDetailList = FXCollections.observableArrayList();
+		
+		prescriptionQueue = new ArrayList<Prescription>();
 	}
 	
 	//Hàm hiển thị chạy giờ
@@ -328,7 +431,15 @@ public class PharmacistController implements Initializable{
     	date.setText(dayOfWeek+", "+formattedDate);
     }
 	
+	public void logout() {
+		stopBackgroundService();
+		Stage currentStage = (Stage) asideBarTitle.getScene().getWindow();
+		currentStage.close();
+	}
 	
+	public void stopBackgroundService() {
+		updatePrescriptionService.cancel();
+	}
 	public void setCurrentStage(Stage stage) {
 		currentStage = stage;
 	}
@@ -342,13 +453,40 @@ public class PharmacistController implements Initializable{
 			//Hiển thị tab chính
 			medicineTable.setVisible(true);
   			asideBarTitle.setText("Quản lý thuốc");
+  			sortByContainer.setVisible(true);
+  			searchAndAddContainer.setVisible(true);
 			//Ẩn các tab còn lại
 			personalContainer.setVisible(false);
+			prescriptionContainer.setVisible(false);
+  			findPrescriptionContainer.setVisible(false);
 			//Tạo animation chuyển động cho các nút
 			AnimationUtils.createFadeTransition(medicineTable, 0.0, 10.0);
 			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
+			AnimationUtils.createFadeTransition(sortByContainer, 0.0, 10.0);
+			AnimationUtils.createFadeTransition(searchBarContainer, 0.0, 10.0);
+			AnimationUtils.createFadeTransition(addMedicineButton, 0.0, 10.0);
 			//Tạo trạng thái active cho tab
-			ActiveStateUtils.addStyleClass(medicineTab);			
+			ActiveStateUtils.addStyleClass(medicineTab);
+			ActiveStateUtils.removeStyleClass(prescriptionTab);
+		} else if (e.getSource().equals(prescriptionTab) && e!=null) {
+			//Hiển thị tab chính
+			prescriptionContainer.setVisible(true);
+  			asideBarTitle.setText("Quản lý đơn thuốc");
+  			findPrescriptionContainer.setVisible(true);
+  			searchPrescriptionButton.setVisible(true);
+  			displayPrescriptionDetail();
+			//Ẩn các tab còn lại
+			medicineTable.setVisible(false);
+			sortByContainer.setVisible(false);
+			personalContainer.setVisible(false);
+  			searchAndAddContainer.setVisible(false);
+			//Tạo animation chuyển động cho các nút
+			AnimationUtils.createFadeTransition(prescriptionContainer, 0.0, 10.0);
+			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
+			AnimationUtils.createFadeTransition(searchPrescriptionButton, 0.0, 10.0);
+			//Tạo trạng thái active cho tab
+			ActiveStateUtils.addStyleClass(prescriptionTab);
+			ActiveStateUtils.removeStyleClass(medicineTab);
 		}
 		
 	}
@@ -360,9 +498,14 @@ public class PharmacistController implements Initializable{
   		personalContainer.setVisible(true);
   		saveInfoButton.setVisible(false);
   		medicineTable.setVisible(false);
-  		
+  		prescriptionContainer.setVisible(false);
+  		sortByContainer.setVisible(false);
+  		searchAndAddContainer.setVisible(false);
+		findPrescriptionContainer.setVisible(false);
+
   		//Loại bỏ chọn tab
   		ActiveStateUtils.removeStyleClass(medicineTab);
+  		ActiveStateUtils.removeStyleClass(prescriptionTab);
   		
   		AnimationUtils.createFadeTransition(personalContainer, 0.0, 10.0);
   		AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
@@ -757,4 +900,266 @@ public class PharmacistController implements Initializable{
   		return i + 1;
   	}
   	
+  	public ObservableList<Prescription> fetchPrescriptionData() {
+  		ObservableList<Prescription> list = FXCollections.observableArrayList();
+  		String sql = "SELECT pp.*, p.prescription_id, "
+  				+ "p.notes  FROM prescription p JOIN diagnosis d "
+  				+ "ON p.prescription_id = d.prescription_id "
+  				+ "JOIN patients pp ON d.patient_id = pp.patient_id "
+  				+ "WHERE DATE(creation_date) = DATE(NOW()) ORDER BY creation_date";
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(sql);
+  			ResultSet rs = ps.executeQuery();
+  			con.setAutoCommit(false);
+  			int orderNumber = 1;
+  			while(rs.next()) {
+  				String patientId = rs.getString("patient_id");
+  				String patientName = rs.getString("patient_name");
+  				int age = rs.getInt("age");
+  				float weight = rs.getFloat("weight");
+  				String address = rs.getString("address");
+  				String phone = rs.getString("phone_number");
+  				Patient patient = new Patient(patientId, patientName, age, weight, address, phone, 0);
+  				String prescriptionId = rs.getString("prescription_id");
+  				String notes = rs.getString("notes");
+  				Prescription pres = new Prescription(orderNumber++, prescriptionId, patient, notes);
+  				list.add(pres);
+  			}
+  			
+  			//Thực hiện gán chi tiết đon thuốc (danh sách thuốc) vào mỗi đơn thuốc
+  			for(Prescription e: list) {
+  				String prescriptionId = e.getPrescriptionIdvalue();
+  				String detailSql = "SELECT m.medicine_id, "
+  								+ "m.medicine_name, "
+  								+ "p.medicine_amount, "
+  								+ "p.medicine_usage "
+  								+ "FROM prescriptiondetail p "
+  								+ "JOIN medicine m ON p.medicine_id = m.medicine_id "
+  								+ "WHERE prescription_id = ?";
+  				try(Connection detailCon = Database.connectDB()) {
+  					PreparedStatement detailPs = con.prepareStatement(detailSql);
+  					detailPs.setString(1, prescriptionId);
+  					ResultSet resultSet = detailPs.executeQuery();
+  					ObservableList<PrescriptionDetail> prescriptionDetailList = FXCollections.observableArrayList();
+  					int order = 1;
+  					while(resultSet.next()) {
+  						String medicineId = resultSet.getString(1);
+  						String medicineName = resultSet.getString(2);
+  						int medicineAmount = resultSet.getInt(3);
+  						String medicineUsage = resultSet.getString(4);
+  						Medicine medicine = getSpecificMedicine(medicineId);
+  						PrescriptionDetail item = new PrescriptionDetail(order++, medicineName, medicineAmount, medicineUsage, medicine);
+  						prescriptionDetailList.add(item);
+  					}
+  					e.setMedicineList(prescriptionDetailList);
+  				} catch(Exception ex) {
+  					ex.printStackTrace();
+  				}
+  			}
+  			return list;
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  		return null;
+  	}
+  	
+  	public Medicine getSpecificMedicine(String medicineId) {
+  		String sql = "SELECT * FROM medicine WHERE medicine_id = ?";
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(sql);
+  			ps.setString(1, medicineId);
+  			ResultSet rs = ps.executeQuery();
+  			Medicine medicine = new Medicine();
+  			if (rs.next()) {
+  				String medicineName = rs.getString("medicine_name");
+  				float unitPirce = rs.getFloat("unit_price");
+  				medicine = new Medicine(medicineId, medicineName, unitPirce);
+  			}
+  			return medicine;
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  		return null;
+  	}
+  	
+  	//Hàm dùng để cập nhật lại prescriptionList nếu có đơn thuốc mới được thêm vào
+  	public void updatePrescriptionList() {
+  		ObservableList<Prescription> newList = fetchPrescriptionData();
+  		if (prescriptionList.size() != newList.size()) {
+  			System.out.println("The prescription has been changed!!!");
+  			int i;
+  			for(i=prescriptionList.size(); i< newList.size(); i++) {
+  				prescriptionList.add(newList.get(i));
+  			}
+  		}
+  	}
+  	public void displayPrescriptionTable() {
+  		prescriptionOrder.setCellValueFactory(cellData -> cellData.getValue().getOrderNumber().asObject());
+  		prescriptionId.setCellValueFactory(cellData -> cellData.getValue().getPrescriptionId());
+  		prescriptionAction.setCellFactory(param -> new SelectionPrescriptionButton(this));
+  		prescriptionListTable.setItems(prescriptionList);
+  	}
+  	//Hàm reset lại pane hiển thị thông tin bệnh nhân khi chọn một đơn thuốc
+  	public void setInitialPatientInfo() {
+  		patientName.setText("Chưa chọn");
+		patientAddress.setText("Không rõ");
+		totalPrice.setText("0 VND");
+  	}
+  	//Hàm thiết lập hiển thị thông tin bệnh nhân
+  	public void setInitialPatientInfo(String name, String address, String money) {
+  		patientName.setText(name);
+		patientAddress.setText(address);
+		totalPrice.setText(money+" VNĐ");
+  	}
+  	
+  	//Hàm hiển thị prescription detail cho một đơn thuốc
+  	public void displayPrescriptionDetail() {
+  		orderColumn.setCellValueFactory(cellData -> cellData.getValue().getOrderNumber().asObject());
+  		nameColumn.setCellValueFactory(cellData -> cellData.getValue().getMedicineName());
+  		quantityColumn.setCellValueFactory(cellData -> cellData.getValue().getMedicineQuantity().asObject());
+  		usageColumn.setCellValueFactory(cellData -> cellData.getValue().getUsage());
+  		prescriptionTable.setItems(prescriptionDetailList);
+  	}
+  	//Hàm chỉnh sửa prescription detail 
+  	public void setPrescriptionDetailList(ObservableList<PrescriptionDetail> newList) {
+  		prescriptionDetailList.clear();
+  		prescriptionDetailList.addAll(newList);
+  		System.out.println(prescriptionDetailList.size()+" phan tu");
+  	}
+  	//Reset lại prescription detail list
+  	public void resetPrescriptionDetailList() {
+  		prescriptionDetailList.clear();
+  	}
+  	//Các hàm thao tác trên hàng đợi
+  	public void addPrescriptionQueue(Prescription e) {
+  		prescriptionQueue.add(e);
+  	}
+  	public void removePrescriptionQueue(Prescription e) {
+  		prescriptionQueue.remove(e);
+  	}
+  	//Lấy prescription detail hiện tại
+  	public List<Prescription> getPrescriptionQueue() {
+  		return prescriptionQueue;
+  	}
+  	
+  	//Chức năng thanh toán khi chọn đơn thuốc
+  	public void payPrescription() {
+  		if (prescriptionQueue.size() == 0) {
+  			Message.showMessage("Vui lòng chọn đơn thuốc để thanh toán", AlertType.ERROR);
+  			return;
+  		}
+  		Prescription selectedItem = prescriptionQueue.getLast();
+  		//Trích xuất các giá trị
+  		Patient patient = selectedItem.getPatientValue();
+  		LocalDate date = LocalDate.now();
+  		String uniqueId = "";
+  		do {
+  			uniqueId = generateUniqueId();
+  		} while(isExistInvoiceId(uniqueId));
+  		ObservableList<PrescriptionDetail> medicineList = selectedItem.getMedicineList();
+  		
+  		Map<String, Object> map = new HashMap<>();
+  		map.put("patient", patient);
+  		map.put("date", date);
+  		map.put("invoiceId", uniqueId);
+  		map.put("medicineList", medicineList);
+  		map.put("pharmacist", pharamicst);
+  		map.put("prescriptionId", selectedItem.getPrescriptionIdvalue());
+  		
+		String css = this.getClass().getResource("/css/style.css").toExternalForm();
+  		try {
+  			FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/InvoiceFormScreen.fxml"));
+  			AnchorPane mainInvoice = loader.load();
+  			InvoiceController controller = loader.getController();
+  			controller.setData(map);
+  			controller.setparentController(this);
+  			Scene newScene = new Scene(mainInvoice);
+  			newScene.getStylesheets().add(css);
+  			Stage newStage = new Stage();
+  			newStage.setScene(newScene);
+  			newStage.show();
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  	}
+  	
+  	public void exportPrescription() {
+  		if (prescriptionQueue.size() == 0) {
+  			Message.showMessage("Vui lòng chọn đơn thuốc trước khi in", AlertType.ERROR);
+  		} else {
+  			//truy xuất dữ liệu cần thiết
+  			Prescription selectedItem = prescriptionQueue.getLast();
+  			//Lấy thông tin bệnh nhân
+  			Patient patient = selectedItem.getPatientValue();
+  			//Lấy Id đơn thuốc
+  			String prescriptionId = selectedItem.getPrescriptionIdvalue();
+  			//Lấy danh sách thuốc của đơn thuốc
+  			ObservableList<PrescriptionDetail> medicineList = selectedItem.getMedicineList();
+  			//Lấy thông tin bác sĩ và chuẩn đoán
+  			String doctorId = "";
+  			String doctorName = "";
+  			String diagnosis = "";
+  			String sql = "SELECT d.doctor_id, "
+  					+ "d.doctor_name, di.diagnosis "
+  					+ "FROM diagnosis di JOIN doctors d "
+  					+ "ON di.doctor_id = d.doctor_id WHERE prescription_id = ? "
+  					+ "AND DATE(diagnosis_date) = DATE(NOW())";
+  			try(Connection con = Database.connectDB()) {
+  				PreparedStatement ps = con.prepareStatement(sql);
+  				ps.setString(1, prescriptionId);
+  				ResultSet rs = ps.executeQuery();
+  				if (rs.next()) {
+  					doctorId = rs.getString("doctor_id");
+  					doctorName = rs.getString("doctor_name");
+  					diagnosis = rs.getString("diagnosis");
+  				}
+  			} catch(Exception e) {
+  				e.printStackTrace();
+  			}
+  			
+  			//Thực hiện việc in đơn thuốc
+  			FileChooser file = new FileChooser();
+  			file.setTitle("Open Save File");
+  			FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)","*.pdf");
+  			file.getExtensionFilters().add(extFilter);
+  			File path = file.showSaveDialog(currentStage);
+  			if (path!=null) {
+  				PdfGeneratorUtil.exportPrescriptionPDF(path.getAbsolutePath(), patient, prescriptionId, doctorId, doctorName, diagnosis, medicineList);
+  				Message.showMessage("Xuất đơn thuốc thành công", AlertType.INFORMATION);
+  			}
+  		}
+  	}
+  	//Hàm tạo id duy nhất
+  	public String generateUniqueId() {
+ 		 // Tạo một UUID mới
+       UUID uniqueId = UUID.randomUUID();
+
+       // Chuyển UUID thành chuỗi và lấy 5 ký tự đầu tiên
+       String shortId = uniqueId.toString().substring(0, 5);
+
+       // In mã ID ngắn
+       System.out.println("Short ID: " + shortId);
+       
+       return shortId;
+ 	}
+  	
+  	public boolean isExistInvoiceId(String id) {
+  		String sql = "SELECT * FROM invoice WHERE invoice_id = ?";
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(sql);
+  			ps.setString(1, id);
+  			ResultSet rs = ps.executeQuery();
+  			if (rs.next()) {
+  				return true;
+  			}
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  		return false;
+  	}
+  	
+  	//Hàm lấy đơn thuốc
+  	public TableView<Prescription> getPrescriptionTable() {
+  		return prescriptionListTable;
+  	}
 }

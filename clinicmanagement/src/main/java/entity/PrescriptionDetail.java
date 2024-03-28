@@ -27,7 +27,16 @@ public class PrescriptionDetail {
 		this.notes = new SimpleStringProperty(notes);
 		this.medicine = new SimpleObjectProperty<Medicine>(medicine);
 	}
-
+	
+	public PrescriptionDetail(int orderNumber, String medicineName, int medicineQuantity 
+							, String usage, Medicine medicine) {
+		this.orderNumber = new SimpleIntegerProperty(orderNumber);
+		this.medicineName = new SimpleStringProperty(medicineName);
+		this.medicineQuantity = new SimpleIntegerProperty(medicineQuantity);
+		this.usage = new SimpleStringProperty(usage);
+		this.medicine = new SimpleObjectProperty<Medicine>(medicine);
+	}
+	
 	public SimpleIntegerProperty getOrderNumber() {
 		return orderNumber;
 	}

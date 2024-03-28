@@ -10,7 +10,7 @@ public class Database {
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/clinic?useUnicode=true&characterEncoding=UTF-8"
 					+ "","root","");
-			System.out.println("Connect successfully");
+//			System.out.println("Connect successfully");
 			return connect;
 		} catch(Exception e) {
 			System.out.println(e);

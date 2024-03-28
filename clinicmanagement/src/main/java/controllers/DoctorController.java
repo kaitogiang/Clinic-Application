@@ -1365,12 +1365,13 @@ public class DoctorController implements Initializable{
   		
   		//Thêm chi tiết đơn thuốc
   		String prescriptionDetailId;
-  		String detailSql = "INSERT INTO prescriptiondetail VALUES(?, ?, ?, ?)";
+  		String detailSql = "INSERT INTO prescriptiondetail VALUES(?, ?, ?, ?, ?)";
   		try(Connection con = Database.connectDB()) {
   			con.setAutoCommit(false);
   			PreparedStatement ps = con.prepareStatement(detailSql);
   			for (PrescriptionDetail e: prescription) {
   				//Tạo id mới cho mỗi prescription detail
+
   				do {
   		  			prescriptionDetailId = generateUniqueId();
   		  		} while(isExistedPrescriptionDetail(prescriptionDetailId));
@@ -1381,6 +1382,7 @@ public class DoctorController implements Initializable{
   				ps.setString(2,prescriptionId);
   				ps.setString(3, medicineId);
   				ps.setInt(4, medicineAmount);
+  				ps.setString(5, e.getUsageValue());
   				ps.addBatch();
   			}
   			ps.executeBatch(); //Thực hiện tất cả lệnh prepare trong một lần

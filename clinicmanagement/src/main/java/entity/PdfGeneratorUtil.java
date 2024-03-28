@@ -22,13 +22,13 @@ import javafx.collections.ObservableList;
 public class PdfGeneratorUtil {
 
 	public static void exportPrescriptionPDF(String path, Patient patient, String prescriptionId, 
-			String doctorId, String docName, String diagnosis, ObservableList<PrescriptionDetail> prescription) {
+		String doctorId, String docName, String diagnosis, ObservableList<PrescriptionDetail> prescription) {
 		//Đặt margin cho giấy A4, left, right, top, bottom
         Document document = new Document(PageSize.A4, -20, -20, 10, 50);
         try {
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(path));
             document.open();
-
+            
             float[] columnWidths = {5.5f, 1f, 2.5f};
             PdfPTable table = new PdfPTable(columnWidths);
             table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
