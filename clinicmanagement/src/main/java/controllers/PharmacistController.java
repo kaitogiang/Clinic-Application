@@ -23,6 +23,7 @@ import entity.ActiveStateUtils;
 import entity.AnimationUtils;
 import entity.DeepCopyUtil;
 import entity.ImageUtils;
+import entity.LogoutHandler;
 import entity.Medicine;
 import entity.MedicineButton;
 import entity.Message;
@@ -265,7 +266,12 @@ public class PharmacistController implements Initializable{
 	
 	private ObservableList<PrescriptionDetail> prescriptionDetailList; 
 	
-	private List<Prescription> prescriptionQueue;
+	private List<Prescription> prescriptionQueue; //Chứa hàng đợi các mục đã chọn
+	
+	private List<SelectionPrescriptionButton> pressedButtonQueue; //Chứa tham chiếu của button được nhấn gần nhất
+	
+	private List<SelectionPrescriptionButton> prescriptionButtonList; //danh sách dùng để tùy chỉnh
+																	//từng button nếu đã thanh toán
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -399,6 +405,8 @@ public class PharmacistController implements Initializable{
 		prescriptionDetailList = FXCollections.observableArrayList();
 		
 		prescriptionQueue = new ArrayList<Prescription>();
+		pressedButtonQueue = new ArrayList<>();
+		prescriptionButtonList = new ArrayList<>();
 	}
 	
 	//Hàm hiển thị chạy giờ
@@ -434,7 +442,8 @@ public class PharmacistController implements Initializable{
 	public void logout() {
 		stopBackgroundService();
 		Stage currentStage = (Stage) asideBarTitle.getScene().getWindow();
-		currentStage.close();
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/LoginScreen.fxml"));
+		LogoutHandler.logout(currentStage, loader);
 	}
 	
 	public void stopBackgroundService() {
@@ -475,6 +484,8 @@ public class PharmacistController implements Initializable{
   			findPrescriptionContainer.setVisible(true);
   			searchPrescriptionButton.setVisible(true);
   			displayPrescriptionDetail();
+  			//Hàm hiển thị trạng thái đã thanh toán nếu kiểm tra id đơn hàng tồn tại trên bảng invoice
+  			modifyPrescriptionButtonState();
 			//Ẩn các tab còn lại
 			medicineTable.setVisible(false);
 			sortByContainer.setVisible(false);
@@ -996,7 +1007,11 @@ public class PharmacistController implements Initializable{
   	public void displayPrescriptionTable() {
   		prescriptionOrder.setCellValueFactory(cellData -> cellData.getValue().getOrderNumber().asObject());
   		prescriptionId.setCellValueFactory(cellData -> cellData.getValue().getPrescriptionId());
-  		prescriptionAction.setCellFactory(param -> new SelectionPrescriptionButton(this));
+  		prescriptionAction.setCellFactory(param -> {
+  			SelectionPrescriptionButton button = new SelectionPrescriptionButton(this);
+            return button;
+  		});
+  		
   		prescriptionListTable.setItems(prescriptionList);
   	}
   	//Hàm reset lại pane hiển thị thông tin bệnh nhân khi chọn một đơn thuốc
@@ -1034,6 +1049,15 @@ public class PharmacistController implements Initializable{
   	public void addPrescriptionQueue(Prescription e) {
   		prescriptionQueue.add(e);
   	}
+  	//Hàm thêm chỉ số đã chọn
+  	public void addSelectedButtonToQueue(SelectionPrescriptionButton e) {
+  		pressedButtonQueue.add(e);
+  	}
+  	//Hàm xóa khỏi hàng đợi
+  	public void removeSelectedButtonFromQueue(SelectionPrescriptionButton e) {
+  		pressedButtonQueue.remove(e);
+  	}
+  	
   	public void removePrescriptionQueue(Prescription e) {
   		prescriptionQueue.remove(e);
   	}
@@ -1041,7 +1065,9 @@ public class PharmacistController implements Initializable{
   	public List<Prescription> getPrescriptionQueue() {
   		return prescriptionQueue;
   	}
-  	
+  	public List<SelectionPrescriptionButton> getPressedButtonQueue() {
+  		return pressedButtonQueue;
+  	}
   	//Chức năng thanh toán khi chọn đơn thuốc
   	public void payPrescription() {
   		if (prescriptionQueue.size() == 0) {
@@ -1162,4 +1188,35 @@ public class PharmacistController implements Initializable{
   	public TableView<Prescription> getPrescriptionTable() {
   		return prescriptionListTable;
   	}
+  	//Tạo ra một hàm dùng để cài lại giá trị của SelectionPrescriptionButton thành nhãn đã thanh toán
+  	//Trong trường hợp người này đã thanh toán
+  	public void modifyPrescriptionButtonState() {
+  		System.out.println("Goi modify");
+  		int i;
+  		for(i=0; i<prescriptionListTable.getItems().size(); i++) {
+  			Prescription item = prescriptionListTable.getItems().get(i);
+  			if (isExistInvoiceId(item.getPrescriptionIdvalue())) {
+	  			SelectionPrescriptionButton button = prescriptionButtonList.get(i);
+	  			button.setSuccessLabel();
+  			}
+  		}
+  	}
+  	
+  	public List<SelectionPrescriptionButton> getPrescriptionButtonList() {
+  		return prescriptionButtonList;
+  	}
+  	
+  	//Hàm kiểm tra xem đã thanh toán cho đơnthuốc chưa
+  	public boolean isPaiedPrescription(String prescriptinId) {
+		String sql = "SELECT * FROM invoice WHERE prescription_id = ?";
+		try(Connection con = Database.connectDB()) {
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setString(1, prescriptinId);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) return true;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

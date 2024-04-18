@@ -11,8 +11,8 @@ import java.util.ResourceBundle;
 import entity.Message;
 import entity.Patient;
 import entity.Pharmacist;
-import entity.Prescription;
 import entity.PrescriptionDetail;
+import entity.SelectionPrescriptionButton;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -169,6 +169,9 @@ public class InvoiceController implements Initializable{
     		} catch(Exception e) {
     			e.printStackTrace();
     		}
+    		SelectionPrescriptionButton selectedButton = parentController.getPressedButtonQueue().getLast();
+        	selectedButton.setSuccessStatus();
+        	Message.showMessage("Thanh toán hóa đơn thành công", AlertType.INFORMATION);
     	}
     }
     //Hàm kiểm tra hóa đơn này đã thanh toán chưa
@@ -188,8 +191,7 @@ public class InvoiceController implements Initializable{
     }
     //Hàm in hóa đơn
     public void exportInvoice() {
-    	TableView<Prescription> prescriptionTable = parentController.getPrescriptionTable();
-    	System.out.println(prescriptionTable.getSelectionModel().getSelectedIndex());
+    	System.out.println("In hoa don");
     }
     
 }
