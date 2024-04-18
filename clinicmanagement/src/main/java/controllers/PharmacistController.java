@@ -1219,4 +1219,20 @@ public class PharmacistController implements Initializable{
 		}
 		return false;
 	}
+  	
+  	//Hàm mở tab tìm kiếm
+  	public void seachPrescription() {
+  		try {
+  	  		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/SearchScreen.fxml"));
+  			String css = this.getClass().getResource("/css/style.css").toExternalForm();
+  	  		AnchorPane container = loader.load();
+  	  		Scene newScene = new Scene(container);
+  	  		newScene.getStylesheets().add(css);
+  	  		Stage newStage = new Stage();
+  	  		newStage.setScene(newScene);
+  	  		newStage.show();
+  		} catch(Exception e) {
+  			System.out.println(e);
+  		}
+  	}
 }

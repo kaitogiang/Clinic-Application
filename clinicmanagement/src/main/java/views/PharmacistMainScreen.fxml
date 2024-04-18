@@ -231,9 +231,9 @@
                         </Button>
                      </children>
                   </HBox>
-                  <HBox fx:id="findPrescriptionContainer" alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                  <HBox fx:id="findPrescriptionContainer" alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" visible="false">
                      <children>
-                        <Button fx:id="searchPrescriptionButton" mnemonicParsing="false" prefHeight="43.0" prefWidth="213.0" styleClass="action-button" text="Tìm kiếm đơn thuốc" visible="false">
+                        <Button fx:id="searchPrescriptionButton" mnemonicParsing="false" onAction="#seachPrescription" prefHeight="43.0" prefWidth="213.0" styleClass="action-button" text="Tìm kiếm đơn thuốc">
                            <font>
                               <Font size="20.0" />
                            </font>

@@ -45,6 +45,16 @@ public class Patient {
 		this.orderNumber = new SimpleIntegerProperty(orderNumber);
 	}
 	
+	public Patient(String patientId, String patientName, int age, float weight, 
+			String phoneNumber, String address) {
+		this.patientId = new SimpleStringProperty(patientId);
+		this.patientName = new SimpleStringProperty(patientName);
+		this.age = new SimpleIntegerProperty(age);
+		this.weight = new SimpleFloatProperty(weight);
+		this.phoneNumber = new SimpleStringProperty(phoneNumber);
+		this.address = new SimpleStringProperty(address);
+	}
+	
 	public Patient(Patient e) {
 		this.patientId = new SimpleStringProperty(e.getPatientIdValue());
 		this.status = new SimpleStringProperty(e.getStatusValue());
