@@ -23,6 +23,7 @@ import entity.ActiveStateUtils;
 import entity.AnimationUtils;
 import entity.DeepCopyUtil;
 import entity.ImageUtils;
+import entity.Invoice;
 import entity.LogoutHandler;
 import entity.Medicine;
 import entity.MedicineButton;
@@ -47,7 +48,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -199,6 +202,61 @@ public class PharmacistController implements Initializable{
     @FXML
     private HBox findPrescriptionContainer;
     
+    //Chức năng tra cứu hóa đơn
+    @FXML
+    private AnchorPane searchInvoiceContainer;
+    
+    @FXML
+    private Button searchInvoiceTab;
+    
+    @FXML
+    private RadioButton byDate;
+
+    @FXML
+    private RadioButton byInvoiceId;
+
+    @FXML
+    private RadioButton byMedicine;
+
+    @FXML
+    private RadioButton byPatientName;
+
+    @FXML
+    private RadioButton ascendingSort;
+    
+    @FXML
+    private RadioButton descendingSort;
+    
+    @FXML
+    private DatePicker searchInvoiceByDate;
+
+    @FXML
+    private HBox searchInvoiceByDateContainer;
+
+    @FXML
+    private TextField searchInvoiceField;
+    
+    @FXML
+    private HBox searchInvoiceTextFieldContainer;
+    
+    @FXML
+    private TableColumn<Invoice, String> creationDateColumn;
+    
+    @FXML
+    private TableColumn<Invoice, String> invoiceIdColumn;
+
+    @FXML
+    private TableColumn<Invoice, Integer> invoiceOrderColumn;
+
+    @FXML
+    private TableColumn<Invoice, String> invoicePreciptionIdColumn;
+
+    @FXML
+    private TableColumn<Invoice, Float> invoiceTotalColumn;
+    
+    @FXML
+    private TableView<Invoice> invoiceTable;
+    
     //Thông tin cá nhân
     @FXML
     private AnchorPane personalContainer;
@@ -260,6 +318,13 @@ public class PharmacistController implements Initializable{
 		QUANTITY_DESCREASE
 	}
 	
+	enum SearchCondition {
+		BY_INVOICE_ID,
+		BY_PATIENT_NAME,
+		BY_MEDICINE,
+		BY_DATE
+	}
+	
 	private SortConditionName selectedCondition;
 	
 	private BackgroundService<Void> updatePrescriptionService;
@@ -272,6 +337,7 @@ public class PharmacistController implements Initializable{
 	
 	private List<SelectionPrescriptionButton> prescriptionButtonList; //danh sách dùng để tùy chỉnh
 																	//từng button nếu đã thanh toán
+	private ObservableList<Invoice> invoiceList; //Danh sách lưu trữ các hóa đơn
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -407,6 +473,51 @@ public class PharmacistController implements Initializable{
 		prescriptionQueue = new ArrayList<Prescription>();
 		pressedButtonQueue = new ArrayList<>();
 		prescriptionButtonList = new ArrayList<>();
+		
+		//Khởi tạo giá trị cho các radioButton
+		byInvoiceId.setSelected(true);
+		ascendingSort.setSelected(true);
+		
+		//Quan sát radioButton byDate, nếu chọn thì hiển thị pane chọn ngày
+		byDate.selectedProperty().addListener((observe, oldValue, newValue)->{
+			if (newValue) {
+				invoiceList.clear();
+				searchInvoiceByDate.setValue(null);
+				searchInvoiceByDate.setEditable(false);
+				searchInvoiceByDateContainer.setVisible(true);
+				searchInvoiceTextFieldContainer.setVisible(false);
+			} else {
+				searchInvoiceByDateContainer.setVisible(false);
+				searchInvoiceTextFieldContainer.setVisible(true);
+			}
+		});
+		
+		byInvoiceId.selectedProperty().addListener((observe, oldValue, newValue)->{
+			if (newValue) {
+				invoiceList.clear();
+				searchInvoiceField.setText("");
+			}
+		});
+		
+		byMedicine.selectedProperty().addListener((observe, oldValue, newValue)->{
+			if (newValue) {
+				invoiceList.clear();
+				searchInvoiceField.setText("");
+			}
+		});
+		
+		byPatientName.selectedProperty().addListener((observe, oldValue, newValue)->{
+			if (newValue) {
+				invoiceList.clear();
+				searchInvoiceField.setText("");
+			}
+		});
+		//Khởi tạo danh sách các hóa đơn
+		invoiceList = FXCollections.observableArrayList();
+		Label defaultInvoiceText = new Label("Chưa có hóa đơn nào");
+		defaultInvoiceText.setFont(new Font(17));
+		invoiceTable.setPlaceholder(defaultInvoiceText);
+		displayInvoice(); //Hiển thị bảng danh sách các hóa đơn
 	}
 	
 	//Hàm hiển thị chạy giờ
@@ -468,6 +579,7 @@ public class PharmacistController implements Initializable{
 			personalContainer.setVisible(false);
 			prescriptionContainer.setVisible(false);
   			findPrescriptionContainer.setVisible(false);
+  			searchInvoiceContainer.setVisible(false);
 			//Tạo animation chuyển động cho các nút
 			AnimationUtils.createFadeTransition(medicineTable, 0.0, 10.0);
 			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
@@ -477,6 +589,7 @@ public class PharmacistController implements Initializable{
 			//Tạo trạng thái active cho tab
 			ActiveStateUtils.addStyleClass(medicineTab);
 			ActiveStateUtils.removeStyleClass(prescriptionTab);
+			ActiveStateUtils.removeStyleClass(searchInvoiceTab);
 		} else if (e.getSource().equals(prescriptionTab) && e!=null) {
 			//Hiển thị tab chính
 			prescriptionContainer.setVisible(true);
@@ -491,6 +604,7 @@ public class PharmacistController implements Initializable{
 			sortByContainer.setVisible(false);
 			personalContainer.setVisible(false);
   			searchAndAddContainer.setVisible(false);
+  			searchInvoiceContainer.setVisible(false);
 			//Tạo animation chuyển động cho các nút
 			AnimationUtils.createFadeTransition(prescriptionContainer, 0.0, 10.0);
 			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
@@ -498,8 +612,41 @@ public class PharmacistController implements Initializable{
 			//Tạo trạng thái active cho tab
 			ActiveStateUtils.addStyleClass(prescriptionTab);
 			ActiveStateUtils.removeStyleClass(medicineTab);
+			ActiveStateUtils.removeStyleClass(searchInvoiceTab);
+			
+		} else if (e.getSource().equals(searchInvoiceTab) && e!=null) {
+			//Hiển thị tab chính
+			searchInvoiceContainer.setVisible(true);
+  			asideBarTitle.setText("Tra cứu hóa đơn");
+  			showSearchInvoiceField(true);
+			//Ẩn các tab còn lại
+			medicineTable.setVisible(false);
+			sortByContainer.setVisible(false);
+			personalContainer.setVisible(false);
+  			searchAndAddContainer.setVisible(false);
+  			prescriptionContainer.setVisible(false);
+  			findPrescriptionContainer.setVisible(false);
+  			//Tạo animation chuyển động
+			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
+			AnimationUtils.createFadeTransition(searchInvoiceContainer, 0.0, 10.0);
+			//Tạo trạng thái active cho tab
+			ActiveStateUtils.addStyleClass(searchInvoiceTab);
+			ActiveStateUtils.removeStyleClass(medicineTab);
+			ActiveStateUtils.removeStyleClass(prescriptionTab);
 		}
 		
+	}
+	
+	public void showSearchInvoiceField(boolean isShow) {
+		if (isShow) {
+			searchInvoiceTextFieldContainer.setVisible(true);
+			searchInvoiceByDateContainer.setVisible(false);
+		} else {
+			searchInvoiceByDateContainer.setVisible(true);
+			searchInvoiceTextFieldContainer.setVisible(false);
+			searchInvoiceByDate.setEditable(false);
+			searchInvoiceByDate.setPromptText("Chọn ngày");
+		}
 	}
 	
 	//Chuyển đến tab trang cá nhân của người dùng
@@ -513,11 +660,12 @@ public class PharmacistController implements Initializable{
   		sortByContainer.setVisible(false);
   		searchAndAddContainer.setVisible(false);
 		findPrescriptionContainer.setVisible(false);
-
+		searchInvoiceContainer.setVisible(false);
   		//Loại bỏ chọn tab
   		ActiveStateUtils.removeStyleClass(medicineTab);
   		ActiveStateUtils.removeStyleClass(prescriptionTab);
-  		
+		ActiveStateUtils.removeStyleClass(searchInvoiceTab);
+
   		AnimationUtils.createFadeTransition(personalContainer, 0.0, 10.0);
   		AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
   		//Khởi tạo dữ liệu cho các trường trong thông tin cá nhân
@@ -1234,5 +1382,143 @@ public class PharmacistController implements Initializable{
   		} catch(Exception e) {
   			System.out.println(e);
   		}
+  	}
+  	
+  	public void searchInvoiceInfo() {
+  		boolean isAscending = ascendingSort.isSelected() ? true : false; //Kiểu sắp xếp
+  		
+  		if (byInvoiceId.isSelected()) {
+  			System.out.println("Tìm theo id hóa đơn");
+  			String searchValue = searchInvoiceField.getText();
+  			System.out.println("Đã nhập vào: "+searchValue);
+  			invoiceList.clear();
+  			invoiceList.addAll(searchInvoiceByCondition(SearchCondition.BY_INVOICE_ID, isAscending, searchValue));
+  			System.out.println("SO phan tu la: "+invoiceList.size());
+  		} else if (byPatientName.isSelected()) {
+  			System.out.println("Tìm theo tên bệnh nhân");
+  			String searchValue = searchInvoiceField.getText();
+  			invoiceList.clear();
+  			invoiceList.addAll(searchInvoiceByCondition(SearchCondition.BY_PATIENT_NAME, isAscending, searchValue));
+  		} else if (byMedicine.isSelected()) {
+  			System.out.println("Tìm theo tên thuốc");
+  			String searchValue = searchInvoiceField.getText();
+  			invoiceList.clear();
+  			invoiceList.addAll(searchInvoiceByCondition(SearchCondition.BY_MEDICINE, isAscending, searchValue));
+  		} else if (byDate.isSelected()) {
+  			System.out.println("Tìm theo ngày: "+searchInvoiceByDate.getValue());
+  			String searchValue = searchInvoiceByDate.getValue().toString();
+  			invoiceList.clear();
+  			invoiceList.addAll(searchInvoiceByCondition(SearchCondition.BY_DATE, isAscending, searchValue));
+  		}
+  	}
+  	//Tìm theo điều kiện
+  	public ObservableList<Invoice> searchInvoiceByCondition(SearchCondition condition, boolean isAscending, String value) {
+  		String sort = isAscending ? " ORDER BY creation_date ASC " : " ORDER BY creation_date DESC ";
+  		ObservableList<Invoice> list = FXCollections.observableArrayList();
+  		if (condition == SearchCondition.BY_INVOICE_ID) {
+  			String sql = "SELECT * FROM invoice WHERE invoice_id LIKE ? "+sort;
+  			try(Connection con = Database.connectDB()) {
+  				PreparedStatement ps = con.prepareStatement(sql);
+  				ps.setString(1,"%" + value + "%");
+  				ResultSet rs = ps.executeQuery();
+  				int order=1;
+  				while(rs.next()) {
+  					String invoiceId = rs.getString("invoice_id");
+  					String prescriptionId = rs.getString("prescription_id");
+  					java.sql.Timestamp creationDate = rs.getTimestamp("creation_date");
+  					java.util.Date date = new java.util.Date(creationDate.getTime());
+  					SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+  					String formattedDate = sdf.format(date);
+  					
+  					float totalAmount = rs.getFloat("total_amount");
+  					Invoice invoice = new Invoice(order++, invoiceId, prescriptionId, formattedDate, totalAmount);
+  					list.add(invoice);
+  				}
+  			} catch(Exception e) {
+  				e.printStackTrace();
+  			}
+  		} else if (condition == SearchCondition.BY_DATE) {
+  			String sql = "SELECT * FROM invoice WHERE DATE(creation_date) = ? "+sort;
+  			try(Connection con = Database.connectDB()) {
+  				PreparedStatement ps = con.prepareStatement(sql);
+  				ps.setString(1, value);
+  				ResultSet rs = ps.executeQuery();
+  				int orderNumer = 1;
+  				while(rs.next()) {
+  					String invoiceId = rs.getString("invoice_id");
+  					String prescriptionId = rs.getString("prescription_id");
+  					java.sql.Timestamp creationDate = rs.getTimestamp("creation_date");
+  					java.util.Date date = new java.util.Date(creationDate.getTime());
+  					SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+  					String formattedDate = sdf.format(date);
+  					float totalAmount = rs.getFloat("total_amount");
+  					Invoice invoice = new Invoice(orderNumer++, invoiceId, prescriptionId, formattedDate, totalAmount);
+  					list.add(invoice);
+  				}
+  			} catch(Exception e) {
+  				e.printStackTrace();
+  			}
+  		} else if (condition == SearchCondition.BY_PATIENT_NAME) {
+  			String sql = "SELECT i.* FROM invoice i JOIN diagnosis d "
+  					+ "ON i.prescription_id = d.prescription_id "
+  					+ "JOIN patients p ON d.patient_id = p.patient_id "
+  					+ "WHERE p.patient_name LIKE ? "+sort;
+  			try(Connection con = Database.connectDB()) {
+  				PreparedStatement ps = con.prepareStatement(sql);
+  				ps.setString(1, "%" + value + "%");
+  				ResultSet rs = ps.executeQuery();
+  				int orderNumer = 1;
+  				while(rs.next()) {
+  					String invoiceId = rs.getString("invoice_id");
+  					String prescriptionId = rs.getString("prescription_id");
+  					java.sql.Timestamp creationDate = rs.getTimestamp("creation_date");
+  					java.util.Date date = new java.util.Date(creationDate.getTime());
+  					SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+  					String formattedDate = sdf.format(date);
+  					float totalAmount = rs.getFloat("total_amount");
+  					Invoice invoice = new Invoice(orderNumer++, invoiceId, prescriptionId, formattedDate, totalAmount);
+  					list.add(invoice);
+  				}
+  			} catch(Exception e) {
+  				e.printStackTrace();
+  			}
+  		} else if (condition == SearchCondition.BY_MEDICINE) {
+  			String sql = "SELECT i.* FROM invoice i "
+  					+ "JOIN prescriptiondetail pre "
+  					+ "ON i.prescription_id = pre.prescription_id "
+  					+ "JOIN medicine m ON pre.medicine_id = m.medicine_id "
+  					+ "WHERE m.medicine_name LIKE ?";
+  			try(Connection con = Database.connectDB()) {
+  				PreparedStatement ps = con.prepareStatement(sql);
+  				ps.setString(1, "%" + value + "%");
+  				ResultSet rs = ps.executeQuery();
+  				int orderNumer = 1;
+  				while(rs.next()) {
+  					String invoiceId = rs.getString("invoice_id");
+  					String prescriptionId = rs.getString("prescription_id");
+  					java.sql.Timestamp creationDate = rs.getTimestamp("creation_date");
+  					java.util.Date date = new java.util.Date(creationDate.getTime());
+  					SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+  					String formattedDate = sdf.format(date);
+  					float totalAmount = rs.getFloat("total_amount");
+  					Invoice invoice = new Invoice(orderNumer++, invoiceId, prescriptionId, formattedDate, totalAmount);
+  					list.add(invoice);
+  				}
+  			} catch(Exception e) {
+  				e.printStackTrace();
+  			}
+  		}
+  		return list;
+  	}
+  	
+  	//Hiển thị danh sách hóa đơn đã tìm kiém
+  	public void displayInvoice() {
+  		invoiceOrderColumn.setCellValueFactory(cellData -> cellData.getValue().getOrderNumber().asObject());
+  		invoiceIdColumn.setCellValueFactory(cellData -> cellData.getValue().getInvoiceId());
+  		invoicePreciptionIdColumn.setCellValueFactory(cellData->cellData.getValue().getPrecriptionId());
+  		creationDateColumn.setCellValueFactory(cellData -> cellData.getValue().getCreationDate());
+  		invoiceTotalColumn.setCellValueFactory(cellData -> cellData.getValue().getTotalAmount().asObject());
+  		
+  		invoiceTable.setItems(invoiceList);
   	}
 }

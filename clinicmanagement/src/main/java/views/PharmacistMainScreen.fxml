@@ -4,14 +4,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -166,19 +167,19 @@
                   </HBox>
                </graphic>
             </Button>
-            <Button fx:id="patientMedicineTab" mnemonicParsing="false" prefHeight="59.0" prefWidth="307.0" styleClass="aside-button">
+            <Button fx:id="searchInvoiceTab" mnemonicParsing="false" onAction="#switchTab" prefHeight="59.0" prefWidth="307.0" styleClass="aside-button">
                <padding>
                   <Insets left="20.0" />
                </padding>
                <graphic>
                   <HBox alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="294.0" spacing="7.0" styleClass="aside-selection-background">
                      <children>
-                        <FontAwesomeIconView glyphName="MEDKIT" size="25" styleClass="icons">
+                        <FontAwesomeIconView glyphName="SEARCH" size="25" styleClass="icons">
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>
                         </FontAwesomeIconView>
-                        <Label prefHeight="65.0" prefWidth="247.0" styleClass="aside-button-title" stylesheets="@../../resources/css/style.css" text="Tạo đơn thuốc" textFill="#e42323">
+                        <Label prefHeight="65.0" prefWidth="247.0" styleClass="aside-button-title" stylesheets="@../../resources/css/style.css" text="Tra cứu hóa đơn" textFill="#e42323">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -247,55 +248,96 @@
             </StackPane>
             <StackPane layoutX="24.0" layoutY="92.0" prefHeight="418.0" prefWidth="1119.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="23.999999999999773" AnchorPane.rightAnchor="23.199999999999818" AnchorPane.topAnchor="92.0">
                <children>
-                  <AnchorPane fx:id="diagnosticContainer" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container" visible="false">
+                  <AnchorPane fx:id="searchInvoiceContainer" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container">
                      <children>
-                        <TabPane layoutX="14.0" layoutY="15.2" prefHeight="394.0" prefWidth="604.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="15.0">
-                          <tabs>
-                            <Tab style="-fx-font-size: 17;" text="Chọn bệnh nhân">
-                              <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="223.0" prefWidth="301.0" />
-                              </content>
-                                 <graphic>
-                                    <FontAwesomeIconView fill="#15c13b" glyphName="CHECK_CIRCLE" size="20" strikethrough="true" styleClass="icon-in-tab" wrappingWidth="20.20001220703125" />
-                                 </graphic>
-                            </Tab>
-                            <Tab fx:id="healthStatusTab" style="-fx-font-size: 17;" text="Tình trạng bệnh">
-                              <content>
-                                <AnchorPane fx:id="healthContainer" minHeight="0.0" minWidth="0.0" prefHeight="365.0" prefWidth="623.0" />
-                              </content>
-                                 <graphic>
-                                    <FontAwesomeIconView fill="#e46132" glyphName="HEARTBEAT" size="20" styleClass="icon-in-tab" wrappingWidth="20.20001220703125" />
-                                 </graphic>
-                            </Tab>
-                          </tabs>
-                        </TabPane>
-                        <Separator layoutX="632.0" layoutY="17.0" orientation="VERTICAL" prefHeight="389.0" prefWidth="6.0" AnchorPane.bottomAnchor="11.999999999999943" AnchorPane.topAnchor="17.0" />
-                        <AnchorPane layoutX="649.0" layoutY="17.0" prefHeight="390.0" prefWidth="454.0" styleClass="diagnostic-pane" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="648.8000000000001" AnchorPane.rightAnchor="15.800000000000068" AnchorPane.topAnchor="16.80000000000001">
+                        <Separator layoutX="711.0" layoutY="16.8" orientation="VERTICAL" prefHeight="389.0" prefWidth="6.0" AnchorPane.bottomAnchor="12.0" AnchorPane.topAnchor="16.8" />
+                        <AnchorPane layoutX="732.8" layoutY="16.8" prefHeight="390.0" prefWidth="376.0" styleClass="diagnostic-pane" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="733.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="17.0">
                            <children>
-                              <Label layoutX="14.0" layoutY="65.0" styleClass="diagnostic-label" text="Kết quả xét nghiệm:" />
+                              <Label layoutX="14.0" layoutY="65.0" styleClass="diagnostic-label" text="Tiêu chí tra cứu:" />
                               <HBox alignment="CENTER" prefHeight="52.0" prefWidth="454.0" styleClass="diagnostic-title-container" AnchorPane.leftAnchor="1.1368683772161603E-13" AnchorPane.rightAnchor="1.1368683772161603E-13">
                                  <children>
-                                    <Label styleClass="diagnostic-title" text="Ghi nhận kết quả khám" />
+                                    <Label styleClass="diagnostic-title" text="Tìm kiếm hóa đơn" />
                                  </children>
                               </HBox>
-                              <TextArea fx:id="testResultField" layoutX="14.0" layoutY="95.0" prefHeight="66.0" prefWidth="427.0" AnchorPane.leftAnchor="13.60000000000008" AnchorPane.rightAnchor="13.200000000000102">
+                              <Label layoutX="22.0" layoutY="279.0" styleClass="diagnostic-label" text="Nhập thông tin tìm kiếm:" />
+                              <RadioButton fx:id="byInvoiceId" layoutX="32.0" layoutY="101.0" mnemonicParsing="false" styleClass="diagnostic-label" text="Mã hóa đơn">
                                  <font>
-                                    <Font size="17.0" />
+                                    <Font size="15.0" />
                                  </font>
-                              </TextArea>
-                              <Label layoutX="14.0" layoutY="164.0" styleClass="diagnostic-label" text="Chuẩn đoán bệnh:" />
-                              <TextArea fx:id="diagnosisField" layoutX="13.0" layoutY="193.0" prefHeight="66.0" prefWidth="427.0" AnchorPane.leftAnchor="13.60000000000008" AnchorPane.rightAnchor="13.200000000000102">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="criteria" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="byPatientName" layoutX="200.0" layoutY="101.0" mnemonicParsing="false" styleClass="diagnostic-label" text="Tên bệnh nhân" toggleGroup="$criteria" AnchorPane.rightAnchor="32.800000000000125">
                                  <font>
-                                    <Font size="17.0" />
+                                    <Font size="15.0" />
                                  </font>
-                              </TextArea>
-                              <Label layoutX="14.0" layoutY="263.0" styleClass="diagnostic-label" text="Ghi chú:" />
-                              <TextArea fx:id="noteField" layoutX="13.0" layoutY="293.0" prefHeight="66.0" prefWidth="427.0" AnchorPane.leftAnchor="13.60000000000008" AnchorPane.rightAnchor="13.200000000000102">
+                              </RadioButton>
+                              <RadioButton fx:id="byMedicine" layoutX="30.0" layoutY="150.0" mnemonicParsing="false" styleClass="diagnostic-label" text="Tên thuốc" toggleGroup="$criteria">
                                  <font>
-                                    <Font size="17.0" />
+                                    <Font size="15.0" />
                                  </font>
-                              </TextArea>
+                              </RadioButton>
+                              <RadioButton fx:id="byDate" layoutX="199.0" layoutY="150.0" mnemonicParsing="false" styleClass="diagnostic-label" text="Ngày bán" toggleGroup="$criteria" AnchorPane.rightAnchor="73.80000000000011">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </RadioButton>
+                              <StackPane layoutX="17.0" layoutY="320.0" prefHeight="46.0" prefWidth="342.0" AnchorPane.leftAnchor="16.800000000000125" AnchorPane.rightAnchor="16.600000000000136">
+                                 <children>
+                                    <HBox fx:id="searchInvoiceTextFieldContainer" alignment="CENTER" spacing="10.0" StackPane.alignment="CENTER">
+                                       <children>
+                                          <TextField fx:id="searchInvoiceField" maxWidth="300.0" onAction="#searchInvoiceInfo" prefHeight="46.0" prefWidth="218.0" promptText="Nhập vào thông tin">
+                                             <font>
+                                                <Font size="17.0" />
+                                             </font>
+                                          </TextField>
+                                          <Button fx:id="addMedicineButton1" mnemonicParsing="false" onAction="#searchInvoiceInfo" prefHeight="46.0" prefWidth="116.0" styleClass="save-button" text="Tìm kiếm" textFill="WHITE">
+                                             <font>
+                                                <Font size="18.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                    <HBox fx:id="searchInvoiceByDateContainer" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="48.0" prefWidth="342.0" spacing="10.0" visible="false">
+                                       <children>
+                                          <DatePicker fx:id="searchInvoiceByDate" prefHeight="44.0" prefWidth="227.0" promptText="Chọn ngày" styleClass="form-field" />
+                                          <Button fx:id="addMedicineButton11" mnemonicParsing="false" onAction="#searchInvoiceInfo" prefHeight="46.0" prefWidth="99.0" styleClass="save-button" text="Tìm kiếm" textFill="WHITE">
+                                             <font>
+                                                <Font size="18.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </StackPane>
+                              <Label layoutX="17.0" layoutY="193.0" styleClass="diagnostic-label" text="Sắp xếp:" />
+                              <RadioButton fx:id="ascendingSort" layoutX="32.0" layoutY="233.0" mnemonicParsing="false" styleClass="diagnostic-label" text="Ngày tăng dần">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="sort" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="descendingSort" layoutX="199.20000000000013" layoutY="233.0" mnemonicParsing="false" styleClass="diagnostic-label" text="Ngày giảm dần" toggleGroup="$sort" AnchorPane.rightAnchor="31.19999999999999">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </RadioButton>
                            </children></AnchorPane>
+                        <TableView fx:id="invoiceTable" layoutX="10.0" layoutY="18.0" prefHeight="390.0" prefWidth="686.0">
+                           <columns>
+                              <TableColumn fx:id="invoiceOrderColumn" editable="false" prefWidth="49.60000687837601" sortable="false" styleClass="medicin-column-style" text="STT" />
+                              <TableColumn fx:id="invoiceIdColumn" editable="false" prefWidth="127.19998931884766" sortable="false" styleClass="medicin-column-style" text="Mã hóa đơn" />
+                              <TableColumn fx:id="invoicePreciptionIdColumn" editable="false" prefWidth="157.5999755859375" sortable="false" styleClass="medicin-column-style" text="Mã đơn thuốc" />
+                              <TableColumn fx:id="creationDateColumn" editable="false" prefWidth="157.59994506835938" sortable="false" styleClass="medicin-column-style" text="Ngày bán" />
+                              <TableColumn fx:id="invoiceTotalColumn" editable="false" prefWidth="132.800048828125" sortable="false" styleClass="medicin-column-style" text="Tổng tiền" />
+                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
                      </children>
                   </AnchorPane>
                   <AnchorPane fx:id="personalContainer" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container" visible="false">
@@ -414,7 +456,7 @@
                         </TextArea>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="prescriptionContainer" prefHeight="200.0" prefWidth="200.0">
+                  <AnchorPane fx:id="prescriptionContainer" prefHeight="200.0" prefWidth="200.0" visible="false">
                      <children>
                         <VBox layoutX="1.0" layoutY="3.2" prefHeight="418.0" prefWidth="724.0" styleClass="diagnostic-pane" AnchorPane.bottomAnchor="-3.0" AnchorPane.topAnchor="3.0">
                            <children>
