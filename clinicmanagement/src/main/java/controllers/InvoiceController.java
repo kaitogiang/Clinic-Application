@@ -1,5 +1,6 @@
 package controllers;
 
+import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +11,7 @@ import java.util.ResourceBundle;
 
 import entity.Message;
 import entity.Patient;
+import entity.PdfGeneratorUtil;
 import entity.Pharmacist;
 import entity.PrescriptionDetail;
 import entity.SelectionPrescriptionButton;
@@ -24,6 +26,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import services.Database;
 
@@ -192,6 +195,15 @@ public class InvoiceController implements Initializable{
     //Hàm in hóa đơn
     public void exportInvoice() {
     	System.out.println("In hoa don");
+    	FileChooser file = new FileChooser();
+			file.setTitle("Open Save File");
+			FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)","*.pdf");
+			file.getExtensionFilters().add(extFilter);
+			File path = file.showSaveDialog(date.getScene().getWindow());
+			if (path!=null) {
+		    	PdfGeneratorUtil.exportInvoicePDF(id, patient, medicineList, path.getAbsolutePath());
+			}
+		
     }
     
 }

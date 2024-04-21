@@ -163,4 +163,281 @@ public class PdfGeneratorUtil {
             e.printStackTrace();
         }
 	}
+	
+	//Hàm xuất PDF hóa đơn
+	public static void exportInvoicePDF(String invoiceId, Patient patient, ObservableList<PrescriptionDetail> medicineList, String path) {
+        System.out.println("id trong pdf la: "+invoiceId);
+		
+		Document document = new Document(PageSize.A4, -20, -20, 10, 50);
+		LocalDate date = LocalDate.now();
+        try {
+        	PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(path));
+            document.open();
+         // Create a BaseFont object, sử dụng times.ttf vì nó chạy ok
+            BaseFont timesNewRoman = BaseFont.createFont("C:\\Users\\SuBur\\Downloads\\FontTimesNewRoman\\times.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            
+            // Tạo các Font chữ
+            Font normalFont = new Font(timesNewRoman, 15);
+            Font smallFont = new Font(timesNewRoman, 13);
+            Font normalFontBold = new Font(timesNewRoman, 15, Font.BOLD);
+            Font bigFont = new Font(timesNewRoman, 18, Font.BOLD);
+            Font mediumFontBold = new Font(timesNewRoman, 16, Font.BOLD);
+            Font smallFontItalic = new Font(timesNewRoman, 13, Font.ITALIC);
+            
+            //Tạo phần tiêu đề và id hóa đơn
+            Paragraph brand = new Paragraph("HÓA ĐƠN BÁN HÀNG\n", bigFont);
+            Paragraph dateTime = new Paragraph("Ngày " + date.getDayOfMonth() + " tháng " +date.getMonthValue()+ " năm "+date.getYear(), normalFont);
+            dateTime.setAlignment(Element.ALIGN_CENTER);
+            
+            Paragraph combine = new Paragraph();
+            combine.add(brand);
+            combine.add(dateTime);
+            combine.setAlignment(Element.ALIGN_CENTER);
+            
+            Paragraph invoiceIdTitle = new Paragraph("Id hóa đơn: "+invoiceId, smallFont);
+            
+            //Thiết lập căn giữa tiêu đề và căn phải id hóa đơn
+            brand.setAlignment(Element.ALIGN_CENTER); //Tiêu đề căn giữa
+            invoiceIdTitle.setAlignment(Element.ALIGN_RIGHT); //Id hóa đơn căn phải
+            invoiceIdTitle.setPaddingTop(40);
+            
+            //Tạo một bảng hiển thị tiêu đề và id hóa đơn
+            float[] columnWidths = {2.5f, 5f, 2.5f}; //Bảng gồm 3 cột
+            PdfPTable invoiceTitle = new PdfPTable(columnWidths);
+            invoiceTitle.getDefaultCell().setBorder(Rectangle.NO_BORDER); //Loại bỏ viền của bảng
+            //I. Tạo dòng đầu tiên
+            //1. Tạo cell dành cho tiêu đề
+            PdfPCell invoiceTitleCell = new PdfPCell();
+            invoiceTitleCell.setBorder(Rectangle.NO_BORDER);
+            invoiceTitleCell.addElement(combine);
+            invoiceTitleCell.setPadding(0);
+            
+            //2. Tạo cell dành cho id hóa đơn
+            PdfPCell invoiceIdCell = new PdfPCell();
+            invoiceIdCell.setBorder(Rectangle.NO_BORDER);
+            invoiceIdCell.addElement(invoiceIdTitle);
+            invoiceIdCell.setPadding(10);
+            
+            //Thêm 3 cell trên vào bảng, phải đủ 3 cell ứng với 3 cột thì bảng mới show
+            invoiceTitle.addCell(""); //Cột đầu rỗng
+            invoiceTitle.addCell(invoiceTitleCell); //Cột giữa là tiêu đề "HÓA DƠN BÁN HÀNG"
+            invoiceTitle.addCell(invoiceIdCell); //Cột 3 là id hóa đơn
+            document.add(invoiceTitle);
+            
+            //Tạo bảng thứ hai để lưu trữ thông tin mã số thuế, địa chỉ phòng khám
+            float[] clinicSize = {2.4f, 5.5f};
+            PdfPTable clinicInfoTable = new PdfPTable(columnWidths);
+            //Dòng đầu tiên mã số thuế
+            Paragraph title1 = new Paragraph("Mã số thuế:", normalFontBold);
+            Paragraph title1Value = new Paragraph("1800271748", normalFont);
+            //Ô đầu tiên dòng 1
+            PdfPCell title1Cell = new PdfPCell();
+            title1Cell.setBorder(Rectangle.NO_BORDER);
+            title1Cell.addElement(title1);
+            //Ô thứ 2 dòng 1
+            PdfPCell title1ValueCell = new PdfPCell();
+            title1ValueCell.setBorder(Rectangle.NO_BORDER);
+            title1ValueCell.setColspan(2);
+            title1ValueCell.addElement(title1Value);
+            //Thêm dòng đầu tiên vào bảng clinic
+            clinicInfoTable.addCell(title1Cell);
+            clinicInfoTable.addCell(title1ValueCell);
+            
+            //Dòng thứ hai địa chỉ
+            Paragraph title2 = new Paragraph("Địa chỉ:",normalFontBold);
+            Paragraph title2Value = new Paragraph("208 Đường 3 tháng 4, Phường Xuân Khánh, Quận Ninh Kiều, Thành phố Cần Thơ", normalFont);
+            //Ô đầu tiên dòng hai
+            PdfPCell title2Cell = new PdfPCell();
+            title2Cell.setBorder(Rectangle.NO_BORDER);
+            title2Cell.addElement(title2);
+            //Ô thứ hai dòng hai
+            PdfPCell title2ValueCell = new PdfPCell();
+            title2ValueCell.setBorder(Rectangle.NO_BORDER);
+            title2ValueCell.setColspan(2);
+            title2ValueCell.addElement(title2Value);
+            //Thêm dòng hai vào bảng clinic
+            clinicInfoTable.addCell(title2Cell);
+            clinicInfoTable.addCell(title2ValueCell);
+            
+            document.add(clinicInfoTable);
+            float[] columnWidths2 = {3.5f, 5f, 1.5f}; //Bảng gồm 3 cột
+            //Tiêu đề "Thông tin người mua"
+            PdfPTable customerTable = new PdfPTable(columnWidths2);
+            Paragraph customerInfoTitle = new Paragraph("Thông tin người mua",bigFont);
+            //Dòng tiêu đề
+            PdfPCell customerInfoTitleCell = new PdfPCell();
+            customerInfoTitleCell.setBorder(Rectangle.NO_BORDER);
+            customerInfoTitleCell.setColspan(3);
+            customerInfoTitleCell.addElement(customerInfoTitle);
+            //Thêm dòng đầu vào bảng customer
+            customerTable.addCell(customerInfoTitleCell);
+            
+            //Dòng thứ hai thông tin họ tên người mua
+            Paragraph customerNameTitle = new Paragraph("Họ tên người mua:",normalFontBold);
+            Paragraph customerNameValue = new Paragraph(patient.getPatientNameValue().toUpperCase(), normalFont); //Đổi chỗ này thành patient.getName
+            //Ô thứ nhất dòng hai
+            PdfPCell customerNameTitleCell = new PdfPCell();
+            customerNameTitleCell.setBorder(Rectangle.NO_BORDER);
+            customerNameTitleCell.addElement(customerNameTitle);
+            //Ô thứ hai dòng hai
+            PdfPCell customerNameValueCell = new PdfPCell();
+            customerNameValueCell.setBorder(Rectangle.NO_BORDER);
+            customerNameValueCell.setColspan(2);
+            customerNameValueCell.addElement(customerNameValue);
+            
+            customerTable.addCell(customerNameTitleCell);
+            customerTable.addCell(customerNameValueCell);
+            
+            //Dòng thứ ba địa chỉ customer
+            Paragraph addressTitle = new Paragraph("Địa chỉ: ",normalFontBold);
+            Paragraph addressValue = new Paragraph(patient.getPatientAddressValue(), normalFont); //Đổi chỗ này thành patient.getAdress
+            //Ô thứ nhất dòng 3
+            PdfPCell addressTitleCell = new PdfPCell();
+            addressTitleCell.setBorder(Rectangle.NO_BORDER);
+            addressTitleCell.addElement(addressTitle);
+            //Ô thứ hai dòng 3
+            PdfPCell addressValueCell = new PdfPCell();
+            addressValueCell.setBorder(Rectangle.NO_BORDER);
+            addressValueCell.setColspan(2);
+            addressValueCell.addElement(addressValue);
+            //Thêm dòng 3 vào bảng customerTable
+            customerTable.addCell(addressTitleCell);
+            customerTable.addCell(addressValueCell);
+
+            //Dòng thứ tư hình thức chuyển khoản
+            Paragraph transferTitle = new Paragraph("Hình thức chuyển khoản: ",normalFontBold);
+            Paragraph transferValue = new Paragraph("Tiền mặt/Chuyển khoản", normalFont);
+            //Ô đầu tiên dòng tư
+            PdfPCell transferTitleCell = new PdfPCell();
+            transferTitleCell.setBorder(Rectangle.NO_BORDER);
+            transferTitleCell.addElement(transferTitle);
+            //Ô thứ hai dòng tư
+            PdfPCell transferValueCell = new PdfPCell();
+            transferValueCell.setBorder(Rectangle.NO_BORDER);
+            transferValueCell.setColspan(2);
+            transferValueCell.addElement(transferValue);
+            //Thêm dòng thứ tư vào bảng customerTable
+            customerTable.addCell(transferTitleCell);
+            customerTable.addCell(transferValueCell);
+            
+            //Dòng thứ năm tiêu đề "Thông tin đơn thuốc"
+            Paragraph prescriptionTitle = new Paragraph("Thông tin đơn thuốc",bigFont);
+            PdfPCell prescriptionTitleCell = new PdfPCell();
+            prescriptionTitleCell.setBorder(Rectangle.NO_BORDER);
+            prescriptionTitleCell.addElement(prescriptionTitle);
+            prescriptionTitleCell.setColspan(3);
+            
+            customerTable.addCell(prescriptionTitleCell);
+
+            
+            document.add(customerTable);
+            
+            //Tạo bảng hiển thị danh sách thuốc
+            float[] columnWidths3 = {1f, 3f, 2f, 2f, 2f};
+            PdfPTable medicineTable = new PdfPTable(columnWidths3);
+            medicineTable.setSpacingBefore(12);
+            //Các tiêu đề bảng
+            Paragraph orderTitle = new Paragraph("STT", normalFontBold);
+            Paragraph medicineTitle = new Paragraph("Tên hàng hóa", normalFontBold);
+            Paragraph quantity = new Paragraph("Số lượng", normalFontBold);
+            Paragraph unitPrice = new Paragraph("Đơn giá", normalFontBold);
+            Paragraph totalAmount = new Paragraph("Thành tiền", normalFontBold);
+            
+            //Căn giữa các tiêu đề
+            orderTitle.setAlignment(Element.ALIGN_CENTER);
+            medicineTitle.setAlignment(Element.ALIGN_CENTER);
+            quantity.setAlignment(Element.ALIGN_CENTER);
+            unitPrice.setAlignment(Element.ALIGN_CENTER);
+            totalAmount.setAlignment(Element.ALIGN_CENTER);
+            
+            //Tạo cell cho các tiêu đề
+            //Cell cho số thứ tự
+            PdfPCell orderCell = new PdfPCell();
+            orderCell.addElement(orderTitle);
+            orderCell.setPaddingBottom(10);
+            
+            //Cell cho số tên hàng hóa
+            PdfPCell medicineCell = new PdfPCell();
+            medicineCell.addElement(medicineTitle);
+            medicineCell.setPaddingBottom(10);
+            
+            //Cell cho số lượng
+            PdfPCell quantityCell = new PdfPCell();
+            quantityCell.addElement(quantity);
+            quantityCell.setPaddingBottom(10);
+            
+            //Cell cho đơn giá
+            PdfPCell unitPriceCell = new PdfPCell();
+            unitPriceCell.addElement(unitPrice);
+            unitPriceCell.setPaddingBottom(10);
+            
+            //Cell cho đơn giá
+            PdfPCell totalAmountCell = new PdfPCell();
+            totalAmountCell.addElement(totalAmount);
+            totalAmountCell.setPaddingBottom(10);
+            
+            //Thêm các cell tiêu đề vào bảng medicineTable
+            medicineTable.addCell(orderCell);
+            medicineTable.addCell(medicineCell);
+            medicineTable.addCell(quantityCell);
+            medicineTable.addCell(unitPriceCell);
+            medicineTable.addCell(totalAmountCell);
+            
+            int i;
+            float totalSum = 0;
+            //Thay đổi số phần tử bằng với kích thước list
+            for (i=0; i<medicineList.size(); i++) {
+            	//Gắn kết nội dung
+            	Paragraph order = new Paragraph(String.valueOf(i+1), normalFont);
+            	Paragraph medicineName = new Paragraph(medicineList.get(i).getMedicineNameValue(), normalFont);
+            	Paragraph medicineQuantity = new Paragraph(String.valueOf(medicineList.get(i).getMedicineQuantityValue()), normalFont);
+            	Paragraph price = new Paragraph(medicineList.get(i).getMedicineValue().getUnitPriceValue()+" VND", normalFont);
+            	float medicineSum = medicineList.get(i).getMedicineValue().getUnitPriceValue()*medicineList.get(i).getMedicineQuantityValue();
+            	totalSum += medicineSum;
+            	Paragraph total = new Paragraph(medicineSum+" VND", normalFont);
+            	//Căn giữa các text
+            	order.setAlignment(Element.ALIGN_CENTER);
+            	medicineName.setAlignment(Element.ALIGN_CENTER);
+            	medicineQuantity.setAlignment(Element.ALIGN_CENTER);
+            	price.setAlignment(Element.ALIGN_CENTER);
+            	total.setAlignment(Element.ALIGN_CENTER);
+            	//Tạo cell cho các ô
+            	PdfPCell orderContentCell = new PdfPCell();
+            	orderContentCell.addElement(order);
+            	
+            	PdfPCell medicineContentCell = new PdfPCell();
+            	medicineContentCell.addElement(medicineName);
+            	
+            	PdfPCell quantityContentCell = new PdfPCell();
+            	quantityContentCell.addElement(medicineQuantity);
+            	
+            	PdfPCell priceContentCell = new PdfPCell();
+            	priceContentCell.addElement(price);
+            	
+            	PdfPCell totalContentCell = new PdfPCell();
+            	totalContentCell.addElement(total);
+            	
+            	medicineTable.addCell(orderContentCell);
+            	medicineTable.addCell(medicineContentCell);
+            	medicineTable.addCell(quantityContentCell);
+            	medicineTable.addCell(priceContentCell);
+            	medicineTable.addCell(totalContentCell);
+            	
+            }
+
+            document.add(medicineTable);
+            
+            Paragraph sum = new Paragraph("Tổng tiền: "+totalSum+" VND", normalFont); //Thay đổi chỗ này
+            sum.setAlignment(Element.ALIGN_RIGHT);
+            sum.setIndentationRight(65);
+            document.add(sum);
+            
+            
+            document.close();
+        } catch(Exception e) {
+        	e.printStackTrace();
+        }
+	}
+	
+	
 }
