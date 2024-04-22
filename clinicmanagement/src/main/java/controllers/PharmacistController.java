@@ -1521,4 +1521,26 @@ public class PharmacistController implements Initializable{
   		
   		invoiceTable.setItems(invoiceList);
   	}
+  	
+  	 public void selectInvoice() {
+  		Invoice selectedItem = invoiceTable.getSelectionModel().getSelectedItem();
+  		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/InvoiceDetailScreen.fxml"));
+		String css = this.getClass().getResource("/css/style.css").toExternalForm();
+		try {
+			AnchorPane root = loader.load();
+			InvoiceDetailController controller = loader.getController();
+			controller.setInvoice(selectedItem);
+			Stage newStage = new Stage();
+			Scene scene = new Scene(root);
+			scene.getStylesheets().add(css);
+			//Tạo icon cho stage
+			Image image = new Image(getClass().getResourceAsStream("/images/healthcare.png"));
+			newStage.getIcons().add(image);
+			newStage.setScene(scene);
+			newStage.setTitle("Invoice detail");
+			newStage.show();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+     }
 }

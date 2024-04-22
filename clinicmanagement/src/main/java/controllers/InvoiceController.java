@@ -175,6 +175,7 @@ public class InvoiceController implements Initializable{
     		SelectionPrescriptionButton selectedButton = parentController.getPressedButtonQueue().getLast();
         	selectedButton.setSuccessStatus();
         	Message.showMessage("Thanh toán hóa đơn thành công", AlertType.INFORMATION);
+        	diminishMedicineAmount();
     	}
     }
     //Hàm kiểm tra hóa đơn này đã thanh toán chưa
@@ -204,6 +205,26 @@ public class InvoiceController implements Initializable{
 		    	PdfGeneratorUtil.exportInvoicePDF(id, patient, medicineList, path.getAbsolutePath());
 			}
 		
+    }
+    
+    //Hàm giảm số lượng thuốc trong kho khi thanh toán
+    public void diminishMedicineAmount(){
+    	String sql = "UPDATE medicine SET stock_quantity = stock_quantity - ? WHERE medicine_id = ?";
+    	try(Connection con = Database.connectDB()) {
+    		con.setAutoCommit(false);
+    		
+    		PreparedStatement ps = con.prepareStatement(sql);
+    		for(PrescriptionDetail e: medicineList) {
+    			ps.setInt(1, e.getMedicineQuantityValue());
+    			ps.setString(2, e.getMedicineValue().getMedicineIdValue());
+    			ps.addBatch(); //Thêm mỗi lệnh prepare vào batch trước khi thực thi
+    		}
+    		
+    		ps.executeBatch(); //Thực hiện các lệnh prepare trong một lần
+    		con.commit(); //Commit giao dịch, xác nhận là sẽ thay đổi trên database
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
     }
     
 }

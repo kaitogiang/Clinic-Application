@@ -191,6 +191,30 @@
                   </HBox>
                </graphic>
             </Button>
+            <Button fx:id="searchInvoiceTab1" layoutX="10.0" layoutY="251.0" mnemonicParsing="false" onAction="#switchTab" prefHeight="59.0" prefWidth="307.0" styleClass="aside-button">
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+               <graphic>
+                  <HBox alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="294.0" spacing="7.0" styleClass="aside-selection-background">
+                     <children>
+                        <FontAwesomeIconView glyphName="BAR_CHART" size="25" styleClass="icons">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </FontAwesomeIconView>
+                        <Label prefHeight="65.0" prefWidth="247.0" styleClass="aside-button-title" stylesheets="@../../resources/css/style.css" text="Thống kê" textFill="#e42323">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </HBox>
+               </graphic>
+            </Button>
          </children>
       </VBox>
       <AnchorPane id="roundedMainContainer" layoutX="314.0" layoutY="222.0" prefHeight="530.0" prefWidth="1166.0" AnchorPane.bottomAnchor="15.600000000000023" AnchorPane.leftAnchor="314.39999999999986" AnchorPane.rightAnchor="19.59999999999991" AnchorPane.topAnchor="221.60000000000002">
@@ -326,7 +350,7 @@
                                  </font>
                               </RadioButton>
                            </children></AnchorPane>
-                        <TableView fx:id="invoiceTable" layoutX="10.0" layoutY="18.0" prefHeight="390.0" prefWidth="686.0">
+                        <TableView fx:id="invoiceTable" layoutX="10.0" layoutY="18.0" onMouseClicked="#selectInvoice" prefHeight="390.0" prefWidth="686.0">
                            <columns>
                               <TableColumn fx:id="invoiceOrderColumn" editable="false" prefWidth="49.60000687837601" sortable="false" styleClass="medicin-column-style" text="STT" />
                               <TableColumn fx:id="invoiceIdColumn" editable="false" prefWidth="127.19998931884766" sortable="false" styleClass="medicin-column-style" text="Mã hóa đơn" />
