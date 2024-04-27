@@ -181,7 +181,7 @@ public class MedicineFormController implements Initializable{
 	    }
 	    //Thêm thuốc vào cơ sở dữ liệu
 	    public void uploadMedicineToDatabase(Medicine medicine) {
-	    	String sql = "INSERT INTO medicine VALUES(?,?,?,?,?,?,?,?,?)";
+	    	String sql = "INSERT INTO medicine VALUES(?,?,?,?,?,?,?,?,?,?)";
 	    	try(Connection con = Database.connectDB()) {
 	    		PreparedStatement ps = con.prepareStatement(sql);
 	    		ps.setString(1, medicine.getMedicineIdValue());
@@ -193,6 +193,7 @@ public class MedicineFormController implements Initializable{
 	    		ps.setFloat(7, medicine.getUnitPriceValue());
 	    		ps.setDate(8, java.sql.Date.valueOf(medicine.getExpirationDateValue()));
 	    		ps.setInt(9,medicine.getQuantityValue());
+	    		ps.setInt(10, medicine.getQuantityValue());
 	    		int insert = ps.executeUpdate();
 	    		if (insert != 0) System.out.println("insert new medicine successfully!!");
 	    	} catch(Exception e) {
@@ -274,7 +275,7 @@ public class MedicineFormController implements Initializable{
 	    public void updateMedicineToDatabase(Medicine medicine) {
 	    	String sql = "UPDATE medicine SET medicine_name = ?, description = ?, "
 	    			+ "manufacturer = ?, dosage = ?, dosage_unit = ?, unit_price = ?, "
-	    			+ "expiration_date = ?, stock_quantity = ? WHERE medicine_id = ?";
+	    			+ "expiration_date = ?, stock_quantity = ?, original_stock = ? WHERE medicine_id = ?";
 	    	try(Connection con = Database.connectDB()) {
 	    		PreparedStatement ps = con.prepareStatement(sql);
 	    		ps.setString(1, medicine.getMedicineNameValue());
@@ -285,7 +286,8 @@ public class MedicineFormController implements Initializable{
 	    		ps.setFloat(6, medicine.getUnitPriceValue());
 	    		ps.setDate(7, java.sql.Date.valueOf(medicine.getExpirationDateValue()));
 	    		ps.setInt(8, medicine.getQuantityValue());
-	    		ps.setString(9, medicine.getMedicineIdValue());
+	    		ps.setInt(9, medicine.getQuantityValue());
+	    		ps.setString(10, medicine.getMedicineIdValue());
 	    		int update = ps.executeUpdate();
 	    		if (update != 0) System.out.println("Update medicine successfull");
 	    	} catch(Exception e) {
