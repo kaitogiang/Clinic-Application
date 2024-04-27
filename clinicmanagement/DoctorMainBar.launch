@@ -2,7 +2,7 @@
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
     <booleanAttribute key="org.eclipse.debug.core.ATTR_FORCE_SYSTEM_CONSOLE_ENCODING" value="false"/>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-        <listEntry value="/clinicmanagement/src/main/java/application/Main.java"/>
+        <listEntry value="/TestSoftware/src/application/MainBar.java"/>
     </listAttribute>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
         <listEntry value="1"/>
@@ -12,9 +12,9 @@
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_CLASSPATH_ONLY_JAR" value="false"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
     <stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.m2e.launchconfig.classpathProvider"/>
-    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="application.Main"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="application.MainBar"/>
     <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="clinicmanagement"/>
-    <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="clinicmanagement"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="TestSoftware"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
     <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="--add-exports javafx.base/com.sun.javafx.event=ALL-UNNAMED"/>
 </launchConfiguration>

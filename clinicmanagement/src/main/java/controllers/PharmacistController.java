@@ -45,6 +45,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -256,6 +260,71 @@ public class PharmacistController implements Initializable{
     
     @FXML
     private TableView<Invoice> invoiceTable;
+    
+    //Chức năng thống kê
+    
+    @FXML
+    private BarChart<?, ?> maxMedicineQuantityChart;
+
+    @FXML
+    private TableView<?> maxMedicineQuantityTable;
+
+    @FXML
+    private ChoiceBox<?> medicineStaticticsType;
+
+    @FXML
+    private Label medicineTypeQuantity;
+
+    @FXML
+    private CategoryAxis medicineXAxis;
+
+    @FXML
+    private NumberAxis medicineYAxis;
+
+    @FXML
+    private Label outOfStock;
+
+    @FXML
+    private BarChart<?, ?> outOfStockChart;
+
+    @FXML
+    private TableView<?> outOfStockTable;
+
+    @FXML
+    private ChoiceBox<?> outOfStockViewMode;
+
+    @FXML
+    private CategoryAxis outOfStockXAxis;
+
+    @FXML
+    private NumberAxis outOfStockYAxis;
+
+    @FXML
+    private Label revenue;
+
+    @FXML
+    private BarChart<?, ?> revenueBarChart;
+
+    @FXML
+    private CategoryAxis revenueBarXAxis;
+
+    @FXML
+    private NumberAxis revenueBarYAxis;
+
+    @FXML
+    private LineChart<?, ?> revenueLineChart;
+
+    @FXML
+    private CategoryAxis revenueLineXAxis;
+
+    @FXML
+    private ChoiceBox<?> revenueStaticticsType;
+
+    @FXML
+    private NumberAxis revenueYAxis;
+
+    @FXML
+    private Label soldMedicineQuantity;
     
     //Thông tin cá nhân
     @FXML
@@ -1543,4 +1612,43 @@ public class PharmacistController implements Initializable{
 			e.printStackTrace();
 		}
      }
+  	 
+  	 //Phần chức năng thống kê
+  	 public void showOverviewStatictics() {
+  		int medicineTotal = 0;
+  		float revenueTotal = 0.0f;
+  		int outOfStockQuantity = 0;
+  		int medicineTypeQuantity = 0;
+  		//Lấy tổng số thuốc
+  		String medicineTotalSql = "SELECT SUM(detail.medicine_amount) medicineTotal "
+  				+ "FROM prescription pre JOIN prescriptiondetail detail "
+  				+ "ON pre.prescription_id = detail.prescription_id "
+  				+ "WHERE creation_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 DAY) AND CURDATE()";
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(medicineTotalSql);
+  			ResultSet rs = ps.executeQuery();
+  			if (rs.next()) {
+  				medicineTotal = rs.getInt(1);
+  			}
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  		
+  		//Lấy tổng doanh thu
+  		String revenueTotalSql = "SELECT SUM(total_amount) "
+  				+ "FROM `invoice` WHERE creation_date "
+  				+ "BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 DAY) AND CURDATE()";
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(revenueTotalSql);
+  			ResultSet rs = ps.executeQuery();
+  			if (rs.next()) {
+  				revenueTotal = rs.getFloat(1);
+  			}
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  		
+  		//Lấy tổng số thuốc sắp hết
+  		
+  	 }
 }
