@@ -49,12 +49,14 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -262,15 +264,32 @@ public class PharmacistController implements Initializable{
     private TableView<Invoice> invoiceTable;
     
     //Chức năng thống kê
+    @FXML
+    private AnchorPane staticticsContainer;
     
     @FXML
-    private BarChart<?, ?> maxMedicineQuantityChart;
+    private ChoiceBox<String> medicineViewMode;
+    
+    @FXML
+    private ChoiceBox<String> medicineStaticticsType;
 
     @FXML
-    private TableView<?> maxMedicineQuantityTable;
+    private BarChart<String, Number> maxMedicineQuantityChart;
 
     @FXML
-    private ChoiceBox<?> medicineStaticticsType;
+    private ScrollPane maxMedicineQuantityChartContainer;
+
+    @FXML
+    private TableColumn<Medicine, String> maxMedicineName;
+    
+    @FXML
+    private TableColumn<Medicine, Integer> maxMedicineQuantity;
+    
+    @FXML
+    private TableColumn<Medicine, Integer> maxMedicineQuantityOrder;
+
+    @FXML
+    private TableView<Medicine> maxMedicineQuantityTable;
 
     @FXML
     private Label medicineTypeQuantity;
@@ -285,25 +304,40 @@ public class PharmacistController implements Initializable{
     private Label outOfStock;
 
     @FXML
-    private BarChart<?, ?> outOfStockChart;
-
-    @FXML
-    private TableView<?> outOfStockTable;
-
-    @FXML
-    private ChoiceBox<?> outOfStockViewMode;
+    private BarChart<String, Number> outOfStockChart;
 
     @FXML
     private CategoryAxis outOfStockXAxis;
 
     @FXML
     private NumberAxis outOfStockYAxis;
+    
+    @FXML
+    private ScrollPane outOfStockChartContainer;
+
+    @FXML
+    private TableColumn<Medicine, String> outOfStockMedicineName;
+
+    @FXML
+    private TableColumn<Medicine, Integer> outOfStockOrder;
+
+    @FXML
+    private TableColumn<Medicine, Integer> outOfStockQuantity;
+
+    @FXML
+    private TableView<Medicine> outOfStockTable;
+
+    @FXML
+    private ChoiceBox<String> outOfStockViewMode;
 
     @FXML
     private Label revenue;
 
     @FXML
-    private BarChart<?, ?> revenueBarChart;
+    private BarChart<String, Number> revenueBarChart;
+
+    @FXML
+    private ScrollPane revenueBarChartContainer;
 
     @FXML
     private CategoryAxis revenueBarXAxis;
@@ -312,19 +346,28 @@ public class PharmacistController implements Initializable{
     private NumberAxis revenueBarYAxis;
 
     @FXML
-    private LineChart<?, ?> revenueLineChart;
+    private LineChart<String, Number> revenueLineChart;
+
+    @FXML
+    private ScrollPane revenueLineChartContainer;
 
     @FXML
     private CategoryAxis revenueLineXAxis;
 
     @FXML
-    private ChoiceBox<?> revenueStaticticsType;
+    private ChoiceBox<String> revenueStaticticsType;
+    
+    @FXML
+    private ChoiceBox<String> revenueViewMode;
 
     @FXML
     private NumberAxis revenueYAxis;
 
     @FXML
     private Label soldMedicineQuantity;
+    
+    @FXML
+    private Button staticticsTab;
     
     //Thông tin cá nhân
     @FXML
@@ -407,6 +450,28 @@ public class PharmacistController implements Initializable{
 	private List<SelectionPrescriptionButton> prescriptionButtonList; //danh sách dùng để tùy chỉnh
 																	//từng button nếu đã thanh toán
 	private ObservableList<Invoice> invoiceList; //Danh sách lưu trữ các hóa đơn
+	
+	private String[] outOfStockString = {"Dạng bảng", "Dạng biểu đồ"};
+	
+	private ObservableList<Medicine> outOfStockMedicineList; //Danh sách thuốc sắp hết
+	
+	private String[] medicineViewString = {"Dạng bảng" ,"Dạng biểu đồ"}; //Danh sách lựa chọn chế độ hiển thị
+	
+	private String[] staticticsByString = {"1 tuần qua", "2 tuần qua", "1 tháng qua", "2 tháng qua", "1 năm qua"};
+	
+	enum StaticticsType {
+		LAST_WEEK,
+		TWO_WEEKS_AGO,
+		LAST_MONTH,
+		TWO_MONTHS_AGO,
+		LAST_YEAR
+	}
+	
+	private ObservableList<Medicine> maxMedicineList; //Chứa 20 thuốc được dùng nhiều nhất
+	
+	private String[] revenueViewModeString = {"Dạng cột", "Dạng đường"};
+	
+	private Map<String, Float> revenueMap;
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -587,6 +652,137 @@ public class PharmacistController implements Initializable{
 		defaultInvoiceText.setFont(new Font(17));
 		invoiceTable.setPlaceholder(defaultInvoiceText);
 		displayInvoice(); //Hiển thị bảng danh sách các hóa đơn
+		
+		//Khởi tạo chế độ chọn cho thống kê số lượng thuốc sắp hết
+		outOfStockViewMode.getItems().addAll(outOfStockString);
+		outOfStockViewMode.getSelectionModel().select(0);
+		outOfStockTable.setVisible(true); //Hiển thị bảng danh sách thuốc sắp hết trước
+		outOfStockChartContainer.setVisible(false);
+		outOfStockViewMode.valueProperty().addListener((observe, oldValue, newValue)->{
+			int index = outOfStockViewMode.getSelectionModel().getSelectedIndex();
+			if (index == 0) {
+				outOfStockTable.setVisible(true);
+				outOfStockChartContainer.setVisible(false);
+			} else {
+				outOfStockTable.setVisible(false);
+				outOfStockChartContainer.setVisible(true);
+			}
+		});
+		//Hiển thị các biểu đồ thống kê
+		outOfStockMedicineList = FXCollections.observableArrayList();
+		outOfStockMedicineList.addAll(fetchOutOfStockMedicineList());
+		showStockChart();
+		
+		//Khởi tạo cho chức năng thống kê số lượng thuốc được dùng nhiều nhất
+		medicineStaticticsType.getItems().addAll(staticticsByString);
+		medicineViewMode.getItems().addAll(medicineViewString);
+		maxMedicineList = FXCollections.observableArrayList();
+		maxMedicineList.addAll(fetchMaxMedicineList(StaticticsType.LAST_WEEK));
+		//Thiết lập giá trị mặc định cho hai choicebox trên
+		medicineStaticticsType.getSelectionModel().select(0);
+		medicineViewMode.getSelectionModel().select(0);
+		maxMedicineQuantityTable.setVisible(true);
+		maxMedicineQuantityChartContainer.setVisible(false);
+		Label defaultMaxMedicine = new Label("Chưa có thông tin");
+		defaultMaxMedicine.setFont(new Font(17));
+		maxMedicineQuantityTable.setPlaceholder(defaultMaxMedicine);
+		//Hiển thị bảng và biểu đồ
+		showMaxMedicineChart();
+		showMaxMedicineTable();			
+		//Quan sát lựa chọn của kiểu lọc 
+		medicineStaticticsType.valueProperty().addListener((observe, oldValue, newValue) -> {
+			int index = medicineStaticticsType.getSelectionModel().getSelectedIndex();
+			if (index == 0) {
+				System.out.println("Chọn thống kê theo 1 tuần qua");
+		  		maxMedicineList.clear();
+		  		maxMedicineList.addAll(fetchMaxMedicineList(StaticticsType.LAST_WEEK));
+		  		showMaxMedicineChart();
+			} else if (index == 1) {
+				System.out.println("Chọn thống kê theo 2 tuần qua");
+		  		maxMedicineList.clear();
+		  		maxMedicineList.addAll(fetchMaxMedicineList(StaticticsType.TWO_WEEKS_AGO));
+		  		showMaxMedicineChart();
+			} else if (index == 2) {
+				System.out.println("Chọn thống kê theo 1 tháng qua");
+		  		maxMedicineList.clear();
+		  		maxMedicineList.addAll(fetchMaxMedicineList(StaticticsType.LAST_MONTH));
+		  		showMaxMedicineChart();
+			} else if (index == 3) {
+				System.out.println("Chọn thống kê theo 2 tháng qua");
+		  		maxMedicineList.clear();
+		  		maxMedicineList.addAll(fetchMaxMedicineList(StaticticsType.TWO_MONTHS_AGO));
+		  		showMaxMedicineChart();
+			} else if (index == 4) {
+				System.out.println("Chọn thống kê theo 1 năm qua");
+		  		maxMedicineList.clear();
+		  		maxMedicineList.addAll(fetchMaxMedicineList(StaticticsType.LAST_YEAR));
+		  		showMaxMedicineChart();
+			}
+		});
+		//Quan sát chọn chế độ hiển thị thống kê thuốc được dùng nhiều nhất
+		medicineViewMode.valueProperty().addListener((observe, oldValue, newValue)->{
+			int index = medicineViewMode.getSelectionModel().getSelectedIndex();
+			if (index == 0) {
+				System.out.println("Chọn chế độ bảng");
+				maxMedicineQuantityTable.setVisible(true);
+				maxMedicineQuantityChartContainer.setVisible(false);
+			} else {
+				System.out.println("Chọn chế độ biểu đồ");
+				maxMedicineQuantityTable.setVisible(false);
+				maxMedicineQuantityChartContainer.setVisible(true);
+			}
+		});
+		
+		//Khởi tạo cho chức năng thống kê tổng doanh thu
+		revenueViewMode.getItems().addAll(revenueViewModeString);
+		revenueStaticticsType.getItems().addAll(staticticsByString);
+		revenueBarChartContainer.setVisible(true);
+		revenueLineChartContainer.setVisible(false);
+		revenueMap = fetchRevenueData(StaticticsType.LAST_WEEK);
+		//Đặt giá trị chọn mặc định
+		revenueViewMode.getSelectionModel().select(0);
+		revenueStaticticsType.getSelectionModel().select(0);
+		showRevenueBarChart();
+		showRevenueLineChart();
+		//Quan sát lựa chọn của người dùng
+		revenueViewMode.valueProperty().addListener((observe, oldValue, newValue)->{
+			int index = revenueViewMode.getSelectionModel().getSelectedIndex();
+			if (index == 0) {
+				revenueBarChartContainer.setVisible(true);
+				revenueLineChartContainer.setVisible(false);
+				System.out.println("Đã chon vào "+index);
+			} else {
+				System.out.println("Đã chon vào "+index);
+				revenueBarChartContainer.setVisible(false);
+				revenueLineChartContainer.setVisible(true);
+			}
+		});
+		//Quan sát giá trị chế độ lọc
+		revenueStaticticsType.valueProperty().addListener((observe, oldValue, newValue) -> {
+			int index = revenueStaticticsType.getSelectionModel().getSelectedIndex();
+			if (index == 0) {
+				revenueMap = fetchRevenueData(StaticticsType.LAST_WEEK);
+				showRevenueBarChart();
+				showRevenueLineChart();
+			} else if (index == 1) {
+				revenueMap = fetchRevenueData(StaticticsType.TWO_WEEKS_AGO);
+				showRevenueBarChart();
+				showRevenueLineChart();
+			} else if (index == 2) {
+				revenueMap = fetchRevenueData(StaticticsType.LAST_MONTH);
+				showRevenueBarChart();
+				showRevenueLineChart();
+			} else if (index == 3) {
+				revenueMap = fetchRevenueData(StaticticsType.TWO_MONTHS_AGO);
+				showRevenueBarChart();
+				showRevenueLineChart();
+			} else {
+				revenueMap = fetchRevenueData(StaticticsType.LAST_YEAR);
+				System.out.println("SO ptu la: "+revenueMap.size());
+				showRevenueBarChart();
+				showRevenueLineChart();
+			}
+		});
 	}
 	
 	//Hàm hiển thị chạy giờ
@@ -649,6 +845,7 @@ public class PharmacistController implements Initializable{
 			prescriptionContainer.setVisible(false);
   			findPrescriptionContainer.setVisible(false);
   			searchInvoiceContainer.setVisible(false);
+			staticticsContainer.setVisible(false);
 			//Tạo animation chuyển động cho các nút
 			AnimationUtils.createFadeTransition(medicineTable, 0.0, 10.0);
 			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
@@ -659,6 +856,8 @@ public class PharmacistController implements Initializable{
 			ActiveStateUtils.addStyleClass(medicineTab);
 			ActiveStateUtils.removeStyleClass(prescriptionTab);
 			ActiveStateUtils.removeStyleClass(searchInvoiceTab);
+			ActiveStateUtils.removeStyleClass(staticticsTab);
+
 		} else if (e.getSource().equals(prescriptionTab) && e!=null) {
 			//Hiển thị tab chính
 			prescriptionContainer.setVisible(true);
@@ -674,6 +873,7 @@ public class PharmacistController implements Initializable{
 			personalContainer.setVisible(false);
   			searchAndAddContainer.setVisible(false);
   			searchInvoiceContainer.setVisible(false);
+			staticticsContainer.setVisible(false);
 			//Tạo animation chuyển động cho các nút
 			AnimationUtils.createFadeTransition(prescriptionContainer, 0.0, 10.0);
 			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
@@ -682,7 +882,8 @@ public class PharmacistController implements Initializable{
 			ActiveStateUtils.addStyleClass(prescriptionTab);
 			ActiveStateUtils.removeStyleClass(medicineTab);
 			ActiveStateUtils.removeStyleClass(searchInvoiceTab);
-			
+			ActiveStateUtils.removeStyleClass(staticticsTab);
+
 		} else if (e.getSource().equals(searchInvoiceTab) && e!=null) {
 			//Hiển thị tab chính
 			searchInvoiceContainer.setVisible(true);
@@ -695,6 +896,7 @@ public class PharmacistController implements Initializable{
   			searchAndAddContainer.setVisible(false);
   			prescriptionContainer.setVisible(false);
   			findPrescriptionContainer.setVisible(false);
+			staticticsContainer.setVisible(false);
   			//Tạo animation chuyển động
 			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
 			AnimationUtils.createFadeTransition(searchInvoiceContainer, 0.0, 10.0);
@@ -702,6 +904,31 @@ public class PharmacistController implements Initializable{
 			ActiveStateUtils.addStyleClass(searchInvoiceTab);
 			ActiveStateUtils.removeStyleClass(medicineTab);
 			ActiveStateUtils.removeStyleClass(prescriptionTab);
+			ActiveStateUtils.removeStyleClass(staticticsTab);
+
+		} else if (e.getSource().equals(staticticsTab) && e!=null) {
+			//Hiển thị tab chính
+			staticticsContainer.setVisible(true);
+			//Ẩn các tab còn lại
+			medicineTable.setVisible(false);
+			sortByContainer.setVisible(false);
+			personalContainer.setVisible(false);
+  			searchAndAddContainer.setVisible(false);
+  			prescriptionContainer.setVisible(false);
+  			findPrescriptionContainer.setVisible(false);
+  			//Tạo animation chuyển động
+  			AnimationUtils.createFadeTransition(staticticsContainer, 0.0, 10.0);
+  			//Tạo trạng thái active cho tab
+  			ActiveStateUtils.addStyleClass(staticticsTab);
+  			ActiveStateUtils.removeStyleClass(searchInvoiceTab);
+			ActiveStateUtils.removeStyleClass(medicineTab);
+			ActiveStateUtils.removeStyleClass(prescriptionTab);
+			//Thực hiện các hành động khác
+			showOverviewStatictics();
+			outOfStockMedicineList.clear();
+			outOfStockMedicineList.addAll(fetchOutOfStockMedicineList());
+			showStockChart();
+			showStockTable();
 		}
 		
 	}
@@ -730,10 +957,12 @@ public class PharmacistController implements Initializable{
   		searchAndAddContainer.setVisible(false);
 		findPrescriptionContainer.setVisible(false);
 		searchInvoiceContainer.setVisible(false);
+		staticticsContainer.setVisible(false);
   		//Loại bỏ chọn tab
   		ActiveStateUtils.removeStyleClass(medicineTab);
   		ActiveStateUtils.removeStyleClass(prescriptionTab);
 		ActiveStateUtils.removeStyleClass(searchInvoiceTab);
+		ActiveStateUtils.removeStyleClass(staticticsTab);
 
   		AnimationUtils.createFadeTransition(personalContainer, 0.0, 10.0);
   		AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
@@ -1636,11 +1865,13 @@ public class PharmacistController implements Initializable{
   		
   		//Lấy tổng doanh thu
   		String revenueTotalSql = "SELECT SUM(total_amount) "
-  				+ "FROM `invoice` WHERE creation_date "
+  				+ "FROM invoice WHERE creation_date "
   				+ "BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 DAY) AND CURDATE()";
   		try(Connection con = Database.connectDB()) {
   			PreparedStatement ps = con.prepareStatement(revenueTotalSql);
   			ResultSet rs = ps.executeQuery();
+			 System.out.println(ps);
+
   			if (rs.next()) {
   				revenueTotal = rs.getFloat(1);
   			}
@@ -1649,6 +1880,314 @@ public class PharmacistController implements Initializable{
   		}
   		
   		//Lấy tổng số thuốc sắp hết
+  		String outOfStockSql = "SELECT count(*) out_of_stock FROM medicine WHERE stock_quantity < 0.3 * original_stock";
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(outOfStockSql);
+  			ResultSet rs = ps.executeQuery();
+  			if (rs.next()) {
+  				outOfStockQuantity = rs.getInt(1);
+  			}
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
   		
+  		//Lấy tổng số các loại thuốc
+  		String medicineQuantity = "SELECT count(*) quantity FROM medicine";
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(outOfStockSql);
+  			ResultSet rs = ps.executeQuery();
+  			if (rs.next()) {
+  				medicineTypeQuantity = rs.getInt(1);
+  			}
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  		
+  		//Đặt các giá trị cho các nhãn
+  		soldMedicineQuantity.setText(String.valueOf(medicineTotal)+" viên");
+  		revenue.setText(String.valueOf(revenueTotal)+" VNĐ");
+  		outOfStock.setText(String.valueOf(outOfStockQuantity)+" loại");
+  		this.medicineTypeQuantity.setText(String.valueOf(medicineTypeQuantity)+" loại");
+  	 }
+  	 
+  	 
+  	 //Hiển thị biểu đồ thuốc sắp hết 
+  	 public void showStockChart() {
+  		 XYChart.Series<String, Number> series = new XYChart.Series<>();
+  		 series.setName("Tên thuốc");
+  		 outOfStockChart.getData().clear();
+  		 int i;
+  		 int n = outOfStockMedicineList.size();
+  		 for(i=0; i<n; i++) {
+  			 String name = outOfStockMedicineList.get(i).getMedicineNameValue().replaceAll(" ", "\n");
+  			 int quantity = outOfStockMedicineList.get(i).getQuantityValue();
+  			 series.getData().add(new XYChart.Data<String, Number>(name, quantity));
+  		 }
+  		outOfStockChart.getData().add(series);
+  		if (n>5) {
+  	  		outOfStockChart.setPrefWidth(n*530/5);
+  		}
+  	 }
+  	 
+  	 //Hiển thị danh sách thuốc sắp hết
+  	 public void showStockTable() {
+  		 outOfStockOrder.setCellValueFactory(cellData -> cellData.getValue().getOrderNumber().asObject());
+  		 outOfStockMedicineName.setCellValueFactory(cellData->cellData.getValue().getMedicineName());
+  		 outOfStockQuantity.setCellValueFactory(cellData -> cellData.getValue().getQuantity().asObject());
+  		 outOfStockTable.setItems(outOfStockMedicineList);
+  	 }
+  	 
+  	 public ObservableList<Medicine> fetchOutOfStockMedicineList() {
+  		 ObservableList<Medicine> list = FXCollections.observableArrayList();
+  		 String sql = "SELECT *  FROM medicine WHERE stock_quantity < 0.2 * original_stock";
+  		 try(Connection con = Database.connectDB()) {
+  			 PreparedStatement ps = con.prepareStatement(sql);
+  			 ResultSet rs = ps.executeQuery();
+  			 int order = 1;
+  			 while(rs.next()) {
+  				String id = rs.getString("medicine_id");
+  				String name = rs.getString("medicine_name");
+  				int quantity = rs.getInt("stock_quantity");
+  				Medicine m = new Medicine(order++, id, name, quantity);
+  				list.add(m);
+  			 }
+  		 } catch(Exception e) {
+  			 e.printStackTrace();
+  		 }
+  		 
+  		 return list;
+  	 }
+  	 
+  	 //Phần thống kê số lượng thuốc được dùng nhiều nhất
+  	 //Hàm nạp 20 thuốc được dùng nhiều nhất theo điều kiện
+  	 public ObservableList<Medicine> fetchMaxMedicineList(StaticticsType condition) {
+  		 String sql = "SELECT m.medicine_id, m.medicine_name, SUM(pd.medicine_amount) total  "
+  		 		+ "FROM prescription pre JOIN prescriptiondetail pd "
+  		 		+ "ON pre.prescription_id = pd.prescription_id "
+  		 		+ "JOIN medicine m ON pd.medicine_id = m.medicine_id "
+  		 		+ "WHERE pre.creation_date "
+  		 		+ "BETWEEN DATE_SUB(CURDATE(), INTERVAL ?) "
+  		 		+ "AND CURDATE() GROUP BY m.medicine_name ORDER BY total DESC";
+  		 
+  		 ObservableList<Medicine> list = FXCollections.observableArrayList();
+  		 if (condition == StaticticsType.LAST_WEEK) {
+  			getMaxMedicine(sql, "1 WEEK", list);
+  		 } else if (condition == StaticticsType.TWO_WEEKS_AGO) {
+   			getMaxMedicine(sql, "2 WEEK", list);
+  		 } else if (condition == StaticticsType.LAST_MONTH) {
+   			getMaxMedicine(sql, "1 MONTH", list);
+  		 } else if (condition == StaticticsType.TWO_MONTHS_AGO) {
+    		getMaxMedicine(sql, "2 MONTH", list);
+  		 } else if (condition == StaticticsType.LAST_YEAR) {
+     		getMaxMedicine(sql, "1 YEAR", list);
+  		 }
+  		 
+  		 return list;
+  	 }
+  	 //Hàm trả về danh sách các thuốc dùng nhiều nhất
+  	 private void getMaxMedicine(String sql, String time, ObservableList<Medicine> list) {
+  		 System.out.println("Giá trị truyền vô là: "+time);
+  		 sql = sql.replace("?", time);
+  		try(Connection con = Database.connectDB()) {
+				 PreparedStatement ps = con.prepareStatement(sql);
+				 ResultSet rs = ps.executeQuery();
+				 int order = 1;
+				 while(rs.next()) {
+					 String id = rs.getString("medicine_id");
+					 String name = rs.getString("medicine_name");
+					 int total = rs.getInt("total");
+					 Medicine m = new Medicine(order++, id, name, total);
+					 list.add(m);
+				 }
+			 } catch(Exception e) {
+				 e.printStackTrace();
+			 }
+  	 }
+  	 
+  	 //Hàm hiển thị bảng
+  	 public void showMaxMedicineTable() {
+  		 maxMedicineQuantityOrder.setCellValueFactory(cellData -> cellData.getValue().getOrderNumber().asObject());
+  		 maxMedicineName.setCellValueFactory(cellData -> cellData.getValue().getMedicineName());
+  		 maxMedicineQuantity.setCellValueFactory(cellData -> cellData.getValue().getQuantity().asObject());
+  		 
+  		 maxMedicineQuantityTable.setItems(maxMedicineList);
+  	 }
+  	 
+  	 public void showMaxMedicineChart(){
+  		 //Tạo trục X và Y của biểu đồ
+  		 CategoryAxis xAxis = new CategoryAxis();
+  		 NumberAxis	yAxis = new NumberAxis();
+  		 //Tùy chỉnh nhãn của trục X và Y
+  		 yAxis.setLabel("Số lượng đã bán");
+  		 //Tạo BarChar
+  		 BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+  		 barChart.setTitle("Biểu đồ thuốc được dùng nhiều nhất");
+  		 barChart.setPrefHeight(300);
+  		 //Tạo dữ liệu cột và nhãn
+  		 XYChart.Series<String, Number> series = new XYChart.Series<>();
+  		 series.setName("Tên thuốc");	
+ 		 int n = maxMedicineList.size();
+ 		 //Thêm dữ liệu vào series
+ 		 for(Medicine e: maxMedicineList) {
+ 			 String name = e.getMedicineNameValue();
+ 			 int quantity = e.getQuantityValue();
+ 			 series.getData().add(new XYChart.Data<>(name, quantity));
+ 		 }
+ 		//Thêm series vào các BarChart để hiển thị các cột
+ 		barChart.getData().add(series);
+ 		if (n>5) {
+ 			barChart.setPrefWidth(n*530/5);
+ 		}
+ 		maxMedicineQuantityChartContainer.setContent(barChart);
+  	 }
+  	 //Hàm nạp tổng doanh thu
+  	 public Map<String, Float> fetchRevenueData(StaticticsType condition) {
+  		 Map<String, Float> map = new HashMap<String, Float>();
+  		 String sql = "";
+  		 if (condition == StaticticsType.LAST_WEEK || condition == StaticticsType.TWO_WEEKS_AGO) {
+  			sql = "SELECT DATE(creation_date) creation_date, SUM(total_amount) total "
+  					+ "FROM invoice WHERE creation_date BETWEEN DATE_SUB(CURDATE(), INTERVAL ?) "
+  					+ "AND CURDATE() GROUP BY DATE(creation_date)";
+  			if (condition == StaticticsType.LAST_WEEK) {
+  				sql = sql.replace("?", "1 WEEK");
+  			} else {
+  				sql = sql.replace("?", "2 WEEK");
+  			}
+  		 } else if (condition == StaticticsType.LAST_MONTH || condition == StaticticsType.TWO_MONTHS_AGO) {
+  			 sql = "SELECT WEEK(creation_date) week_number, SUM(total_amount) total "
+  			 		+ "FROM invoice WHERE creation_date "
+  			 		+ "BETWEEN DATE_SUB(CURDATE(), INTERVAL ? MONTH) AND CURDATE() "
+  			 		+ "GROUP BY WEEK(creation_date)";
+  			 if (condition == StaticticsType.LAST_MONTH) {
+  				 sql = sql.replace("?", "1");
+  			 } else {
+  				 sql = sql.replace("?", "2");
+  			 }
+  		 } else {
+  			 sql = "SELECT MONTH(creation_date) month_number, SUM(total_amount) total "
+  			 		+ "FROM invoice WHERE creation_date "
+  			 		+ "BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 YEAR) AND CURDATE() "
+  			 		+ "GROUP BY MONTH(creation_date)";
+  		 }
+  		 
+  		 try(Connection con = Database.connectDB()) {
+  			 PreparedStatement ps = con.prepareStatement(sql);
+  			 ResultSet rs = ps.executeQuery();
+  			 if (condition == StaticticsType.LAST_WEEK || condition == StaticticsType.TWO_WEEKS_AGO) {
+  				while(rs.next()) {
+  					// Lấy giá trị kiểu java.sql.Timestamp từ cơ sở dữ liệu
+  	                java.sql.Timestamp timestamp = rs.getTimestamp("creation_date");
+  	                // Chuyển đổi thành kiểu java.time.LocalDate để chỉ lấy ngày
+  	                LocalDate date = timestamp.toLocalDateTime().toLocalDate();
+  	                //Chuyển đổi định dạng ngày sang dd-MM-yyyy
+  	                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+  	    			//Lấy chuỗi ngày đã định dạng
+  	                String dateString = String.valueOf(date.format(formatter));
+  	    			//Lấy tổng số tiền thu được
+  	                float total = rs.getFloat("total");
+  	                map.put(dateString, total);
+  	  			 }
+  			 } else if (condition == StaticticsType.LAST_MONTH || condition == StaticticsType.TWO_MONTHS_AGO) {
+  				 while(rs.next()) {
+  					 String weekNumber = String.valueOf(rs.getInt("week_number"));
+  					 float total = rs.getFloat("total");
+  					 map.put(weekNumber, total);
+  				 }
+  			 } else {
+  				 while(rs.next()) {
+  					 String monthNumber = String.valueOf(rs.getInt("month_number"));
+  					 float total = rs.getFloat("total");
+  					 map.put(monthNumber, total);
+  				 }
+  			 }
+  			 
+  		 } catch(Exception e) {
+  			 e.printStackTrace();
+  		 }
+  		 
+  		 return map;
+  	 }
+  	 
+  	 public void showRevenueBarChart() {
+  		 //Tạo các trục X, Y cho biểu đồ
+  		 CategoryAxis xAxis = new CategoryAxis();
+  		 NumberAxis yAxis = new NumberAxis();
+  		 yAxis.setLabel("Số tiền thu được");
+  		 //Tạo BarChar
+  		 BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+  		 barChart.setTitle("Biểu đồ doanh thu dạng cột");
+  		 barChart.setPrefHeight(300);
+  		 XYChart.Series<String, Number> series = new XYChart.Series<>();
+  		 int index = revenueStaticticsType.getSelectionModel().getSelectedIndex();  		 
+  		//Nạp dữ liệu vào trong chart
+		 int n = revenueMap.size();
+		 int i = 0;
+  		 if (index == 0 || index == 1) {
+  	  		 series.setName("Ngày");
+  		 } else if (index == 2 || index == 3) {
+  			 series.setName("Số tuần");
+  		 } else {
+  			 series.setName("Số tháng");
+  		 }
+  		 //Gán dữ liệu vào cho series
+		 for(String key: revenueMap.keySet()) {
+			 String label = new String("");
+			 if (index == 0 || index == 1) {
+				 label = key;
+			 } else if (index == 2 || index == 3) {
+				 label = "Tuần thứ "+key;
+			 } else {
+				 label = "Tháng "+key;
+			 }
+			 float value = revenueMap.get(key);
+			 series.getData().add(new XYChart.Data<String, Number>(label, value));
+		 }
+		 barChart.getData().add(series);
+		 if (n>5) {
+			 barChart.setPrefWidth(n*530/5);
+		 }
+		 revenueBarChartContainer.setContent(barChart);
+  	 }
+  	 
+  	 //Hiển thị line bar cho thống kê doanh thu
+  	 public void showRevenueLineChart() {
+  		 //Tạo trục x và y
+  		 CategoryAxis xAxis = new CategoryAxis();
+  		 NumberAxis yAxis = new NumberAxis();
+  		 yAxis.setLabel("Số tiền thu được");
+  		 //Tạo line chart
+  		 LineChart<String, Number> lineChart = new LineChart<String, Number>(xAxis, yAxis);
+  		 lineChart.setTitle("Biểu đồ doanh thu dạng cột");
+  		 lineChart.setPrefHeight(300);
+  		 XYChart.Series<String, Number> series = new XYChart.Series<>();
+  		 int index = revenueStaticticsType.getSelectionModel().getSelectedIndex();
+  		//Nạp dữ liệu vào trong chart
+		 int n = revenueMap.size();
+		 int i = 0;
+  		 if (index == 0 || index == 1) {
+  	  		 series.setName("Ngày");
+  		 } else if (index == 2 || index == 3) {
+  			 series.setName("Số tuần");
+  		 } else {
+  			 series.setName("Số tháng");
+  		 }
+  		 //Gán dữ liệu vào cho series
+		 for(String key: revenueMap.keySet()) {
+			 String label = new String("");
+			 if (index == 0 || index == 1) {
+				 label = key;
+			 } else if (index == 2 || index == 3) {
+				 label = "Tuần thứ "+key;
+			 } else {
+				 label = "Tháng "+key;
+			 }
+			 float value = revenueMap.get(key);
+			 series.getData().add(new XYChart.Data<String, Number>(label, value));
+		 }
+		 lineChart.getData().add(series);
+		 if (n>5) {
+			 lineChart.setPrefWidth(n*530/5);
+		 }
+		 revenueLineChartContainer.setContent(lineChart);
   	 }
 }

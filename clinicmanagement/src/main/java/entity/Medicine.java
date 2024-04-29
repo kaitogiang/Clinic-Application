@@ -60,6 +60,13 @@ public class Medicine {
 		this.unit_price = new SimpleFloatProperty(unit_price);
 	}
 	
+	public Medicine(int orderNumber,String medicineId, String medicineName, int quantity) {
+		this.orderNumber = new SimpleIntegerProperty(orderNumber);
+		this.medicineId = new SimpleStringProperty(medicineId);
+		this.medicineName = new SimpleStringProperty(medicineName);
+		this.quantity = new SimpleIntegerProperty(quantity);
+	}
+	
 	public Medicine(Medicine obj) {
 		this.medicineId = new SimpleStringProperty(obj.getMedicineIdValue());
 		this.orderNumber = new SimpleIntegerProperty(obj.getOrderNumberVaue());

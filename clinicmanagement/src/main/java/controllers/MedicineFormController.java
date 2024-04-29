@@ -130,8 +130,14 @@ public class MedicineFormController implements Initializable{
 	    		float unitPrice = Float.valueOf(unitPriceField.getText());
 	    		String expiration = expirationField.getValue().toString();
 	    		Medicine med = new Medicine(id, orderNumber, name, description, manufacturer, dosage, dosageUnit, unitPrice, expiration, dosage);
-	    		medicineAddedCallback.accept(med);
 	    		uploadMedicineToDatabase(med);
+	    		//Convert to dd-MM-yyyy for expiration
+	    		LocalDate exp = expirationField.getValue();
+	    		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	    		String formattedDate = exp.format(formatter);
+	    		med.setExpirationDate(formattedDate);
+	    		//Add to table
+	    		medicineAddedCallback.accept(med);
 	    		resetAllField();
 	    		Message.showMessage("Thêm thuốc thành công", AlertType.INFORMATION);
 	    		System.out.println("Adding the medicine successfully!! ");
