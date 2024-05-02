@@ -562,3 +562,27 @@
 .separator-line {
     -fx-background-color: #ECF1F6;
 }
+
+.admin-statistics-card {
+
+}
+ 
+.admin-statistics-card-aside {
+	-fx-background-color: #06d6a0;
+}
+
+/* Tạo transaprent cho scrollpane */
+.scroll-pane {
+	-fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+	-fx-background-color: transparent;
+}
+
+.border-radius-container{
+	-fx-background-radius: 10px;
+}
+.border-top-bottom-left {
+	-fx-background-radius: 10px 0 0 10px;
+}

@@ -14,6 +14,7 @@ import org.springframework.boot.SpringApplication;
 
 import application.ClinicmanagementApplication;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import entity.Admin;
 import entity.Doctor;
 import entity.Message;
 import entity.PasswordEncryptor;
@@ -214,6 +215,8 @@ public class LoginController implements Initializable{
     		} else if (roles == Role.PHARMACIST) {
     			loadStage("/views/PharmacistMainScreen.fxml", roles, username, "Pharmacist");
     			System.out.println("Nhan vien ban thuoc");
+    		} else {
+    			loadStage("/views/AdminMainScreen.fxml", roles, username, "Admin");
     		}
     	}
     }
@@ -251,6 +254,12 @@ public class LoginController implements Initializable{
 				currentStage.setOnCloseRequest(e->{
 					controller.stopBackgroundService();
 				});
+			} else {
+				AdminController controller = loader.getController();
+				scene.setUserData(getUserInfo(username));
+				controller.setCurrentStage(currentStage);
+				controller.setMyScene(scene);
+				
 			}
 			currentStage.setMaximized(false);
 			currentStage.setTitle(title);
@@ -377,6 +386,17 @@ public class LoginController implements Initializable{
     			+ "JOIN pharmacists pha ON acc.account_id = pha.account_id "
     			+ "JOIN roles ro ON acc.role_id = ro.role_id "
     			+ "WHERE username = ?";
+    	} else {
+    		sql = "SELECT a.admin_id, "
+    			+ "a.admin_name, "
+    			+ "a.admin_email, "
+    			+ "a.admin_address, "
+    			+ "a.experience_year, "
+    			+ "a.admin_phone, "
+    			+ "ro.role_name, "
+    			+ "a.image_id "
+    			+ "FROM admin a JOIN accounts acc ON a.account_id = acc.account_id "
+    			+ "JOIN roles ro ON ro.role_id = acc.role_id WHERE username = ?";
     	}
     	String id = "";
 		String name = "";
@@ -425,6 +445,15 @@ public class LoginController implements Initializable{
     				description = rs.getString(8);
     				permission = rs.getString(9);
     				imageId = rs.getInt(10);
+    			} else {
+    				id = rs.getString("admin_id");
+    				name = rs.getString("admin_name");
+    				email = rs.getString("admin_email");
+    				address = rs.getString("admin_address");
+    				experienceYear = rs.getFloat("experience_year");
+    				phone = rs.getString("admin_phone");
+    				role = rs.getString("role_name");
+    				imageId = rs.getInt("image_id");
     			}
     		}
     	} catch(Exception e) {
@@ -436,8 +465,9 @@ public class LoginController implements Initializable{
     		return new Doctor(id, name, email, phone, address, experienceYear, role, description, permission, imageId);
     	} else if (roles == Role.PHARMACIST) {
     		return new Pharmacist(id, name, email, phone, address, experienceYear, role, description, permission, imageId);
+    	} else {
+    		return new Admin(id, name, email, phone, address, experienceYear, role, imageId);
     	}
-    	return null;
     }
     //Hàm thêm nút tab để chuyển đổi giữa các text Field trong login
     public void handleTextFieldPressed(KeyEvent event, TextField nextTextField) {
