@@ -257,9 +257,11 @@
 	-fx-background-color: linear-gradient(to bottom, #DBDBDD, #E7E7E8);
 	-fx-background-radius: 6px;
 }
+
+
 .choice-box-background {
 	-fx-background-color: transparent;
-	-fx-font-size: 17px;
+	-fx-font-size: 16px;
 }
 /*Tạo kiểu cho personal user */
 .personal-container {
@@ -585,4 +587,31 @@
 }
 .border-top-bottom-left {
 	-fx-background-radius: 10px 0 0 10px;
+}
+
+.border-top-left-radius {
+	-fx-background-radius: 10px 10px 0 0;
+}
+
+.border-gray-color {
+	-fx-border-color: gray;
+}
+
+.upload-image-btn {
+	-fx-background-color: transparent;
+	-fx-font-size: 17px;
+	-fx-border-color: gray;
+	-fx-border-radius: 4px;
+}
+
+.upload-image-btn:hover {
+	-fx-background-color: linear-gradient(to bottom, #DBDBDD, #E7E7E8);
+}
+
+.close-lightgray-button {
+	-fx-background-color: linear-gradient(to bottom, #DBDBDD, #E7E7E8);
+	-fx-background-radius: 6px;
+}
+.close-lightgray-button:hover {
+	-fx-background-color: linear-gradient(to bottom, #B6B6B7, #DDDDDD);
 }
