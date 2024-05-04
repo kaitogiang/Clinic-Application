@@ -268,7 +268,10 @@ public class AdminController implements Initializable{
     
     private String imageUriString = ""; //Dùng để tạo file ảnh
     
-    private Map<String, String[]> roleMap;
+    private String absoluteImagePath = ""; //Lấy đường dẫn tuyệt đối của ảnh để upload
+    
+    private Map<String, String[]> roleMap; //Map để chứa các mô tả và quyên hạn của các vai trò
+    
     
     @Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -769,14 +772,40 @@ public class AdminController implements Initializable{
   		  			Message.showMessage("Vui lòng chọn ảnh đại diện", AlertType.ERROR);
   		  		} else {
   		  			//Thực thi tác vụ tại đây
+  		  			String userId = "";
   		  			int roleIndex = roleChoiceBox.getSelectionModel().getSelectedIndex()+1;
+  		  			do {
+  		  				userId = generateUniqueId();
+  		  			} while(isExistedId(userId, roleIndex));
+  		  			
   		  			String name = fullNameField.getText();
   		  			String email = emailField.getText();
   		  			String phone = phoneField.getText();
   		  			String address = addressField.getText();
   		  			float experienceYear = Float.parseFloat(experienceYearField.getText());
+  		  			int imageId = ImageUtils.storeImage(absoluteImagePath);
+  		  			//Thêm vào cơ sở dữ liệu
+  		  			int accountId = addingUserToDatabase(roleIndex, userId, name, email, phone, experienceYear, imageId, address);
+  		  			int orderNumber = employeeList.size()+1;
+  		  			String selectedRole = roleChoiceBox.getValue();
+  		  			String roleDescription = roleMap.get(selectedRole)[0];
+  		  			String permission = roleMap.get(selectedRole)[1];
+  		  			//Tạo đối tượng doctor hoặc pharmacist
+  		  			Doctor doc = null;
+  		  			Pharmacist phar = null;
+  		  			if (roleIndex == 2) {
+  		  				//Doctor
+  		  				doc = new Doctor(userId, name, email, phone, address, experienceYear, selectedRole, roleDescription, permission, imageId);
+  		  			} else {
+  		  				//Pharmacist
+  		  				phar = new Pharmacist(userId, name, email, phone, address, experienceYear, selectedRole, roleDescription, permission, imageId);
+  		  			}
   		  			
+  		  			Employee emp = new Employee(orderNumber, name,"Chưa có", selectedRole, roleDescription, permission, (roleIndex == 2) ? doc : phar, accountId, "");
+  		  			employeeList.add(emp);
   		  			System.out.println("Đã thêm thành công người dùng");
+  		  			Message.showMessage("Đã thêm người dùng thành công", AlertType.INFORMATION);
+  		  			resetUserCreationForm();
   		  		}
   			} else {
   				if (isEmptyField(repUserList)) {
@@ -789,6 +818,32 @@ public class AdminController implements Initializable{
   		  			Message.showMessage("Vui lòng chọn ảnh đại diện", AlertType.ERROR);
   		  		} else {
   		  			//Thực thi tác vụ tại đây
+  		  		String userId = "";
+		  			int roleIndex = roleChoiceBox.getSelectionModel().getSelectedIndex()+1;
+		  			do {
+		  				userId = generateUniqueId();
+		  			} while(isExistedId(userId, roleIndex));
+		  			
+		  			String name = fullNameField.getText();
+		  			String email = emailField.getText();
+		  			String phone = phoneField.getText();
+		  			String address = addressField.getText();
+		  			int imageId = ImageUtils.storeImage(absoluteImagePath);
+		  			//Thêm vào cơ sở dữ liệu
+		  			int accountId = addingUserToDatabase(roleIndex, userId, name, email, phone, 0, imageId, address);
+		  			int orderNumber = employeeList.size()+1;
+		  			String selectedRole = roleChoiceBox.getValue();
+		  			String roleDescription = roleMap.get(selectedRole)[0];
+		  			String permission = roleMap.get(selectedRole)[1];
+		  			//Tạo đối tượng doctor hoặc pharmacist
+		  			Receptionist rep = new Receptionist(userId, name, email, phone, address, selectedRole, roleDescription, permission, imageId);
+
+		  			
+		  			Employee emp = new Employee(orderNumber, name,"Chưa có", selectedRole, roleDescription, permission, rep, accountId, "");
+		  			employeeList.add(emp);
+		  			System.out.println("Đã thêm thành công người dùng");
+		  			Message.showMessage("Đã thêm người dùng thành công", AlertType.INFORMATION);
+		  			resetUserCreationForm();
   		  			
   		  			System.out.println("Đã thêm thành công người dùng");
   		  		}
@@ -796,8 +851,8 @@ public class AdminController implements Initializable{
   		}
   	}
   	
-  	//Hàm thêm người dùng lên cơ sở dữ liệu
-  	public void addingUserToDatabase(int roleIndex, String id, String name, 
+  	//Hàm thêm người dùng lên cơ sở dữ liệu, sẽ trả về id của tài khoản tạm
+  	public int addingUserToDatabase(int roleIndex, String id, String name, 
   			String email, String phone,  float experienceYear, int imageId, String address) {
   		String doctorSql = "INSERT INTO doctors VALUES(?,?,?,?,?,?,?,?)";
   		String pharmacistSql = "INSERT INTO pharmacists VALUES(?,?,?,?,?,?,?,?)";
@@ -864,9 +919,11 @@ public class AdminController implements Initializable{
   			ps.setString(2, "Chưa tạo");
   			ps.setInt(3, roleIndex);
   			int result = ps.executeUpdate();
+  			return accountId;
   		} catch(Exception e) {
   			e.printStackTrace();
   		}
+  		return -1;
   	}
   	
   	
@@ -936,7 +993,7 @@ public class AdminController implements Initializable{
 		File selectedFile = fileChooser.showOpenDialog(null);
 		if (selectedFile!=null) {
 			Image image = new Image(selectedFile.toURI().toString());
-//			ImageUtils.updateImage(selectedFile.getAbsolutePath(), admin.getImageId());
+			absoluteImagePath = selectedFile.getAbsolutePath();
 			selectedImagePath.set(selectedFile.getName());
 			imageUriString = selectedFile.toURI().toString();
 			ImageView imageview = new ImageView(image);
@@ -957,6 +1014,7 @@ public class AdminController implements Initializable{
   		imageFileName.setGraphic(null);
   		selectedImagePath.set("Chưa có ảnh");
   		imageUriString = "";
+  		absoluteImagePath = "";
   	}
   	
   	//Hàm lấy id của một role name

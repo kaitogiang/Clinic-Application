@@ -12,16 +12,25 @@ import services.Database;
 
 public class ImageUtils {
 	//Hàm lưu trữ file ảnh lên cơ sở dữ liệu
-	public static void storeImage(String imagePath) {
+	public static int storeImage(String imagePath) {
 		String sql = "INSERT INTO images(image_data) VALUES(?)";
 		try(Connection con = Database.connectDB()) {
 			PreparedStatement ps = con.prepareStatement(sql);
 			FileInputStream fis = new FileInputStream(imagePath);
 			ps.setBinaryStream(1, fis, fis.available());
 			//fis.available() là chiều dài của stream
+			ps.executeUpdate();
+			//Hàm trả về id khi upload lên
+			String idSql = "SELECT image_id FROM images ORDER BY image_id DESC LIMIT 1";
+			PreparedStatement idPs = con.prepareStatement(idSql);
+			ResultSet idRs = idPs.executeQuery();
+			if (idRs.next()) {
+				return idRs.getInt(1);
+			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		return 0;
 	}
 	//Hàm lấy hình ảnh từ cơ sở dữ liệu dựa trên id của hình ảnh
 	public static Image retrieveImage(int imageId) {
