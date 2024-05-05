@@ -115,4 +115,8 @@ public class Doctor {
 	public void setImageId(int imageId) {
 		this.imageId = imageId;
 	}
+	
+	public String toString() {
+		return doctorId+"-"+doctorName;
+	}
 }

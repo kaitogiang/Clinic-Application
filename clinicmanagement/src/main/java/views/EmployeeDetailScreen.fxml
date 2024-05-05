@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import java.lang.String?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="791.0" prefWidth="1047.0" styleClass="record-container" stylesheets="@../../resources/css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EmployeeDetailController">
+   <children>
+      <Label fx:id="asideBarTitle" layoutX="472.0" layoutY="24.0" prefHeight="30.0" prefWidth="189.0" styleClass="diagnosis-title" text="Chi tiết khám bệnh">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <AnchorPane layoutX="30.0" layoutY="25.0" prefHeight="386.0" prefWidth="342.0" style="-fx-background-color: white;">
+         <styleClass>
+            <String fx:value="border-radius-container" />
+            <String fx:value="dropshadow-box" />
+         </styleClass>
+         <children>
+            <ImageView fx:id="avatarImageView" fitHeight="252.0" fitWidth="240.0" layoutX="51.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../resources/images/Oanh.jpg" />
+               </image>
+            </ImageView>
+            <Label fx:id="asideBarTitle1" layoutX="102.0" layoutY="301.0" prefHeight="30.0" prefWidth="120.0" styleClass="diagnosis-title" text="Ảnh đại diện">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Button fx:id="uploadImageBtn" layoutX="67.0" layoutY="332.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="178.0" style="-fx-background-color: transparent;" text="Tải ảnh lên">
+               <graphic>
+                  <FontAwesomeIconView fill="#0799c9" glyphName="EDIT" size="30" styleClass="icons-fill-in-title" text="" wrappingWidth="27.885751426219997" />
+               </graphic>
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Button>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="398.0" layoutY="25.0" prefHeight="284.0" prefWidth="614.0" style="-fx-background-color: white;">
+         <styleClass>
+            <String fx:value="border-radius-container" />
+            <String fx:value="dropshadow-box" />
+         </styleClass>
+         <children>
+            <HBox alignment="CENTER" layoutX="17.0" layoutY="14.0" prefHeight="43.0" prefWidth="43.0" styleClass="icons-container">
+               <children>
+                  <FontAwesomeIconView fill="WHITE" glyphName="USER" size="30" styleClass="icons-fill" wrappingWidth="20.685738563537654" />
+               </children>
+            </HBox>
+            <Label layoutX="69.0" layoutY="21.0" prefHeight="30.0" prefWidth="220.0" styleClass="personal-title" text="THÔNG TIN CÁ NHÂN" textFill="#0799c9">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <StackPane layoutX="33.0" layoutY="62.0" prefHeight="200.0" prefWidth="570.0">
+               <children>
+                  <VBox fx:id="personalInformationContainer" prefHeight="167.0" prefWidth="570.0" visible="false">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="301.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle11" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Họ tên:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="employeeName" prefHeight="30.0" prefWidth="439.0" style="-fx-font-size: 18;" styleClass="diagnosis-content" text="Nguyễn Hoàng Gia Bảo" wrapText="true">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="43.0" prefWidth="301.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle111" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Email:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="employeeEmail" prefHeight="30.0" prefWidth="434.0" style="-fx-font-size: 18;" styleClass="diagnosis-content" text="lanlun@gmail.com" wrapText="true">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="53.0" prefHeight="43.0" prefWidth="301.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle1111" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Số điện thoại:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="employeePhone" prefHeight="30.0" prefWidth="436.0" style="-fx-font-size: 18;" styleClass="diagnosis-content" text="lanlun@gmail.com" wrapText="true">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox prefHeight="71.0" prefWidth="398.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle11111" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Địa chỉ:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="employeeAddress" alignment="TOP_LEFT" prefHeight="63.0" prefWidth="434.0" style="-fx-font-size: 18;" styleClass="diagnosis-content" text="Nam Định, Hà Nội" wrapText="true">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox fx:id="EditablePersonalInformationContainer" layoutX="10.0" layoutY="10.0" prefHeight="167.0" prefWidth="570.0" spacing="5.0">
+                     <children>
+                        <HBox prefHeight="43.0" prefWidth="301.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle111" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Họ tên:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="nameField" focusTraversable="false" prefHeight="39.0" prefWidth="305.0" text="Nguyễn Thị Lan">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="43.0" prefWidth="301.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle1111" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Email:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="emailField" focusTraversable="false" prefHeight="39.0" prefWidth="307.0" text="lanlun@gmail.com">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="53.0" prefHeight="43.0" prefWidth="301.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle11111" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Số điện thoại:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="phoneField" focusTraversable="false" prefHeight="39.0" prefWidth="305.0" text="0190293898">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </HBox>
+                        <HBox prefHeight="71.0" prefWidth="398.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle111112" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Địa chỉ:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <TextArea fx:id="addressField" prefHeight="68.0" prefWidth="306.0" text="Nam định, Hà Nội">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </TextArea>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </StackPane>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="398.0" layoutY="333.0" prefHeight="386.0" prefWidth="620.0" style="-fx-background-color: white;">
+         <styleClass>
+            <String fx:value="border-radius-container" />
+            <String fx:value="dropshadow-box" />
+         </styleClass>
+         <children>
+            <HBox alignment="CENTER" layoutX="16.0" layoutY="20.0" prefHeight="43.0" prefWidth="43.0" styleClass="icons-container">
+               <children>
+                  <FontAwesomeIconView fill="WHITE" glyphName="USER_MD" size="30" styleClass="icons-fill" wrappingWidth="20.685738563537654" />
+               </children>
+            </HBox>
+            <Label layoutX="68.0" layoutY="27.0" prefHeight="30.0" prefWidth="220.0" styleClass="personal-title" text="THÔNG TIN VAI TRÒ" textFill="#0799c9">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <StackPane layoutX="29.0" layoutY="81.0" prefHeight="284.0" prefWidth="570.0">
+               <children>
+                  <VBox fx:id="roleInformationContainer" prefHeight="242.0" prefWidth="570.0" visible="false">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="301.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle111" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Chức vụ:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="employeePosition" prefHeight="30.0" prefWidth="260.0" style="-fx-font-size: 18;" styleClass="diagnosis-content" text="Bác sĩ" wrapText="true">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="43.0" prefWidth="301.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle1111" prefHeight="30.0" prefWidth="185.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Số năm kinh nghiệm">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="employeeExperienceYear" prefHeight="30.0" prefWidth="260.0" style="-fx-font-size: 18;" styleClass="diagnosis-content" text="3" wrapText="true">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="53.0" prefHeight="101.0" prefWidth="530.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle11111" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Mô tả vai trò:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="roleDescription" alignment="TOP_LEFT" prefHeight="98.0" prefWidth="402.0" style="-fx-font-size: 18;" styleClass="diagnosis-content" text="Xem danh sách đơn thuốc, quản lý thuốc, quản lý hóa đơn, xuất đơn thuốc, xuất hóa đơn, quản lý thông tin cá nhân" wrapText="true">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="64.0" prefHeight="88.0" prefWidth="530.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle111111" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Quyền hạn:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="rolePermission" alignment="TOP_LEFT" prefHeight="118.0" prefWidth="402.0" style="-fx-font-size: 18;" styleClass="diagnosis-content" text="Xem thông tin danh sách bệnh nhân, đăng ký khám bệnh, quản lý thông tin cá nhân" wrapText="true">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox fx:id="editableRoleInformationContainer" layoutX="10.0" layoutY="10.0" prefHeight="262.0" prefWidth="570.0" spacing="5.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="301.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle1111" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Chức vụ:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <StackPane prefHeight="42.0" prefWidth="359.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <HBox fx:id="roleNameRadio" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                                       <children>
+                                          <RadioButton fx:id="receptionistRadioButton" mnemonicParsing="false" text="Nhân viên lễ tân">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="roleGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="doctorRadioButton" layoutX="10.0" layoutY="18.0" mnemonicParsing="false" text="Bác sĩ" toggleGroup="$roleGroup">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </RadioButton>
+                                          <RadioButton fx:id="pharmacistRadioButton" layoutX="86.0" layoutY="18.0" mnemonicParsing="false" text="Nhân viên bán thuốc" toggleGroup="$roleGroup">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </RadioButton>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="43.0" prefWidth="301.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle11111" prefHeight="30.0" prefWidth="185.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Số năm kinh nghiệm">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="experienceYearField" focusTraversable="false" prefHeight="40.0" prefWidth="228.0" text="3">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="53.0" prefHeight="101.0" prefWidth="530.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle111111" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Mô tả vai trò:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <TextArea fx:id="roleDescriptionField" editable="false" prefHeight="90.0" prefWidth="423.0" text="Xem thông tin danh sách bệnh nhân, đăng ký khám bệnh, quản lý thông tin cá nhân" wrapText="true">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </TextArea>
+                           </children>
+                        </HBox>
+                        <HBox layoutX="10.0" layoutY="64.0" prefHeight="88.0" prefWidth="530.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="asideBarTitle1111111" prefHeight="30.0" prefWidth="122.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Quyền hạn:">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <TextArea fx:id="rolePermissionField" editable="false" prefHeight="90.0" prefWidth="423.0" text="Xem thông tin danh sách bệnh nhân, đăng ký khám bệnh, quản lý thông tin cá nhân" wrapText="true">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </TextArea>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </StackPane>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="30.0" layoutY="434.0" prefHeight="284.0" prefWidth="342.0" style="-fx-background-color: white;">
+         <styleClass>
+            <String fx:value="border-radius-container" />
+            <String fx:value="dropshadow-box" />
+         </styleClass>
+         <children>
+            <HBox alignment="CENTER" layoutX="14.0" layoutY="13.0" prefHeight="43.0" prefWidth="43.0" styleClass="icons-container">
+               <children>
+                  <FontAwesomeIconView fill="WHITE" glyphName="USER" size="30" styleClass="icons-fill" wrappingWidth="20.685738563537654" />
+               </children>
+            </HBox>
+            <Label layoutX="64.0" layoutY="19.0" prefHeight="30.0" prefWidth="238.0" styleClass="personal-title" text="THÔNG TIN TÀI KHOẢN" textFill="#0799c9">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <VBox fx:id="accountContainer" layoutX="19.0" layoutY="64.0" prefHeight="213.0" prefWidth="306.0" spacing="5.0">
+               <children>
+                  <HBox prefHeight="32.0" prefWidth="306.0" spacing="5.0">
+                     <children>
+                        <Label fx:id="asideBarTitle111" prefHeight="30.0" prefWidth="278.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Tên đăng nhập:">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="usernameLabel" alignment="TOP_LEFT" prefHeight="39.0" prefWidth="303.0" style="-fx-font-size: 18;" styleClass="diagnosis-content" text="doc.nguyenlanngoc">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="30.0" prefWidth="306.0" spacing="5.0">
+                     <children>
+                        <Label fx:id="asideBarTitle1111" alignment="TOP_LEFT" prefHeight="43.0" prefWidth="137.0" style="-fx-font-size: 18;" styleClass="diagnosis-title" text="Ngày tạo:">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="accountCreationDateLabel" alignment="TOP_LEFT" prefHeight="43.0" prefWidth="268.0" style="-fx-font-size: 18;" styleClass="diagnosis-content" text="2024-05-04 23:46:03" wrapText="true">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Button fx:id="changePasswordButton" mnemonicParsing="false" onAction="#showPasswordInput" prefHeight="42.0" prefWidth="186.0" style="-fx-background-color: transparent;" text="Đặt lại mật khẩu">
+                     <graphic>
+                        <FontAwesomeIconView fill="#0799c9" glyphName="EDIT" size="30" styleClass="icons-fill-in-title" text="" wrappingWidth="27.885751426219997" />
+                     </graphic>
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Button>
+                  <HBox fx:id="passwordAlternationContainer" alignment="CENTER" prefHeight="37.0" prefWidth="306.0" spacing="10.0">
+                     <children>
+                        <StackPane HBox.hgrow="ALWAYS">
+                           <children>
+                              <PasswordField fx:id="newPasswordHideField" prefHeight="40.0" prefWidth="241.0" promptText="Nhập mật khẩu mới">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </PasswordField>
+                              <TextField fx:id="newPasswordField" focusTraversable="false" prefHeight="40.0" prefWidth="228.0" promptText="Nhập mật khẩu mới">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </StackPane>
+                        <Button fx:id="changePasswordButton1" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#showPassword" prefHeight="25.0" prefWidth="54.0" style="-fx-background-color: transparent; -fx-border-color: #0799c9; -fx-border-radius: 10px;" HBox.hgrow="NEVER">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                           <graphic>
+                              <FontAwesomeIconView glyphName="EYE" size="30" styleClass="icons-fill-in-title" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+      <HBox fx:id="actionContainer" alignment="CENTER" layoutX="740.0" layoutY="735.0" prefHeight="43.0" prefWidth="275.0" spacing="20.0">
+         <children>
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#save" prefHeight="43.0" prefWidth="155.0" styleClass="save-button" text="Lưu thay đổi" textFill="WHITE">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#close" prefHeight="43.0" prefWidth="101.0" style="-fx-background-radius: 10;" styleClass="clear-button" text="Thoát">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

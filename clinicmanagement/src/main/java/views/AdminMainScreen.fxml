@@ -7,6 +7,7 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
@@ -68,7 +69,7 @@
             <Separator layoutX="1345.0" layoutY="10.0" orientation="VERTICAL" prefHeight="61.0" prefWidth="6.0" />
             <HBox alignment="CENTER" layoutX="1347.0" prefHeight="79.0" prefWidth="152.0" AnchorPane.leftAnchor="1347.2" AnchorPane.rightAnchor="1.0">
                <children>
-                  <Button fx:id="logoutButton" mnemonicParsing="false" styleClass="logout-button" text="Đăng xuất">
+                  <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logout" styleClass="logout-button" text="Đăng xuất">
                      <font>
                         <Font size="20.0" />
                      </font>
@@ -262,7 +263,7 @@
                   <AnchorPane fx:id="accountContainer" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container">
                      <children>
                         <Separator layoutX="780.0" layoutY="16.8" orientation="VERTICAL" prefHeight="389.0" prefWidth="6.0" AnchorPane.bottomAnchor="12.0" AnchorPane.topAnchor="16.8" />
-                        <TableView fx:id="employeeTable" layoutX="14.0" layoutY="14.0" prefHeight="508.0" prefWidth="748.0" stylesheets="@../../resources/css/style.css">
+                        <TableView fx:id="employeeTable" layoutX="14.0" layoutY="14.0" onMouseClicked="#selectEmployee" prefHeight="508.0" prefWidth="748.0" stylesheets="@../../resources/css/style.css">
                            <columns>
                               <TableColumn fx:id="orderEmployeeColumn" editable="false" prefWidth="60.799991607666016" sortable="false" styleClass="column-text-size" text="STT" />
                               <TableColumn id="lastColumn" fx:id="employeeNameColumn" editable="false" prefWidth="190.40000915527344" sortable="false" styleClass="column-text-size" text="Tên nhân viên" />
@@ -276,7 +277,7 @@
                         </TableView>
                         <StackPane layoutX="800.7999877929688" layoutY="16.799999237060547" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="800.8000000000001" AnchorPane.rightAnchor="11.20000000000016" AnchorPane.topAnchor="16.8">
                            <children>
-                              <AnchorPane fx:id="addingUserForm" prefHeight="508.0" prefWidth="306.0" style="-fx-background-color: #F5F9FA;" styleClass="border-radius-container">
+                              <AnchorPane fx:id="addingUserForm" prefHeight="508.0" prefWidth="306.0" style="-fx-background-color: #F5F9FA;" styleClass="border-radius-container" visible="false">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="62.0" prefWidth="306.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
@@ -354,7 +355,7 @@
                                     </Button>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane fx:id="addingAccountForm" layoutX="10.0" layoutY="10.0" prefHeight="508.0" prefWidth="306.0" style="-fx-background-color: #F5F9FA;" styleClass="border-radius-container" visible="false">
+                              <AnchorPane fx:id="addingAccountForm" layoutX="10.0" layoutY="10.0" prefHeight="508.0" prefWidth="306.0" style="-fx-background-color: #F5F9FA;" styleClass="border-radius-container">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="62.0" prefWidth="306.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
@@ -406,19 +407,19 @@
                                                 <Font size="17.0" />
                                              </font>
                                           </TextField>
-                                          <TextField fx:id="passwordField" layoutX="10.0" layoutY="10.0" maxWidth="300.0" prefHeight="46.0" prefWidth="274.0" promptText="Mật khẩu">
+                                          <PasswordField fx:id="passwordField" prefHeight="46.0" promptText="Mật khẩu">
                                              <font>
                                                 <Font size="17.0" />
                                              </font>
-                                          </TextField>
-                                          <TextField fx:id="passwordAuthenticationField" layoutX="10.0" layoutY="103.0" maxWidth="300.0" prefHeight="46.0" prefWidth="274.0" promptText="Nhập lại mật khẩu">
+                                          </PasswordField>
+                                          <PasswordField fx:id="passwordAuthenticationField" layoutX="10.0" layoutY="169.0" prefHeight="46.0" promptText="Nhập lại mật khẩu">
                                              <font>
                                                 <Font size="17.0" />
                                              </font>
-                                          </TextField>
+                                          </PasswordField>
                                        </children>
                                     </VBox>
-                                    <Button fx:id="addingAccountButton" layoutX="16.8" layoutY="433.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="177.0" styleClass="save-button" text="Tạo tài khoản" textFill="WHITE" AnchorPane.bottomAnchor="29.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="113.0">
+                                    <Button fx:id="addingAccountButton" layoutX="16.8" layoutY="433.0" mnemonicParsing="false" onAction="#addingUserAccount" prefHeight="46.0" prefWidth="177.0" styleClass="save-button" text="Tạo tài khoản" textFill="WHITE" AnchorPane.bottomAnchor="29.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="113.0">
                                        <font>
                                           <Font size="18.0" />
                                        </font>

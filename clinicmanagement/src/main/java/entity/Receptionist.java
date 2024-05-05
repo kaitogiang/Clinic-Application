@@ -104,11 +104,16 @@ public class Receptionist {
 		this.imageId = imageId;
 	}
 	
+//	@Override
+//	public String toString() {
+//		return "Receptionist [receptionistId=" + receptionistId + ", receptionistName=" + receptionistName
+//				+ ", receptionistEmail=" + receptionistEmail + ", phone_number=" + phone_number + ", role=" + role
+//				+ ", roleDescription=" + roleDescription + ", permissions=" + permissions + "]";
+//	}
+	
 	@Override
 	public String toString() {
-		return "Receptionist [receptionistId=" + receptionistId + ", receptionistName=" + receptionistName
-				+ ", receptionistEmail=" + receptionistEmail + ", phone_number=" + phone_number + ", role=" + role
-				+ ", roleDescription=" + roleDescription + ", permissions=" + permissions + "]";
+		return receptionistId+"-"+receptionistName;
 	}
 	
 }

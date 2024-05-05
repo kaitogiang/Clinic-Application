@@ -117,5 +117,7 @@ private String pharmacistId;
 		this.imageId = imageId;
 	}
 	
-	
+	public String toString() {
+		return pharmacistId+"-"+pharmacistName;
+	}
 }

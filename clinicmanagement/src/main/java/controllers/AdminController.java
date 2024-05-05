@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,7 +24,9 @@ import entity.Doctor;
 import entity.Employee;
 import entity.EmployeeButton;
 import entity.ImageUtils;
+import entity.LogoutHandler;
 import entity.Message;
+import entity.PasswordEncryptor;
 import entity.Pharmacist;
 import entity.Receptionist;
 import javafx.animation.Animation;
@@ -33,6 +36,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -44,6 +48,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -228,16 +234,16 @@ public class AdminController implements Initializable{
     private AnchorPane addingAccountForm;
     
     @FXML
-    private ComboBox<String> choosingAvalableUserBox;
+    private ComboBox<Object> choosingAvalableUserBox;
     
     @FXML
     private TextField userNameField;
     
     @FXML
-    private TextField passwordAuthenticationField;
+    private PasswordField passwordAuthenticationField;
 
     @FXML
-    private TextField passwordField;
+    private PasswordField passwordField;
     
     @FXML
     private Button addingAccountButton;
@@ -260,7 +266,9 @@ public class AdminController implements Initializable{
     
     private Admin admin;
     
-    private ObservableList<Employee> employeeList;
+    private ObservableList<Employee> employeeList; //Chứa danh sách để hiển thị trên UI
+    
+    private ObservableList<Employee> subEmployeeList; //Chứa danh sách ban đầu toàn bộ 
     
     private String[] rolesString = {"Nhân viên lễ tân", "Bác sĩ", "Nhân viên bán thuốc"};
     
@@ -271,6 +279,10 @@ public class AdminController implements Initializable{
     private String absoluteImagePath = ""; //Lấy đường dẫn tuyệt đối của ảnh để upload
     
     private Map<String, String[]> roleMap; //Map để chứa các mô tả và quyên hạn của các vai trò
+    
+    Map<String, Object> avalableUserAccountMap; //Map chứa các user chưa có tài khoản
+    
+    private String[] filterString = {"Lễ tân","Bác sĩ", "Dược sĩ"};
     
     
     @Override
@@ -293,6 +305,7 @@ public class AdminController implements Initializable{
     	showOverviewScreen();
     	switchTab(null);
     	employeeList = fetchEmployeeData();
+    	subEmployeeList.addAll(employeeList);
     	displayEmployeeTable();
     	//Gán giá trị cho choice box chọn vai trò người dùng khi tạo người dùng
     	roleChoiceBox.getItems().addAll(rolesString);
@@ -334,6 +347,22 @@ public class AdminController implements Initializable{
     		popup.getContent().clear();
     		popup.hide();
     	});
+    	//Gán giá trị cho filter
+    	filterByBox.getItems().addAll(filterString);
+    	
+    	
+    	//Quan sát employeeList, nếu có phần tử bị xóa thì cập nhật lại số thứ tự
+    	employeeList.addListener((ListChangeListener.Change<? extends Employee> change) -> {
+            while (change.next()) {
+                if (change.wasRemoved()) {
+                    // Thực hiện hành động khi có phần tử được xóa khỏi danh sách
+                	int order=1;
+                	for(Employee e: employeeList) {
+                		e.setOrderNumber(order++);
+                	}
+                }
+            }
+        });
 	}
     
     public void setCurrentStage(Stage stage) {
@@ -741,7 +770,133 @@ public class AdminController implements Initializable{
   		addingUserForm.setVisible(false);
   		//Đặt các giá trị
   		roleLabel.setText("Chưa chọn");
+  		
+  		//Thực hiện các tác vụ
+  		avalableUserAccountMap = getAvalableUserAccount();
+  		//Tạo danh sách các người dùng cung cấp cho choicebox
+  		ObservableList<Object> list = FXCollections.observableArrayList();
+  		avalableUserAccountMap.forEach((key, value)->{
+  			list.add(value);
+  		});
+  		choosingAvalableUserBox.setItems(list);
+		choosingAvalableUserBox.setPromptText("Chọn tên người dùng");
+//  		choosingAvalableUserBox.getItems().addAll(list);
+  		choosingAvalableUserBox.valueProperty().addListener((observe, oldValue, newValue)->{
+  			System.out.println(newValue);
+  			if (newValue instanceof Receptionist) {
+  				Receptionist value = (Receptionist) newValue;
+  				roleLabel.setText(value.getRole());
+  			} else if (newValue instanceof Doctor) {
+  				Doctor value = (Doctor) newValue;
+  				roleLabel.setText(value.getRole());
+  			} else if (newValue instanceof Pharmacist) {
+  				Pharmacist value = (Pharmacist) newValue;
+  				roleLabel.setText(value.getRole());
+  			} else {
+  				roleLabel.setText("Chưa chọn");
+  			}
+  		});
+  		//Đoạn code này hoạt động, dùng để đặt giá trị cho combobox khi clear selection
+  		//Combobox chỉ có thể hiển thị dạng String
+  		//Hàm setPromptText của combobox chỉ sử dụng được lúc khởi tạo thôi, nếu khi đã chọn
+  		//sau đó hủy thì prompt text sẽ không hiện. Do đó phải tự thiết lập lại button cell
+  		//của combobox khi giá trị bị null
+  		choosingAvalableUserBox.setButtonCell(new ListCell<Object>() {
+		    @Override
+		    protected void updateItem(Object item, boolean empty) {
+		        super.updateItem(item, empty);
+		        if (empty || item == null) {
+		            setText("Chọn tên người dùng");
+		        } else {
+		            setText(item.toString());
+		        }
+		    }
+		});
+  		resetUserAccountForm();
   	}
+  	//Hàm lấy các người dùng chưa có tài khoản
+  	public Map<String, Object> getAvalableUserAccount() {
+  		String repSql = "SELECT rep.*, ro.* FROM receptionists rep "
+  				+ "JOIN accounts acc ON rep.account_id = acc.account_id "
+  				+ "JOIN roles ro ON acc.role_id = ro.role_id WHERE acc.password = ''";
+  		
+  		String docSql = "SELECT doc.*, ro.* FROM doctors doc "
+  				+ "JOIN accounts acc ON doc.account_id = acc.account_id "
+  				+ "JOIN roles ro ON acc.role_id = ro.role_id WHERE acc.password = ''";
+  		
+  		String pharSql = "SELECT p.*, ro.* FROM pharmacists p "
+  				+ "JOIN accounts acc ON p.account_id = acc.account_id "
+  				+ "JOIN roles ro ON acc.role_id = ro.role_id WHERE acc.password =''";
+  		
+  		Map<String, Object> map = new HashMap<String, Object>();
+  		
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement rePs = con.prepareStatement(repSql);
+  			PreparedStatement docPs = con.prepareStatement(docSql);
+  			PreparedStatement pharPs = con.prepareStatement(pharSql);
+  			
+  			ResultSet repRs = rePs.executeQuery();
+  			ResultSet docRs = docPs.executeQuery();
+  			ResultSet pharRs = pharPs.executeQuery();
+  			
+  			//Lấy danh sách tất cả receptionist
+  			while(repRs.next()) {
+  				String id = repRs.getString("receptionist_id");
+  				String name = repRs.getString("receptionist_name");
+  				String email = repRs.getString("receptionist_email");
+  				String address = repRs.getString("address");
+  				String phone = repRs.getString("phone_number");
+  				String roleName = repRs.getString("role_name");
+  				String description = repRs.getString("description");
+  				String permission = repRs.getString("permissions");
+  				int imageId = repRs.getInt("image_id");
+  				int accountId = repRs.getInt("account_id");
+  				Receptionist rep = new Receptionist(id, name, email, phone, address, roleName, description, permission, imageId);
+  				map.put(String.valueOf(accountId), rep);
+  			}
+  			
+  			//Lấy danh sách tất cả doctor
+  			while(docRs.next()) {
+  				String id = docRs.getString("doctor_id");
+  				String name = docRs.getString("doctor_name");
+  				String email = docRs.getString("doctor_email");
+  				String address = docRs.getString("address");
+  				String phone = docRs.getString("phone_number");
+  				float experience = docRs.getFloat("experience_year");
+  				String roleName = docRs.getString("role_name");
+  				String description = docRs.getString("description");
+  				String permission = docRs.getString("permissions");
+  				int imageId = docRs.getInt("image_id");
+  				int accountId = docRs.getInt("account_id");
+  				Doctor rep = new Doctor(id, name, email, phone, address, experience, roleName, description, permission, imageId);
+  				map.put(String.valueOf(accountId), rep);
+  			}
+  			
+  			//Lấy danh sách tất cả pharmacist
+  			while(pharRs.next()) {
+  				String id = pharRs.getString("pharmacist_id");
+  				String name = pharRs.getString("pharmacist_name");
+  				String email = pharRs.getString("pharmacist_email");
+  				String address = pharRs.getString("address");
+  				String phone = pharRs.getString("phone_number");
+  				float experience = pharRs.getFloat("experience_year");
+  				String roleName = pharRs.getString("role_name");
+  				String description = pharRs.getString("description");
+  				String permission = pharRs.getString("permissions");
+  				int imageId = pharRs.getInt("image_id");
+  				int accountId = pharRs.getInt("account_id");
+  				Pharmacist rep = new Pharmacist(id, name, email, phone, address, experience, roleName, description, permission, imageId);
+  				map.put(String.valueOf(accountId), rep);
+  			}
+  			
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  		
+  		return map;
+  	}
+  	
+  	
   	
   	//Hàm chuyển về form tạo người dùng mới
   	public void goToUserCreationForm() {
@@ -1083,5 +1238,100 @@ public class AdminController implements Initializable{
   			e.printStackTrace();
   		}
   		return map;
+  	}
+  	
+  	//Hàm tạo tài khoản mới
+  	public void addingUserAccount() {
+  		if (choosingAvalableUserBox.getValue()==null) {
+  			Message.showMessage("Vui lòng chọn người dùng chưa có tài khoản", AlertType.ERROR);
+  		} else {
+  			if (userNameField.getText().isEmpty() 
+  				|| passwordField.getText().isEmpty() 
+  				|| passwordAuthenticationField.getText().isEmpty()) {
+  				Message.showMessage("Vui lòng nhập đầy đủ thông tin", AlertType.ERROR);
+  			} else if (!passwordField.getText().equals(passwordAuthenticationField.getText())) {
+  				Message.showMessage("Mật khẩu không khớp", AlertType.ERROR);
+  			} else if (passwordField.getText().length()<8) {
+  				Message.showMessage("Mật khẩu ít nhất 8 ký tự", AlertType.ERROR);
+  			} else {
+  				//Thực hiện tác vụ tại đây
+  				String username = userNameField.getText();
+  				String password = passwordField.getText();
+  				String encryptPassword = PasswordEncryptor.hashPassword(password); //Mã hóa mật khẩu
+  				Object selectedItem = choosingAvalableUserBox.getValue();
+  				int accountId = 0;
+  				for(Map.Entry<String, Object> entry : avalableUserAccountMap.entrySet()) {
+  					if (entry.getValue().equals(selectedItem)) {
+  						accountId = Integer.parseInt(entry.getKey());
+  						break;
+  					}
+  				}
+  				//Cập nhật cơ sở dữ liệu
+  				addingAccountToDatabase(username, encryptPassword, accountId);
+  				//Thay đổi combobox lại
+  				ObservableList<Object> userList = choosingAvalableUserBox.getItems();
+  				choosingAvalableUserBox.setValue(null);
+  				userList.remove(selectedItem);
+  				//Cập nhật lại danh sách tất cả user trong màn hình chính
+  				for(Employee e: employeeList) {
+  					if (e.getAccountId() == accountId) {
+  						e.setUsername(username);
+  						e.setAccountCreationDate(LocalDateTime.now().toString());
+  					}
+  				}
+  				resetUserAccountForm();
+  				Message.showMessage("Tạo tài khoản thành công", AlertType.INFORMATION);
+  			}
+  		}
+  	}
+  	
+  	//Hàm reset lại tất cả trường của form tạo tài khoản
+  	public void resetUserAccountForm() {
+  		choosingAvalableUserBox.getSelectionModel().clearSelection();
+  		userNameField.setText("");
+  		passwordField.setText("");
+  		passwordAuthenticationField.setText("");
+  	}
+  	
+  	//Hàm tạo tài khoản cho người dùng trên Database
+  	public void addingAccountToDatabase(String username, String password, int accountId) {
+  		String sql = "UPDATE accounts SET username = ?, "
+  				+ "password = ?, CreationDate = NOW() WHERE account_id = ?";
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(sql);
+  			ps.setString(1, username);
+  			ps.setString(2, password);
+  			ps.setInt(3, accountId);
+  			int update = ps.executeUpdate();
+  			System.out.println("Tạo tài khoản thành công");
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  	}
+  	//Hàm hiển thị chi tiết nhân viên khi admin nhấp chọn một dòng
+  	public void selectEmployee() {
+  		Employee emp = employeeTable.getSelectionModel().getSelectedItem();
+  		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/EmployeeDetailScreen.fxml"));
+		String css = this.getClass().getResource("/css/style.css").toExternalForm();
+  		try {
+  			AnchorPane main = loader.load();
+  			Scene scene = new Scene(main);
+  			Stage stage = new Stage();
+  			EmployeeDetailController controller = loader.getController();
+  			controller.setData(emp, false);
+  			scene.getStylesheets().add(css);
+  			stage.setScene(scene);
+  			stage.setTitle("Employee detail");
+  			stage.show();
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  	}
+  	
+  	
+  	//logout
+  	public void logout() {
+  		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/LoginScreen.fxml"));
+		LogoutHandler.logout(currentStage, loader);
   	}
 }

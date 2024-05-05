@@ -277,7 +277,7 @@
             </StackPane>
             <StackPane layoutX="24.0" layoutY="92.0" prefHeight="418.0" prefWidth="1119.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="23.999999999999773" AnchorPane.rightAnchor="23.199999999999818" AnchorPane.topAnchor="92.0">
                <children>
-                  <AnchorPane fx:id="searchInvoiceContainer" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container" visible="false">
+                  <AnchorPane fx:id="searchInvoiceContainer" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container">
                      <children>
                         <Separator layoutX="711.0" layoutY="16.8" orientation="VERTICAL" prefHeight="389.0" prefWidth="6.0" AnchorPane.bottomAnchor="12.0" AnchorPane.topAnchor="16.8" />
                         <AnchorPane layoutX="732.8" layoutY="16.8" prefHeight="390.0" prefWidth="376.0" styleClass="diagnostic-pane" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="733.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="17.0">
@@ -586,7 +586,7 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                   </TableView>
-                  <AnchorPane fx:id="staticticsContainer" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container">
+                  <AnchorPane fx:id="staticticsContainer" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container" visible="false">
                      <children>
                         <ScrollPane prefHeight="418.0" prefWidth="1118.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.7999999999999545" AnchorPane.topAnchor="0.0">
                            <content>
