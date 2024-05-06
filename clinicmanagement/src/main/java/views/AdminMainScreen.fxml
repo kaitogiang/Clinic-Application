@@ -569,7 +569,7 @@
                         </TextArea>
                      </children>
                   </AnchorPane>
-                  <StackPane fx:id="revenueContainer">
+                  <StackPane fx:id="revenueContainer" visible="false">
                      <children>
                         <AnchorPane fx:id="spendingContainer" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container" visible="false">
                            <children>
@@ -653,7 +653,7 @@
                                     </HBox>
                                     <VBox layoutX="16.8" layoutY="74.0" maxWidth="300.0" prefHeight="334.0" prefWidth="268.0" spacing="10.0" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="19.0">
                                        <children>
-                                          <TextArea fx:id="medicalServiceNameField" prefHeight="180.0" prefWidth="269.0" promptText="Tên dịch vụ khám">
+                                          <TextArea fx:id="medicalServiceNameField" prefHeight="180.0" prefWidth="269.0" promptText="Tên dịch vụ khám" wrapText="true">
                                              <font>
                                                 <Font size="17.0" />
                                              </font>
@@ -665,7 +665,7 @@
                                           </TextField>
                                        </children>
                                     </VBox>
-                                    <Button fx:id="addingUserButton11" layoutX="17.8" layoutY="452.7999999999999" mnemonicParsing="false" onAction="#addingNewUser" prefHeight="46.0" prefWidth="270.0" styleClass="save-button" text="Thêm dịch vụ" textFill="WHITE" AnchorPane.bottomAnchor="15.199999999999989" AnchorPane.leftAnchor="17.8" AnchorPane.rightAnchor="18.19999999999999">
+                                    <Button fx:id="addingUserButton11" layoutX="17.8" layoutY="452.7999999999999" mnemonicParsing="false" onAction="#addMedicalService" prefHeight="46.0" prefWidth="270.0" styleClass="save-button" text="Thêm dịch vụ" textFill="WHITE" AnchorPane.bottomAnchor="15.199999999999989" AnchorPane.leftAnchor="17.8" AnchorPane.rightAnchor="18.19999999999999">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
@@ -677,6 +677,24 @@
                         </AnchorPane>
                      </children>
                   </StackPane>
+                  <AnchorPane fx:id="accountContainer1" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container">
+                     <children>
+                        <TableView fx:id="employeeTable1" layoutX="10.0" layoutY="14.0" onMouseClicked="#selectEmployee" prefHeight="508.0" prefWidth="1098.0" stylesheets="@../../resources/css/style.css">
+                           <columns>
+                              <TableColumn fx:id="orderEmployeeColumn1" editable="false" prefWidth="60.799991607666016" sortable="false" styleClass="column-text-size" text="STT" />
+                              <TableColumn id="lastColumn" fx:id="employeeNameColumn1" editable="false" prefWidth="251.1999969482422" sortable="false" styleClass="column-text-size" text="Tên vật tư" />
+                              <TableColumn id="lastColumn" fx:id="usernameColumn1" editable="false" minWidth="0.0" prefWidth="96.79998779296875" sortable="false" styleClass="column-text-size" text="Số lượng" />
+                              <TableColumn id="lastColumn" fx:id="roleColumn1" editable="false" prefWidth="119.20001220703125" sortable="false" styleClass="column-text-size" text="Đã hỏng" />
+                              <TableColumn id="lastColumn" fx:id="actionColumn1" editable="false" prefWidth="202.4000244140625" sortable="false" styleClass="column-text-size" text="Giá đơn vị" />
+                              <TableColumn id="lastColumn" fx:id="actionColumn11" editable="false" prefWidth="188.800048828125" sortable="false" styleClass="column-text-size" text="Tổng tiền" />
+                              <TableColumn id="lastColumn" fx:id="actionColumn111" editable="false" prefWidth="171.20001220703125" sortable="false" styleClass="column-text-size" text="Hành động" />
+                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
                </children>
             </StackPane>
             <HBox fx:id="statusNumberContainer" alignment="CENTER_LEFT" layoutX="289.0" layoutY="15.0" prefHeight="43.0" prefWidth="306.0" visible="false">

@@ -28,6 +28,7 @@ import entity.EmployeeButton;
 import entity.Expenditure;
 import entity.ImageUtils;
 import entity.LogoutHandler;
+import entity.MedicalService;
 import entity.Message;
 import entity.PasswordEncryptor;
 import entity.Pharmacist;
@@ -317,16 +318,16 @@ public class AdminController implements Initializable{
     private AnchorPane medicalServiceContainer;
     
     @FXML
-    private TableView<?> medicalServiceTable;
+    private TableView<MedicalService> medicalServiceTable;
     
     @FXML
-    private TableColumn<?, ?> medicalServiceOrderColumn;
+    private TableColumn<MedicalService, Integer> medicalServiceOrderColumn;
 
     @FXML
-    private TableColumn<?, ?> medicalServiceNameColumn;
+    private TableColumn<MedicalService, String> medicalServiceNameColumn;
     
     @FXML
-    private TableColumn<?, ?> medicalServiceFeeColumn;
+    private TableColumn<MedicalService, Float> medicalServiceFeeColumn;
     
     @FXML
     private TextArea medicalServiceNameField;
@@ -366,7 +367,9 @@ public class AdminController implements Initializable{
     
     private String[] filterString = {"Tất cả", "Nhân viên lễ tân","Bác sĩ", "Nhân viên bán thuốc"};
     
-    private ObservableList<Expenditure> expenditureList;
+    private ObservableList<Expenditure> expenditureList; //Danh sách chứa các chi tiêu
+    
+    private ObservableList<MedicalService> medicalServiceList; //Danh sách chứa các dịch vụ
     
     
     @Override
@@ -494,9 +497,10 @@ public class AdminController implements Initializable{
     			spendingContainer.setVisible(true);
         		medicalServiceContainer.setVisible(false);
         		AnimationUtils.createFadeTransition(spendingContainer, 0.0, 10.0);
-            	spendingRadioButton.getStyleClass().add("font-weight-text");
-            	serviceRadioButton.getStyleClass().remove("font-weight-text");
-
+            	if (!spendingRadioButton.getStyleClass().contains("font-weight-text")) {
+            		spendingRadioButton.getStyleClass().add("font-weight-text");
+                	serviceRadioButton.getStyleClass().remove("font-weight-text");
+            	}
     		}
     		System.out.println(newValue);
     	});
@@ -506,8 +510,10 @@ public class AdminController implements Initializable{
     			spendingContainer.setVisible(false);
         		medicalServiceContainer.setVisible(true);
         		AnimationUtils.createFadeTransition(medicalServiceContainer, 0.0, 10.0);
-        		serviceRadioButton.getStyleClass().add("font-weight-text");
-        		spendingRadioButton.getStyleClass().remove("font-weight-text");
+        		if(!serviceRadioButton.getStyleClass().contains("font-weight-text")) {
+        			serviceRadioButton.getStyleClass().add("font-weight-text");
+            		spendingRadioButton.getStyleClass().remove("font-weight-text");
+        		}
     		}
     	});
     	
@@ -555,7 +561,39 @@ public class AdminController implements Initializable{
 			return cell;
 		});
 
-
+		//Khởi tạo danh sách các dịch vụ
+		medicalServiceList = getMedicalServiceList();
+		//Thiết lập giá trị mặc định cho bảng khi không có dịch vụ nào
+		Label defaultSer = new Label("Chưa có dịch vụ nào");
+		defaultSer.setFont(new Font(17));
+		medicalServiceTable.setPlaceholder(defaultSer);
+		//Gọi hàm hiển thị các dịch vụ
+		displayMedicalServiceTable();
+		//Cài đặt xuống dòng khi hết hàng trong bảng dịch vụ
+		medicalServiceTable.setRowFactory(tv->{
+			TableRow<MedicalService> row = new TableRow<>();
+			
+			//Tạo một nút Text để tính toán chiều cao
+			Text text = new Text();
+			row.itemProperty().addListener((obs, oldItem, newItem) -> {
+				if (newItem != null) {
+					text.setText(newItem.getServiceNameValue());
+					row.setPrefHeight(text.getBoundsInLocal().getHeight() + 10);
+				}
+			});
+			return row;
+		});
+		
+		medicalServiceNameColumn.setCellFactory(tc -> {
+			TableCell<MedicalService, String> cell = new TableCell<>();
+			Text text = new Text();
+			cell.setGraphic(text);
+			//Tự động xuống dòng nếu vượt quá chiều rộng của ô
+			text.wrappingWidthProperty().bind(spendingPurposeColumn.widthProperty());
+			text.textProperty().bind(cell.itemProperty());
+			return cell;
+		});
+		
 	}
     
     //
@@ -1739,8 +1777,89 @@ public class AdminController implements Initializable{
   	}
 
   	//Hàm lấy tất cả các dịch vụ trong phòng khám
+  	ObservableList<MedicalService> getMedicalServiceList() {
+  		ObservableList<MedicalService> list = FXCollections.observableArrayList();
+  		String sql = "SELECT * FROM medical_services";
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(sql);
+  			ResultSet rs = ps.executeQuery();
+  			int order = 1;
+  			while(rs.next()) {
+  				String id = rs.getString("service_id");
+  				String serviceName = rs.getString("serivce_name");
+  				float fee = rs.getFloat("fee");
+  				MedicalService mc = new MedicalService(order++, id, serviceName, fee);
+  				list.add(mc);
+  			}
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  		
+  		return list;
+  	}
   	
+  	//Hàm hiện thị bảng các dịch vụ
+  	public void displayMedicalServiceTable() {
+  		medicalServiceOrderColumn.setCellValueFactory(cellData -> cellData.getValue().getOrderNumber().asObject());
+  		medicalServiceNameColumn.setCellValueFactory(cellData -> cellData.getValue().getServiceName());
+  		medicalServiceFeeColumn.setCellValueFactory(cellData -> cellData.getValue().getFee().asObject());
+  		
+  		medicalServiceTable.setItems(medicalServiceList);
+  	}
+  	//Hàm thêm mới một dịch vụ trong phòng khám
+  	public void addMedicalService() {
+  		String name = medicalServiceNameField.getText();
+  		String fee = medicalServiceFeeField.getText();
+  		
+  		if (name.isEmpty() || fee.isEmpty()) {
+  			Message.showMessage("Vui lòng nhập đầy đủ thông tin", AlertType.ERROR);
+  		} else if (!isNumberFormat(fee)) {
+  			Message.showMessage("Vui lòng nhập đúng định dạng số tiền", AlertType.ERROR);
+  		} else {
+  			String id = "";
+  			do {
+  				id = generateUniqueId();
+  			} while(isExistedMedicalServiceId(id));
+  			String sql = "INSERT INTO medical_services VALUES(?,?,?)";
+  			try(Connection con = Database.connectDB()) {
+  				PreparedStatement ps = con.prepareStatement(sql);
+  				ps.setString(1, id);
+  				ps.setString(2, name);
+  				ps.setFloat(3, Float.valueOf(fee));
+  				
+  				int insert = ps.executeUpdate();
+  				if (insert!=0) {
+  					System.out.println("Thêm dịch vụ thành cộng");
+  					int order = medicalServiceList.size()+1;
+  					MedicalService mc = new MedicalService(order, id, name, Float.valueOf(fee));
+  					medicalServiceList.add(mc);
+  				}
+  				resetMedicalServiceForm();
+  			} catch(Exception e) {
+  				e.printStackTrace();
+  			}
+  		}
+  	}
   	
+  	//Hàm kiểm tra id của medical service
+  	public boolean isExistedMedicalServiceId(String id) {
+  		String sql = "SELECT * FROM medical_services WHERE service_id = ?";
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(sql);
+  			ps.setString(1, id);
+  			ResultSet rs = ps.executeQuery();
+  			return rs.next();
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  		return false;
+  	}
+  	
+  	//Hàm xóa các trường trong form dịch vụ
+  	public void resetMedicalServiceForm() {
+  		medicalServiceNameField.setText("");
+  		medicalServiceFeeField.setText("");
+  	}
   	
   	//logout
   	public void logout() {
