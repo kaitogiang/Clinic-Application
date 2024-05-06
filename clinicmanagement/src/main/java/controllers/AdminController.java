@@ -5,6 +5,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ import entity.AnimationUtils;
 import entity.Doctor;
 import entity.Employee;
 import entity.EmployeeButton;
+import entity.Expenditure;
 import entity.ImageUtils;
 import entity.LogoutHandler;
 import entity.Message;
@@ -48,11 +50,15 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -60,8 +66,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Popup;
@@ -256,6 +264,78 @@ public class AdminController implements Initializable{
     @FXML
     private Label roleLabel;
     
+    //Chức năng của Quản lý tài khoản
+    @FXML
+    private StackPane revenueContainer;
+    
+    @FXML
+    private HBox totalRevenueContainer;
+
+    @FXML
+    private Label totalRevenueLabel;
+    
+    @FXML
+    private HBox revenueTypeContainer;
+    
+    @FXML
+    private RadioButton spendingRadioButton;
+    
+    @FXML
+    private RadioButton serviceRadioButton;
+    
+    @FXML
+    private RadioButton revenueChartRadioButton;
+    
+    @FXML
+    private TableView<Expenditure> spendingTable;
+    
+    @FXML
+    private TableColumn<Expenditure, Integer> spendingOrderColumn;
+    
+    @FXML
+    private TableColumn<Expenditure, String> spendingPurposeColumn;
+    
+    @FXML
+    private TableColumn<Expenditure, Float> spendingAmountColumn;
+    
+    @FXML
+    private TableColumn<Expenditure, String> spendingDateColumn;
+    
+    @FXML
+    private TextArea spendingPurposeField;
+    
+    @FXML
+    private TextField spendingAmountField;
+   
+    @FXML
+    private DatePicker spendingDateField;
+    
+    @FXML
+    private AnchorPane spendingContainer;
+    
+    @FXML
+    private AnchorPane medicalServiceContainer;
+    
+    @FXML
+    private TableView<?> medicalServiceTable;
+    
+    @FXML
+    private TableColumn<?, ?> medicalServiceOrderColumn;
+
+    @FXML
+    private TableColumn<?, ?> medicalServiceNameColumn;
+    
+    @FXML
+    private TableColumn<?, ?> medicalServiceFeeColumn;
+    
+    @FXML
+    private TextArea medicalServiceNameField;
+    
+    @FXML
+    private TextField medicalServiceFeeField;
+    
+    @FXML
+    private StackPane optionBar;
     
     
     //user-defined variable
@@ -285,6 +365,8 @@ public class AdminController implements Initializable{
     Map<String, Object> avalableUserAccountMap; //Map chứa các user chưa có tài khoản
     
     private String[] filterString = {"Tất cả", "Nhân viên lễ tân","Bác sĩ", "Nhân viên bán thuốc"};
+    
+    private ObservableList<Expenditure> expenditureList;
     
     
     @Override
@@ -402,7 +484,83 @@ public class AdminController implements Initializable{
     		}
     	});
     	
+    	//Các xử lý thuộc về Quản lý tài khoản
+    	spendingRadioButton.setSelected(true);
+    	spendingRadioButton.getStyleClass().add("font-weight-text");
+    	serviceRadioButton.getStyleClass().remove("font-weight-text");
+    	//Quan sát lựa chọn của các radio button để hiển thị form tương ứng
+    	spendingRadioButton.selectedProperty().addListener((observe, oldValue, newValue)->{
+    		if (newValue) {
+    			spendingContainer.setVisible(true);
+        		medicalServiceContainer.setVisible(false);
+        		AnimationUtils.createFadeTransition(spendingContainer, 0.0, 10.0);
+            	spendingRadioButton.getStyleClass().add("font-weight-text");
+            	serviceRadioButton.getStyleClass().remove("font-weight-text");
+
+    		}
+    		System.out.println(newValue);
+    	});
+    	
+    	serviceRadioButton.selectedProperty().addListener((observe, oldValue, newValue)->{
+    		if (newValue) {
+    			spendingContainer.setVisible(false);
+        		medicalServiceContainer.setVisible(true);
+        		AnimationUtils.createFadeTransition(medicalServiceContainer, 0.0, 10.0);
+        		serviceRadioButton.getStyleClass().add("font-weight-text");
+        		spendingRadioButton.getStyleClass().remove("font-weight-text");
+    		}
+    	});
+    	
+    	//Đặt các giá trị mặc định cho các bảng
+    	Label defaultSpindingText = new Label("Chưa có khoản chi nào");
+    	defaultSpindingText.setFont(new Font(17));
+    	spendingTable.setPlaceholder(defaultSpindingText);
+    	
+    	Label defaultService = new Label("Chưa có loại dịch vụ khám nào");
+    	defaultService.setFont(new Font(17));
+    	medicalServiceTable.setPlaceholder(defaultService);
+    	
+    	//Gán giá trị cho nhãn revenue
+    	totalRevenueLabel.setText(getTotalRevenue()+" VNĐ");
+    	
+    	//Khởi tạo danh sách tất cả chi tiêu của admin
+    	expenditureList = getExpenditureList();
+    	
+    	//Gọi hàm hiển thị các bảng chi tiêu
+    	displayExpenditureTable();
+    	
+    	//Cài đặt xuống dòng khi hết hàng trong bảng
+		spendingTable.setRowFactory(tv->{
+			TableRow<Expenditure> row = new TableRow<>();
+			
+			//Tạo một nút Text để tính toán chiều cao
+			Text text = new Text();
+			row.itemProperty().addListener((obs, oldItem, newItem) -> {
+				if (newItem != null) {
+					text.setText(newItem.getPurposeValue());
+					row.setPrefHeight(text.getBoundsInLocal().getHeight() + 10);
+				}
+			});
+			return row;
+		});
+		
+		//Sử dụng WrapText để cho phép tự động xuống dòng
+		spendingPurposeColumn.setCellFactory(tc -> {
+			TableCell<Expenditure, String> cell = new TableCell<>();
+			Text text = new Text();
+			cell.setGraphic(text);
+			//Tự động xuống dòng nếu vượt quá chiều rộng của ô
+			text.wrappingWidthProperty().bind(spendingPurposeColumn.widthProperty());
+			text.textProperty().bind(cell.itemProperty());
+			return cell;
+		});
+
+
 	}
+    
+    //
+    
+    
     
     public void removeElementEmployeeList(Employee e) {
     	employeeList.remove(e);
@@ -466,6 +624,9 @@ public class AdminController implements Initializable{
 			accountContainer.setVisible(false);
 			filterContainer.setVisible(false);
 			ActionBar.setVisible(false);
+			revenueContainer.setVisible(false);
+			revenueTypeContainer.setVisible(false);
+  			totalRevenueContainer.setVisible(false);
 			
 			//Tạo animation chuyển động cho các nút
 			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
@@ -484,15 +645,20 @@ public class AdminController implements Initializable{
 			ActionBar.setVisible(true);
 			addingAccountForm.setVisible(false);
 			addingUserForm.setVisible(true);
+//			optionBar.setTranslateX(10);
+			asideBarTitle.setPrefWidth(300);
 			//Ẩn các tab còn lại
   			overviewContainer.setVisible(false);
 			personalContainer.setVisible(false);
+  			revenueContainer.setVisible(false);
+  			revenueTypeContainer.setVisible(false);
+  			totalRevenueContainer.setVisible(false);
 			//Tạo animation chuyển động cho các nút
 			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
 			AnimationUtils.createFadeTransition(accountContainer, 0.0, 10.0);
 			AnimationUtils.createFadeTransition(filterContainer, 0.0, 10.0);
 			AnimationUtils.createFadeTransition(ActionBar, 0.0, 10.0);
-
+			
 			//Tạo trạng thái active cho tab
 			ActiveStateUtils.addStyleClass(accountTab);
 			ActiveStateUtils.removeStyleClass(overviewTab);
@@ -502,7 +668,30 @@ public class AdminController implements Initializable{
 			//Thực hiện các tác vụ khi chuyển đến giao diện Quản lý tài khoản
 			resetUserCreationForm();
 		} else if (e.getSource().equals(revenueTab) && e!=null) {
+			//Hiển thị tab chính
+  			asideBarTitle.setText("Quản lý tài chính");
+  			revenueContainer.setVisible(true);
+  			spendingContainer.setVisible(true);
+  			revenueTypeContainer.setVisible(true);
+  			totalRevenueContainer.setVisible(true);
+			//Ẩn các tab còn lại
+  			overviewContainer.setVisible(false);
+			personalContainer.setVisible(false);
+			accountContainer.setVisible(false);
+			filterContainer.setVisible(false);
+			ActionBar.setVisible(false);
+			medicalServiceContainer.setVisible(false);
 			
+			//Tạo animation chuyển động cho các nút
+			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
+			AnimationUtils.createFadeTransition(revenueContainer, 0.0, 10.0);
+			AnimationUtils.createFadeTransition(revenueTypeContainer, 0.0, 10.0);
+			AnimationUtils.createFadeTransition(totalRevenueContainer, 0.0, 10.0);
+			//Tạo trạng thái active cho tab
+			ActiveStateUtils.addStyleClass(revenueTab);
+			ActiveStateUtils.removeStyleClass(accountTab);
+			ActiveStateUtils.removeStyleClass(overviewTab);
+			ActiveStateUtils.removeStyleClass(medicalSuppliesTab);
 		} else if (e.getSource().equals(medicalSuppliesTab) && e!=null) {
 			
 		}
@@ -520,7 +709,9 @@ public class AdminController implements Initializable{
   		accountContainer.setVisible(false);
   		filterContainer.setVisible(false);
 		ActionBar.setVisible(false);
-  		
+		revenueContainer.setVisible(false);
+		revenueTypeContainer.setVisible(false);
+		totalRevenueContainer.setVisible(false);
   		//Loại bỏ chọn tab
   		ActiveStateUtils.removeStyleClass(overviewTab);
   		ActiveStateUtils.removeStyleClass(accountTab);
@@ -1430,6 +1621,125 @@ public class AdminController implements Initializable{
 
 		}
   	}
+  	
+  	//Các xử lý cho chức năng của Quản lý tài chính
+  	public String getTotalRevenue() {
+  		String sql = "SELECT SUM(total_amount) total FROM invoice WHERE 1";
+  		String total =  "";
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(sql);
+  			ResultSet rs = ps.executeQuery();
+  			if (rs.next()) {
+  				total = rs.getString("total");
+  			}
+  		}catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  		Double amount = Double.parseDouble(total);
+  		 DecimalFormat formatter = new DecimalFormat("#,###");
+         String formattedString = formatter.format(amount).replace(',', '.');
+  		
+  		System.out.println(formattedString);
+  		return formattedString;
+  	}
+  	
+  	//Lấy danh sách tất cả các chi tiêu trong phòng khám của admin
+  	public ObservableList<Expenditure> getExpenditureList() {
+  		String sql = "SELECT * FROM expenditure";
+  		ObservableList<Expenditure> list = FXCollections.observableArrayList();
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(sql);
+  			ResultSet rs = ps.executeQuery();
+  			int order = 1;
+  			while(rs.next()) {
+  				String id = rs.getString("expenditure_id");
+  				String purpose = rs.getString("expenditure_purpose");
+  				float amount = rs.getFloat("expenditure_amount");
+  				LocalDate date = rs.getDate("expenditure_date").toLocalDate();
+  				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+  				String dateString = date.format(formatter);
+  				Expenditure e = new Expenditure(order++, id, purpose, amount, dateString);
+  				list.add(e);
+  			}
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  		return list;
+  	}
+  	
+  	//Hàm thêm một chi tiêu
+  	public void addExpenditure() {
+  		String purpose = spendingPurposeField.getText();
+  		String amount = spendingAmountField.getText();
+  		LocalDate date = spendingDateField.getValue();
+  		if (purpose.isEmpty() || amount.isEmpty() || date == null) {
+  			Message.showMessage("Vui lòng nhập đầy đủ thông tin", AlertType.ERROR);
+  		} else if (!isNumberFormat(amount)) {
+  			Message.showMessage("Vui lòng nhập đúng định dạng số tiền", AlertType.ERROR);
+  		} else {
+  			String id = "";
+  			do {
+  				id = generateUniqueId();
+  			} while(isExistedIdInExpenditure(id));
+  			java.sql.Date dateValue = java.sql.Date.valueOf(date);
+  			String sql = "INSERT INTO expenditure VALUES(?,?,?,?,?)";
+  			try(Connection con = Database.connectDB()) {
+  				PreparedStatement ps = con.prepareStatement(sql);
+  				ps.setString(1, id);
+  				ps.setString(2, purpose);
+  				ps.setFloat(3, Float.parseFloat(amount));
+  				ps.setDate(4, dateValue);
+  				ps.setString(5, admin.getAdminId());
+  				
+  				int insert = ps.executeUpdate();
+  				if (insert != 0 ) {
+  					System.out.println("Thêm chi tiêu thành công");
+  					resetExpenditureForm();
+  				}
+  			} catch(Exception e) {
+  				e.printStackTrace();
+  			}
+  			//Tạo đối tượng và thêm vào list
+  			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			String dateString = date.format(formatter);
+			int order = expenditureList.size()+1;
+			Expenditure e = new Expenditure(order, id, purpose, order, dateString);
+			expenditureList.add(e);
+  		}
+  	}
+  	//Hàm kiểm tra id trùng của bảng chi tiêu
+  	public boolean isExistedIdInExpenditure(String id) {
+  		String sql = "SELECT * FROM expenditure WHERE expenditure_id = ?";
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(sql);
+  			ps.setString(1, id);
+  			ResultSet rs = ps.executeQuery();
+  			return rs.next();
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  		return false;
+  	}
+  	
+  	//Hàm hiển thị bảng chi tiêu
+  	public void displayExpenditureTable() {
+  		spendingOrderColumn.setCellValueFactory(cellData -> cellData.getValue().getOrderNumber().asObject());
+  		spendingPurposeColumn.setCellValueFactory(cellData -> cellData.getValue().getPurpose());
+  		spendingAmountColumn.setCellValueFactory(cellData -> cellData.getValue().getAmount().asObject());
+  		spendingDateColumn.setCellValueFactory(cellData->cellData.getValue().getDate());
+  		
+  		spendingTable.setItems(expenditureList);
+  	}
+  	
+  	//Hàm làm rỗng text field của form thêm chi tiêu
+  	public void resetExpenditureForm() {
+  		spendingPurposeField.setText("");
+  		spendingAmountField.setText("");
+  		spendingDateField.setValue(null);
+  	}
+
+  	//Hàm lấy tất cả các dịch vụ trong phòng khám
+  	
   	
   	
   	//logout

@@ -615,3 +615,7 @@
 .close-lightgray-button:hover {
 	-fx-background-color: linear-gradient(to bottom, #B6B6B7, #DDDDDD);
 }
+
+.font-weight-text {
+	-fx-font-weight: bold;
+}
