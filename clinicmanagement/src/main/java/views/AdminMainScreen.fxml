@@ -229,12 +229,12 @@
                      <children>
                         <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="55.0" prefWidth="282.0" styleClass="search-bar-background">
                            <children>
-                              <TextField fx:id="searchField" maxWidth="-Infinity" prefHeight="23.0" prefWidth="232.0" promptText="Tìm kiếm" styleClass="search-bar-textfield">
+                              <TextField fx:id="searchField" maxWidth="-Infinity" onAction="#searchEmployee" prefHeight="23.0" prefWidth="232.0" promptText="Tìm kiếm" styleClass="search-bar-textfield">
                                  <font>
                                     <Font size="17.0" />
                                  </font>
                               </TextField>
-                              <Button fx:id="searchButton" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="41.0" prefWidth="47.0" styleClass="search-bar-button" textAlignment="CENTER">
+                              <Button fx:id="searchButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#searchEmployee" prefHeight="41.0" prefWidth="47.0" styleClass="search-bar-button" textAlignment="CENTER">
                                  <graphic>
                                     <FontAwesomeIconView fill="WHITE" glyphName="SEARCH" size="25" text="" wrappingWidth="30.41423797607422" />
                                  </graphic>
@@ -277,7 +277,7 @@
                         </TableView>
                         <StackPane layoutX="800.7999877929688" layoutY="16.799999237060547" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="800.8000000000001" AnchorPane.rightAnchor="11.20000000000016" AnchorPane.topAnchor="16.8">
                            <children>
-                              <AnchorPane fx:id="addingUserForm" prefHeight="508.0" prefWidth="306.0" style="-fx-background-color: #F5F9FA;" styleClass="border-radius-container" visible="false">
+                              <AnchorPane fx:id="addingUserForm" prefHeight="508.0" prefWidth="306.0" style="-fx-background-color: #F5F9FA;" styleClass="border-radius-container">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="62.0" prefWidth="306.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
@@ -355,7 +355,7 @@
                                     </Button>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane fx:id="addingAccountForm" layoutX="10.0" layoutY="10.0" prefHeight="508.0" prefWidth="306.0" style="-fx-background-color: #F5F9FA;" styleClass="border-radius-container">
+                              <AnchorPane fx:id="addingAccountForm" layoutX="10.0" layoutY="10.0" prefHeight="508.0" prefWidth="306.0" style="-fx-background-color: #F5F9FA;" styleClass="border-radius-container" visible="false">
                                  <children>
                                     <HBox alignment="CENTER" prefHeight="62.0" prefWidth="306.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
@@ -576,16 +576,6 @@
                   </AnchorPane>
                </children>
             </StackPane>
-            <HBox fx:id="filterContainer" alignment="CENTER" layoutX="422.1999999999999" layoutY="15.0" prefHeight="43.0" prefWidth="263.0" styleClass="sort-container" AnchorPane.rightAnchor="480.20000000000005">
-               <children>
-                  <Label prefHeight="26.0" prefWidth="98.0" text="Lọc theo:">
-                     <font>
-                        <Font size="17.0" />
-                     </font>
-                  </Label>
-                  <ChoiceBox fx:id="filterByBox" prefHeight="38.0" prefWidth="147.0" styleClass="choice-box-background" />
-               </children>
-            </HBox>
             <HBox fx:id="statusNumberContainer" alignment="CENTER_LEFT" layoutX="289.0" layoutY="15.0" prefHeight="43.0" prefWidth="306.0" visible="false">
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="133.0" spacing="5.0">
@@ -618,6 +608,19 @@
                         </Label>
                      </children>
                   </HBox>
+               </children>
+            </HBox>
+            <HBox fx:id="filterContainer" alignment="CENTER" layoutX="382.39999999999986" layoutY="14.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="44.0" prefWidth="300.0" styleClass="sort-container" AnchorPane.rightAnchor="483.20000000000005">
+               <children>
+                  <Label prefHeight="26.0" prefWidth="124.0" text="Lọc vai trò: ">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                     <padding>
+                        <Insets left="6.0" />
+                     </padding>
+                  </Label>
+                  <ChoiceBox fx:id="filterByBox" minWidth="100.0" prefHeight="38.0" prefWidth="210.0" styleClass="choice-box-background" />
                </children>
             </HBox>
          </children>

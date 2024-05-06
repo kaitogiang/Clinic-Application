@@ -17,6 +17,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import entity.AccentRemover;
 import entity.ActiveStateUtils;
 import entity.Admin;
 import entity.AnimationUtils;
@@ -60,6 +61,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Popup;
@@ -282,7 +284,7 @@ public class AdminController implements Initializable{
     
     Map<String, Object> avalableUserAccountMap; //Map chứa các user chưa có tài khoản
     
-    private String[] filterString = {"Lễ tân","Bác sĩ", "Dược sĩ"};
+    private String[] filterString = {"Tất cả", "Nhân viên lễ tân","Bác sĩ", "Nhân viên bán thuốc"};
     
     
     @Override
@@ -305,8 +307,13 @@ public class AdminController implements Initializable{
     	showOverviewScreen();
     	switchTab(null);
     	employeeList = fetchEmployeeData();
+    	subEmployeeList = FXCollections.observableArrayList();
     	subEmployeeList.addAll(employeeList);
     	displayEmployeeTable();
+    	//Đặt giá trị mặc định cho employeeTable khi không có bệnh nhân
+    	Label defaultText = new Label("Chưa có bệnh nhân nào");
+    	defaultText.setFont(new Font(17));
+    	employeeTable.setPlaceholder(defaultText);
     	//Gán giá trị cho choice box chọn vai trò người dùng khi tạo người dùng
     	roleChoiceBox.getItems().addAll(rolesString);
     	//Quan sát lựa chọn vai trò của admin
@@ -349,7 +356,12 @@ public class AdminController implements Initializable{
     	});
     	//Gán giá trị cho filter
     	filterByBox.getItems().addAll(filterString);
-    	
+    	filterByBox.getSelectionModel().select(0);
+    	//Quan sát lựa chọn box
+    	filterByBox.valueProperty().addListener((observe, oldValue, newValue)->{
+    		int index = filterByBox.getSelectionModel().getSelectedIndex();
+    		filterByConditon(index);
+    	});
     	
     	//Quan sát employeeList, nếu có phần tử bị xóa thì cập nhật lại số thứ tự
     	employeeList.addListener((ListChangeListener.Change<? extends Employee> change) -> {
@@ -361,9 +373,40 @@ public class AdminController implements Initializable{
                 		e.setOrderNumber(order++);
                 	}
                 }
+                if (change.wasAdded()) {
+                	//Phần tử mới được thêm vào
+                    Employee newestEmployee = employeeList.get(employeeList.size() - 1);
+                	int filterIndex = filterByBox.getSelectionModel().getSelectedIndex();
+                	String role = newestEmployee.getRoleValue();
+                	if (filterIndex == 0) {
+                		//Tất cả
+                		subEmployeeList.add(newestEmployee);
+                	} else if (filterIndex == 1 && filterString[1].equals(role)) {
+                		//Lễ tân
+                		subEmployeeList.add(newestEmployee);
+                	} else if (filterIndex == 2 && filterString[2].equals(role)) {
+                		//Bác sĩ
+                		subEmployeeList.add(newestEmployee);
+                	} else if (filterIndex == 3 && filterString[3].equals(role)) {
+                		//Dược sĩ
+                		subEmployeeList.add(newestEmployee);
+                	}
+                }
             }
         });
+    	//Quan sát searchTextField, nếu giá trị là rỗng trả về list thỏa điều kiện trong bộ lọc
+    	searchField.textProperty().addListener((observe, oldValue, newValue)->{
+    		if (newValue.isEmpty()) {
+    			int filterIndex = filterByBox.getSelectionModel().getSelectedIndex();
+    			filterByConditon(filterIndex);
+    		}
+    	});
+    	
 	}
+    
+    public void removeElementEmployeeList(Employee e) {
+    	employeeList.remove(e);
+    }
     
     public void setCurrentStage(Stage stage) {
     	this.currentStage = stage;
@@ -760,7 +803,7 @@ public class AdminController implements Initializable{
   		roleColumn.setCellValueFactory(cellData -> cellData.getValue().getRole());
   		actionColumn.setCellFactory(params -> new EmployeeButton(this));
   		
-  		employeeTable.setItems(employeeList);
+  		employeeTable.setItems(subEmployeeList);
   	}
   	
   	//Hàm chuyển sang form tạo tài khoản người dùng
@@ -1311,6 +1354,7 @@ public class AdminController implements Initializable{
   	//Hàm hiển thị chi tiết nhân viên khi admin nhấp chọn một dòng
   	public void selectEmployee() {
   		Employee emp = employeeTable.getSelectionModel().getSelectedItem();
+  		if (emp==null) return;
   		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/EmployeeDetailScreen.fxml"));
 		String css = this.getClass().getResource("/css/style.css").toExternalForm();
   		try {
@@ -1326,6 +1370,65 @@ public class AdminController implements Initializable{
   		} catch(Exception e) {
   			e.printStackTrace();
   		}
+  	}
+  	
+  	//Hàm tìm kiếm một nhân viên
+  	public void searchEmployee() {
+  		String searchText = AccentRemover.removeDiacritics(searchField.getText()).toLowerCase();
+  		//Khi nào người dùng có nhập tìm kiếm thì mới tìm kiếm
+  		ObservableList<Employee> filteredList = FXCollections.observableArrayList();
+  		if (!searchText.isEmpty()) {
+  			subEmployeeList.forEach(e->{
+  				String origin = AccentRemover.removeDiacritics(e.toString()).toLowerCase();
+  				if (origin.contains(searchText)) {
+  					filteredList.add(e);
+  				}
+  			});
+  			subEmployeeList.clear();
+  			subEmployeeList.addAll(filteredList);
+  			employeeTable.refresh();
+  		}
+  	}
+  	
+  	//Hàm hiển thị danh sách ứng với bộ lọc
+  	public void filterByConditon(int index) {
+  		if (index == 0) {
+			//Chọn tất cả
+			subEmployeeList.clear(); //Lỗi
+			subEmployeeList.addAll(employeeList);
+            employeeTable.refresh();
+
+		} else if (index == 1) {
+			//Lễ tân
+			subEmployeeList.clear();
+			employeeList.forEach(e->{
+				if (e.getRoleValue().equals(filterString[1])) {
+					subEmployeeList.add(e);
+				}
+			});
+            employeeTable.refresh();
+
+		} else if (index == 2) {
+			//Bác sĩ
+			subEmployeeList.clear();
+			employeeList.forEach(e->{
+				if (e.getRoleValue().equals(filterString[2])) {
+					subEmployeeList.add(e);
+				}
+			});
+            employeeTable.refresh();
+
+		} else if (index == 3) {
+			//dược sĩ
+			subEmployeeList.clear();
+			employeeList.forEach(e->{
+				if (e.getRoleValue().equals(filterString[3])) {
+					subEmployeeList.add(e);
+				}
+			});
+            employeeTable.refresh();
+
+		}
   	}
   	
   	

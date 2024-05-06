@@ -114,5 +114,7 @@ public class Employee<T> {
 		this.accountCreationDate = accountCreationDate;
 	}
 	
-	
+	public String toString() {
+		return employeeName.get() + " - " + username.get() + " - " + role.get() + " - " +data; 
+	}
 }
