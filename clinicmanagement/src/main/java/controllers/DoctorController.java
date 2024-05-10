@@ -677,7 +677,8 @@ public class DoctorController implements Initializable{
   		statusNumberContainer.setVisible(false);
   		searchBarContainer.setVisible(false);
   		filterByContainer.setVisible(false);
-  		
+  		prescriptionContainer.setVisible(false);
+		patientNameContainer.setVisible(false);
   		//Loại bỏ chọn tab
   		ActiveStateUtils.removeStyleClass(patientListTab);
 		ActiveStateUtils.removeStyleClass(patientDiagnosticTab);

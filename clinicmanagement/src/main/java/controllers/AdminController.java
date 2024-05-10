@@ -29,6 +29,8 @@ import entity.Expenditure;
 import entity.ImageUtils;
 import entity.LogoutHandler;
 import entity.MedicalService;
+import entity.MedicalSupplies;
+import entity.MedicalSuppliesButton;
 import entity.Message;
 import entity.PasswordEncryptor;
 import entity.Pharmacist;
@@ -338,6 +340,46 @@ public class AdminController implements Initializable{
     @FXML
     private StackPane optionBar;
     
+    //Chức năng quản lý vật tư y tế
+    @FXML
+    private Button addMedicalSuppliesButton;
+    
+    @FXML
+    private Button searchMedicalSuppliesButton;
+
+    @FXML
+    private TextField searchMedicalSuppliesField;
+    
+    @FXML
+    private AnchorPane medicalSuppliesContainer;
+    
+    @FXML
+    private TableView<MedicalSupplies> medicalSuppliesTable;
+    
+    @FXML
+    private TableColumn<MedicalSupplies, Integer> medicalSuppliesOrder;
+    
+    @FXML
+    private TableColumn<MedicalSupplies, String> medicalSuppliesName;
+    
+    @FXML
+    private TableColumn<MedicalSupplies, Integer> medicalSuppliesQuantity;
+    
+    @FXML
+    private TableColumn<MedicalSupplies, Integer> spoiledMedicalSuppliesQuantity;
+    
+    @FXML
+    private TableColumn<MedicalSupplies, Float> medicalSuppliesPrice;
+    
+    @FXML
+    private TableColumn<MedicalSupplies, Float> totalMedicalSuppliesPrice;
+
+    @FXML
+    private TableColumn<MedicalSupplies, Void> medicalSuppliesAction;
+    
+    @FXML
+    private HBox medicalSuppliesActionBar;
+
     
     //user-defined variable
     
@@ -371,6 +413,7 @@ public class AdminController implements Initializable{
     
     private ObservableList<MedicalService> medicalServiceList; //Danh sách chứa các dịch vụ
     
+    private ObservableList<MedicalSupplies> medicalSuppliesList; //Danh sách chứa các vật tư y tế
     
     @Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -594,6 +637,27 @@ public class AdminController implements Initializable{
 			return cell;
 		});
 		
+		//Chức năng dành cho quản lý vật tư y tế
+		//Đặt giá trị mặc định cho bảng quản lý vật tư y tế
+		Label defaultMC = new Label("Chưa có vật tư y tế nào");
+		defaultMC.setFont(new Font(17));
+		medicalSuppliesTable.setPlaceholder(defaultMC);
+		//Gán danh sách tất cả các vật tư y tế trong phòng khám
+		medicalSuppliesList = getMedicalSuppliesList();
+		//Thực hiện gán lại số thứ tự khi xóa một vật tư khỏi phòng khám
+		medicalSuppliesList.addListener((ListChangeListener.Change<? extends MedicalSupplies> change) -> {
+            while (change.next()) {
+                if (change.wasRemoved()) {
+                    // Thực hiện hành động khi có phần tử được xóa khỏi danh sách
+                	int order=1;
+                	for(MedicalSupplies e: medicalSuppliesList) {
+                		e.setOrderNumber(order++);
+                	}
+                }
+            }
+        });
+		//Gọi hàm hiển thị bảng các vật tư y tế
+		displayMedicalSuppliesTable();
 	}
     
     //
@@ -662,9 +726,11 @@ public class AdminController implements Initializable{
 			accountContainer.setVisible(false);
 			filterContainer.setVisible(false);
 			ActionBar.setVisible(false);
+			medicalSuppliesActionBar.setVisible(false);
 			revenueContainer.setVisible(false);
 			revenueTypeContainer.setVisible(false);
   			totalRevenueContainer.setVisible(false);
+  			medicalSuppliesContainer.setVisible(false);
 			
 			//Tạo animation chuyển động cho các nút
 			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
@@ -677,7 +743,7 @@ public class AdminController implements Initializable{
 
 		} else if (e.getSource().equals(accountTab) && e!=null) {
 			//Hiển thị tab chính
-  			asideBarTitle.setText("Quản lý tài khoản người dùng");
+  			asideBarTitle.setText("Quản lý nhân viên");
 			accountContainer.setVisible(true);
 			filterContainer.setVisible(true);
 			ActionBar.setVisible(true);
@@ -691,6 +757,8 @@ public class AdminController implements Initializable{
   			revenueContainer.setVisible(false);
   			revenueTypeContainer.setVisible(false);
   			totalRevenueContainer.setVisible(false);
+  			medicalSuppliesContainer.setVisible(false);
+  			medicalSuppliesActionBar.setVisible(false);
 			//Tạo animation chuyển động cho các nút
 			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
 			AnimationUtils.createFadeTransition(accountContainer, 0.0, 10.0);
@@ -719,7 +787,8 @@ public class AdminController implements Initializable{
 			filterContainer.setVisible(false);
 			ActionBar.setVisible(false);
 			medicalServiceContainer.setVisible(false);
-			
+			medicalSuppliesContainer.setVisible(false);
+			medicalSuppliesActionBar.setVisible(false);
 			//Tạo animation chuyển động cho các nút
 			AnimationUtils.createFadeTransition(asideBarTitle, 0.0, 10.0);
 			AnimationUtils.createFadeTransition(revenueContainer, 0.0, 10.0);
@@ -731,7 +800,30 @@ public class AdminController implements Initializable{
 			ActiveStateUtils.removeStyleClass(overviewTab);
 			ActiveStateUtils.removeStyleClass(medicalSuppliesTab);
 		} else if (e.getSource().equals(medicalSuppliesTab) && e!=null) {
-			
+			//Hiển thị tab chính
+  			asideBarTitle.setText("Quản lý vật tư y tế");
+  			medicalSuppliesContainer.setVisible(true);
+			medicalSuppliesActionBar.setVisible(true);
+  			
+			//Ẩn các tab còn lại
+  			overviewContainer.setVisible(false);
+			personalContainer.setVisible(false);
+			accountContainer.setVisible(false);
+			filterContainer.setVisible(false);
+			ActionBar.setVisible(false);
+			medicalServiceContainer.setVisible(false);
+			revenueContainer.setVisible(false);
+  			spendingContainer.setVisible(false);
+  			revenueTypeContainer.setVisible(false);
+  			totalRevenueContainer.setVisible(false);
+			//Tạo animation chuyển động cho các nút
+			AnimationUtils.createFadeTransition(medicalSuppliesContainer, 0.0, 10.0);
+			AnimationUtils.createFadeTransition(medicalSuppliesActionBar, 0.0, 10.0);
+			//Tạo trạng thái active cho tab
+			ActiveStateUtils.addStyleClass(medicalSuppliesTab);
+			ActiveStateUtils.removeStyleClass(accountTab);
+			ActiveStateUtils.removeStyleClass(overviewTab);
+			ActiveStateUtils.removeStyleClass(revenueTab);
 		}
 		
 	}
@@ -750,6 +842,8 @@ public class AdminController implements Initializable{
 		revenueContainer.setVisible(false);
 		revenueTypeContainer.setVisible(false);
 		totalRevenueContainer.setVisible(false);
+		medicalSuppliesContainer.setVisible(false);
+		medicalSuppliesActionBar.setVisible(false);
   		//Loại bỏ chọn tab
   		ActiveStateUtils.removeStyleClass(overviewTab);
   		ActiveStateUtils.removeStyleClass(accountTab);
@@ -1860,6 +1954,44 @@ public class AdminController implements Initializable{
   		medicalServiceNameField.setText("");
   		medicalServiceFeeField.setText("");
   	}
+  	
+  	//Các chức năng quản lý vật tư y tế
+  	//Lấy danh sách tất cả vật tư
+  	public ObservableList<MedicalSupplies> getMedicalSuppliesList() {
+  		ObservableList<MedicalSupplies> list = FXCollections.observableArrayList();
+  		String sql = "SELECT * FROM medical_supplies";
+  		try(Connection con = Database.connectDB()) {
+  			PreparedStatement ps = con.prepareStatement(sql);
+  			ResultSet rs = ps.executeQuery();
+  			int order = 1;
+  			while(rs.next()) {
+  				String id = rs.getString("supplies_id");
+  				String name = rs.getString("supplies_name");
+  				int quantity = rs.getInt("quantity");
+  				float unitPrice = rs.getFloat("unit_price");
+  				float total = rs.getFloat("total_price");
+  				int spoiledQuantity = rs.getInt("spoiled_quantity");
+  				MedicalSupplies ms = new MedicalSupplies(order++, id, name, quantity, spoiledQuantity, unitPrice, total);
+  				list.add(ms);
+  			}
+  		} catch(Exception e) {
+  			e.printStackTrace();
+  		}
+  		return list;
+  	}
+  	//Hiển thị bảng tất cả các vật tư trong phòng khám
+  	public void displayMedicalSuppliesTable() {
+  		medicalSuppliesOrder.setCellValueFactory(cellData->cellData.getValue().getOrderNumer().asObject());
+  		medicalSuppliesName.setCellValueFactory(cellData->cellData.getValue().getName());
+  		medicalSuppliesQuantity.setCellValueFactory(cellData -> cellData.getValue().getQuantity().asObject());
+  		spoiledMedicalSuppliesQuantity.setCellValueFactory(cellData -> cellData.getValue().getSpoiledQuantity().asObject());
+  		medicalSuppliesPrice.setCellValueFactory(cellData -> cellData.getValue().getPrice().asObject());
+  		totalMedicalSuppliesPrice.setCellValueFactory(cellData -> cellData.getValue().getTotal().asObject());
+  		medicalSuppliesAction.setCellFactory(params -> new MedicalSuppliesButton(this));
+  		
+  		medicalSuppliesTable.setItems(medicalSuppliesList);
+  	}
+  	
   	
   	//logout
   	public void logout() {

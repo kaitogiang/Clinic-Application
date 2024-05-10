@@ -156,7 +156,7 @@
                               <Insets left="10.0" />
                            </HBox.margin>
                         </FontAwesomeIconView>
-                        <Label prefHeight="65.0" prefWidth="247.0" styleClass="aside-button-title" stylesheets="@../../resources/css/style.css" text="Quản lý tài khoản" textFill="#e42323">
+                        <Label prefHeight="65.0" prefWidth="247.0" styleClass="aside-button-title" stylesheets="@../../resources/css/style.css" text="Quản lý nhân viên" textFill="#e42323">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -220,7 +220,7 @@
       </VBox>
       <AnchorPane id="roundedMainContainer" layoutX="315.2" layoutY="103.2" prefHeight="649.0" prefWidth="1166.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="315.0" AnchorPane.rightAnchor="19.0" AnchorPane.topAnchor="103.0">
          <children>
-            <Label fx:id="asideBarTitle" layoutX="22.0" layoutY="21.0" prefHeight="30.0" prefWidth="170.0" styleClass="title-tab" text="Quản lý tài khoản">
+            <Label fx:id="asideBarTitle" layoutX="22.0" layoutY="21.0" prefHeight="30.0" prefWidth="192.0" styleClass="title-tab" text="Quản lý vật tư y tế">
                <font>
                   <Font size="20.0" />
                </font>
@@ -254,7 +254,7 @@
                         </Button>
                      </children>
                   </HBox>
-                  <HBox fx:id="totalRevenueContainer" alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                  <HBox fx:id="totalRevenueContainer" alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" visible="false">
                      <children>
                         <FontAwesomeIconView fill="#00b499" glyphName="MONEY" selectionFill="#c7e6e2" size="25" />
                         <Label text="Tổng doanh thu:">
@@ -267,6 +267,32 @@
                               <Font size="17.0" />
                            </font>
                         </Label>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="medicalSuppliesActionBar" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="52.0" prefWidth="443.0" spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="55.0" prefWidth="282.0" styleClass="search-bar-background">
+                           <children>
+                              <TextField fx:id="searchMedicalSuppliesField" maxWidth="-Infinity" prefHeight="23.0" prefWidth="232.0" promptText="Tìm kiếm" styleClass="search-bar-textfield">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </TextField>
+                              <Button fx:id="searchMedicalSuppliesButton" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="41.0" prefWidth="47.0" styleClass="search-bar-button" textAlignment="CENTER">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="WHITE" glyphName="SEARCH" size="25" text="" wrappingWidth="30.41423797607422" />
+                                 </graphic>
+                                 <padding>
+                                    <Insets left="5.0" />
+                                 </padding>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <Button fx:id="addMedicalSuppliesButton" mnemonicParsing="false" prefHeight="42.0" prefWidth="154.0" styleClass="save-button" text="Thêm vật tư" textFill="WHITE">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Button>
                      </children>
                   </HBox>
                </children>
@@ -677,17 +703,17 @@
                         </AnchorPane>
                      </children>
                   </StackPane>
-                  <AnchorPane fx:id="accountContainer1" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container">
+                  <AnchorPane fx:id="medicalSuppliesContainer" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container">
                      <children>
-                        <TableView fx:id="employeeTable1" layoutX="10.0" layoutY="14.0" onMouseClicked="#selectEmployee" prefHeight="508.0" prefWidth="1098.0" stylesheets="@../../resources/css/style.css">
+                        <TableView fx:id="medicalSuppliesTable" layoutX="10.0" layoutY="14.0" onMouseClicked="#selectEmployee" prefHeight="508.0" prefWidth="1098.0" stylesheets="@../../resources/css/style.css" AnchorPane.leftAnchor="9.599999999999909" AnchorPane.rightAnchor="10.0">
                            <columns>
-                              <TableColumn fx:id="orderEmployeeColumn1" editable="false" prefWidth="60.799991607666016" sortable="false" styleClass="column-text-size" text="STT" />
-                              <TableColumn id="lastColumn" fx:id="employeeNameColumn1" editable="false" prefWidth="251.1999969482422" sortable="false" styleClass="column-text-size" text="Tên vật tư" />
-                              <TableColumn id="lastColumn" fx:id="usernameColumn1" editable="false" minWidth="0.0" prefWidth="96.79998779296875" sortable="false" styleClass="column-text-size" text="Số lượng" />
-                              <TableColumn id="lastColumn" fx:id="roleColumn1" editable="false" prefWidth="119.20001220703125" sortable="false" styleClass="column-text-size" text="Đã hỏng" />
-                              <TableColumn id="lastColumn" fx:id="actionColumn1" editable="false" prefWidth="202.4000244140625" sortable="false" styleClass="column-text-size" text="Giá đơn vị" />
-                              <TableColumn id="lastColumn" fx:id="actionColumn11" editable="false" prefWidth="188.800048828125" sortable="false" styleClass="column-text-size" text="Tổng tiền" />
-                              <TableColumn id="lastColumn" fx:id="actionColumn111" editable="false" prefWidth="171.20001220703125" sortable="false" styleClass="column-text-size" text="Hành động" />
+                              <TableColumn fx:id="medicalSuppliesOrder" editable="false" prefWidth="60.799991607666016" sortable="false" styleClass="column-text-size" text="STT" />
+                              <TableColumn id="lastColumn" fx:id="medicalSuppliesName" editable="false" prefWidth="251.1999969482422" sortable="false" styleClass="column-text-size" text="Tên vật tư" />
+                              <TableColumn id="lastColumn" fx:id="medicalSuppliesQuantity" editable="false" minWidth="0.0" prefWidth="96.79998779296875" sortable="false" styleClass="column-text-size" text="Số lượng" />
+                              <TableColumn id="lastColumn" fx:id="spoiledMedicalSuppliesQuantity" editable="false" prefWidth="119.20001220703125" sortable="false" styleClass="column-text-size" text="Đã hỏng" />
+                              <TableColumn id="lastColumn" fx:id="medicalSuppliesPrice" editable="false" prefWidth="202.4000244140625" sortable="false" styleClass="column-text-size" text="Giá đơn vị" />
+                              <TableColumn id="lastColumn" fx:id="totalMedicalSuppliesPrice" editable="false" prefWidth="188.800048828125" sortable="false" styleClass="column-text-size" text="Tổng tiền" />
+                              <TableColumn id="lastColumn" fx:id="medicalSuppliesAction" editable="false" prefWidth="171.20001220703125" sortable="false" styleClass="column-text-size" text="Hành động" />
                            </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -746,7 +772,7 @@
                         <ChoiceBox fx:id="filterByBox" minWidth="100.0" prefHeight="38.0" prefWidth="210.0" styleClass="choice-box-background" />
                      </children>
                   </HBox>
-                  <HBox fx:id="revenueTypeContainer" alignment="CENTER" layoutX="198.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="44.0" prefWidth="489.0" spacing="5.0" style="-fx-background-color: transparent;" styleClass="sort-container">
+                  <HBox fx:id="revenueTypeContainer" alignment="CENTER" layoutX="198.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="44.0" prefWidth="489.0" spacing="20.0" style="-fx-background-color: transparent;" styleClass="sort-container">
                      <children>
                         <RadioButton fx:id="spendingRadioButton" mnemonicParsing="false" style="-fx-font-size: 15px;" text="Chi tiêu phòng khám">
                            <font>
@@ -757,11 +783,6 @@
                            </toggleGroup>
                         </RadioButton>
                         <RadioButton fx:id="serviceRadioButton" layoutX="195.0" layoutY="24.0" mnemonicParsing="false" style="-fx-font-size: 15;" text="Phí dịch vụ khám" toggleGroup="$revenueRadioType">
-                           <font>
-                              <Font size="15.5" />
-                           </font>
-                        </RadioButton>
-                        <RadioButton fx:id="revenueChartRadioButton" layoutX="264.0" layoutY="24.0" mnemonicParsing="false" style="-fx-font-size: 15;" text="Biểu đồ doanh thu" toggleGroup="$revenueRadioType">
                            <font>
                               <Font size="15.5" />
                            </font>

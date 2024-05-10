@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="566.0" prefWidth="582.0" styleClass="main-form-background" stylesheets="@../../resources/css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PatientFormController">
+   <children>
+      <Label fx:id="medicalSuppliesTitle" layoutX="52.0" layoutY="25.0" prefHeight="30.0" prefWidth="201.0" styleClass="title-tab" text="Thêm vật tư y tế mới">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <Separator layoutX="55.0" layoutY="69.0" prefHeight="12.0" prefWidth="523.0" style="-fx-background-color: #ECF1F6;" />
+      <Button layoutX="180.0" layoutY="478.0" mnemonicParsing="false" onAction="#addPatient" prefHeight="43.0" prefWidth="202.0" styleClass="action-button" text="Thêm vật tư y tế">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Button>
+      <Button layoutX="422.0" layoutY="478.0" mnemonicParsing="false" onAction="#close" styleClass="clear-button" text="Thoát">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Button>
+      <StackPane layoutX="53.0" layoutY="102.0" prefHeight="346.0" prefWidth="490.0">
+         <children>
+            <VBox fx:id="medicalSuppliesFormContainer" prefHeight="400.0" prefWidth="515.0" spacing="10.0">
+               <children>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label styleClass="form-title" text="Tên vật tư y tế:" />
+                        <TextField fx:id="medicalSuppliesNameField" prefHeight="38.0" prefWidth="234.0" promptText="Nhập tên vật tư y tế" styleClass="form-field" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="10.0" layoutY="10.0" spacing="5.0">
+                     <children>
+                        <Label styleClass="form-title" text="Số lượng:" />
+                        <TextField fx:id="medicalSuppliesQuantityField" prefHeight="38.0" prefWidth="234.0" promptText="Nhập vào số lượng vật tư" styleClass="form-field" />
+                     </children>
+                  </VBox>
+                  <VBox layoutX="10.0" layoutY="94.0" spacing="5.0">
+                     <children>
+                        <Label styleClass="form-title" text="Giá đơn vị" />
+                        <TextField fx:id="medicalSuppliesPriceField" prefHeight="38.0" prefWidth="234.0" promptText="Nhấp giá của một vật tư" styleClass="form-field" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="178.0" prefHeight="60.0" prefWidth="515.0" spacing="5.0">
+                     <children>
+                        <Button mnemonicParsing="false" styleClass="clear-button" text="Xóa bỏ tất cả">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </Button>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            <VBox fx:id="medicalSuppliesLabelContainer" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" spacing="20.0" visible="false">
+               <children>
+                  <VBox spacing="5.0" />
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label prefHeight="30.0" prefWidth="97.0" styleClass="form-title" text="Tên vật tư:" />
+                        <Label fx:id="medicalSuppliesNameLabel" prefHeight="30.0" prefWidth="391.0" styleClass="form-title" text="Máy đo thính lực" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="10.0" layoutY="20.0" spacing="10.0">
+                     <children>
+                        <Label styleClass="form-title" text="Số lượng:" />
+                        <Label fx:id="medicalSuppliesQuantityLabel" prefHeight="30.0" prefWidth="314.0" styleClass="form-title" text="3" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="10.0" layoutY="61.0" spacing="10.0">
+                     <children>
+                        <Label prefHeight="30.0" prefWidth="158.0" styleClass="form-title" text="Giá đơn vị: " />
+                        <Label fx:id="medicalSuppliesPriceLabel" prefHeight="30.0" prefWidth="408.0" styleClass="form-title" text="450.000 VND" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="10.0" layoutY="102.0" spacing="10.0">
+                     <children>
+                        <Label prefHeight="30.0" prefWidth="125.0" styleClass="form-title" text="Tổng tiền:" />
+                        <Label fx:id="medicalSuppliesTotalLabel" prefHeight="30.0" prefWidth="408.0" styleClass="form-title" text="1.400.4059 VND" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="143.0" spacing="10.0">
+                     <children>
+                        <Label prefHeight="30.0" prefWidth="203.0" styleClass="form-title" text="Tình trạng vật tư y tế:" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="283.0" spacing="30.0">
+                           <children>
+                              <HBox alignment="CENTER" spacing="10.0">
+                                 <children>
+                                    <Label styleClass="form-title" text="Còn tốt:">
+                                       <graphic>
+                                          <FontAwesomeIconView fill="#04bcbc" glyphName="CIRCLE" selectionFill="#a90303" size="12" />
+                                       </graphic>
+                                    </Label>
+                                    <Label fx:id="goodQuantity" styleClass="form-title" text="2" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" spacing="10.0">
+                                 <children>
+                                    <Label styleClass="form-title" text="Đã hỏng:">
+                                       <graphic>
+                                          <FontAwesomeIconView fill="#ff0101" glyphName="CIRCLE" selectionFill="#a90303" size="12" />
+                                       </graphic>
+                                    </Label>
+                                    <Label fx:id="spoiledQuantity" styleClass="form-title" text="1" />
+                                 </children>
+                              </HBox>
+                           </children>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>

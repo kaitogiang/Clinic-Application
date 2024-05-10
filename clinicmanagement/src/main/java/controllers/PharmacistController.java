@@ -909,6 +909,7 @@ public class PharmacistController implements Initializable{
 		} else if (e.getSource().equals(staticticsTab) && e!=null) {
 			//Hiển thị tab chính
 			staticticsContainer.setVisible(true);
+  			asideBarTitle.setText("Thống kê");
 			//Ẩn các tab còn lại
 			medicineTable.setVisible(false);
 			sortByContainer.setVisible(false);
@@ -1894,7 +1895,7 @@ public class PharmacistController implements Initializable{
   		//Lấy tổng số các loại thuốc
   		String medicineQuantity = "SELECT count(*) quantity FROM medicine";
   		try(Connection con = Database.connectDB()) {
-  			PreparedStatement ps = con.prepareStatement(outOfStockSql);
+  			PreparedStatement ps = con.prepareStatement(medicineQuantity);
   			ResultSet rs = ps.executeQuery();
   			if (rs.next()) {
   				medicineTypeQuantity = rs.getInt(1);
