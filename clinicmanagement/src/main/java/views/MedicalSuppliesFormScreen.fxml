@@ -12,15 +12,15 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="566.0" prefWidth="582.0" styleClass="main-form-background" stylesheets="@../../resources/css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PatientFormController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="566.0" prefWidth="582.0" styleClass="main-form-background" stylesheets="@../../resources/css/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MedicalSuppliesFormController">
    <children>
       <Label fx:id="medicalSuppliesTitle" layoutX="52.0" layoutY="25.0" prefHeight="30.0" prefWidth="201.0" styleClass="title-tab" text="Thêm vật tư y tế mới">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <Separator layoutX="55.0" layoutY="69.0" prefHeight="12.0" prefWidth="523.0" style="-fx-background-color: #ECF1F6;" />
-      <Button layoutX="180.0" layoutY="478.0" mnemonicParsing="false" onAction="#addPatient" prefHeight="43.0" prefWidth="202.0" styleClass="action-button" text="Thêm vật tư y tế">
+      <Separator layoutX="55.0" layoutY="69.0" prefHeight="12.0" prefWidth="490.0" style="-fx-background-color: #ECF1F6;" />
+      <Button fx:id="addButton" layoutX="180.0" layoutY="478.0" mnemonicParsing="false" onAction="#addMedicalSupplies" prefHeight="43.0" prefWidth="202.0" styleClass="action-button" text="Thêm vật tư y tế">
          <font>
             <Font size="20.0" />
          </font>
@@ -48,20 +48,14 @@
                   </VBox>
                   <VBox layoutX="10.0" layoutY="94.0" spacing="5.0">
                      <children>
-                        <Label styleClass="form-title" text="Giá đơn vị" />
+                        <Label styleClass="form-title" text="Giá đơn vị:" />
                         <TextField fx:id="medicalSuppliesPriceField" prefHeight="38.0" prefWidth="234.0" promptText="Nhấp giá của một vật tư" styleClass="form-field" />
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="178.0" prefHeight="60.0" prefWidth="515.0" spacing="5.0">
+                  <VBox fx:id="spoiledContainer" layoutX="10.0" layoutY="178.0" spacing="5.0">
                      <children>
-                        <Button mnemonicParsing="false" styleClass="clear-button" text="Xóa bỏ tất cả">
-                           <font>
-                              <Font size="17.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </Button>
+                        <Label styleClass="form-title" text="Số lượng hỏng:" />
+                        <TextField fx:id="medicalSuppliesSpoiled" prefHeight="38.0" prefWidth="234.0" promptText="Nhập số lượng vật tư hỏng" styleClass="form-field" />
                      </children>
                   </VBox>
                </children>
@@ -71,31 +65,31 @@
                   <VBox spacing="5.0" />
                   <HBox spacing="10.0">
                      <children>
-                        <Label prefHeight="30.0" prefWidth="97.0" styleClass="form-title" text="Tên vật tư:" />
+                        <Label prefHeight="30.0" prefWidth="126.0" style="-fx-font-weight: bold;" styleClass="form-title" text="Tên vật tư:" />
                         <Label fx:id="medicalSuppliesNameLabel" prefHeight="30.0" prefWidth="391.0" styleClass="form-title" text="Máy đo thính lực" />
                      </children>
                   </HBox>
                   <HBox layoutX="10.0" layoutY="20.0" spacing="10.0">
                      <children>
-                        <Label styleClass="form-title" text="Số lượng:" />
+                        <Label style="-fx-font-weight: bold;" styleClass="form-title" text="Số lượng:" />
                         <Label fx:id="medicalSuppliesQuantityLabel" prefHeight="30.0" prefWidth="314.0" styleClass="form-title" text="3" />
                      </children>
                   </HBox>
                   <HBox layoutX="10.0" layoutY="61.0" spacing="10.0">
                      <children>
-                        <Label prefHeight="30.0" prefWidth="158.0" styleClass="form-title" text="Giá đơn vị: " />
+                        <Label prefHeight="30.0" prefWidth="158.0" style="-fx-font-weight: bold;" styleClass="form-title" text="Giá đơn vị: " />
                         <Label fx:id="medicalSuppliesPriceLabel" prefHeight="30.0" prefWidth="408.0" styleClass="form-title" text="450.000 VND" />
                      </children>
                   </HBox>
                   <HBox layoutX="10.0" layoutY="102.0" spacing="10.0">
                      <children>
-                        <Label prefHeight="30.0" prefWidth="125.0" styleClass="form-title" text="Tổng tiền:" />
+                        <Label prefHeight="30.0" prefWidth="125.0" style="-fx-font-weight: bold;" styleClass="form-title" text="Tổng tiền:" />
                         <Label fx:id="medicalSuppliesTotalLabel" prefHeight="30.0" prefWidth="408.0" styleClass="form-title" text="1.400.4059 VND" />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="143.0" spacing="10.0">
                      <children>
-                        <Label prefHeight="30.0" prefWidth="203.0" styleClass="form-title" text="Tình trạng vật tư y tế:" />
+                        <Label prefHeight="30.0" prefWidth="221.0" style="-fx-font-weight: bold;" styleClass="form-title" text="Tình trạng vật tư y tế:" />
                         <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="283.0" spacing="30.0">
                            <children>
                               <HBox alignment="CENTER" spacing="10.0">

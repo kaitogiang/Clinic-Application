@@ -271,7 +271,7 @@
                   </HBox>
                   <HBox fx:id="medicalSuppliesActionBar" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="52.0" prefWidth="443.0" spacing="10.0">
                      <children>
-                        <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="55.0" prefWidth="282.0" styleClass="search-bar-background">
+                        <HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="55.0" prefWidth="282.0" styleClass="search-bar-background" visible="false">
                            <children>
                               <TextField fx:id="searchMedicalSuppliesField" maxWidth="-Infinity" prefHeight="23.0" prefWidth="232.0" promptText="Tìm kiếm" styleClass="search-bar-textfield">
                                  <font>
@@ -288,7 +288,7 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Button fx:id="addMedicalSuppliesButton" mnemonicParsing="false" prefHeight="42.0" prefWidth="154.0" styleClass="save-button" text="Thêm vật tư" textFill="WHITE">
+                        <Button fx:id="addMedicalSuppliesButton" mnemonicParsing="false" onAction="#addMedicalSupplies" prefHeight="42.0" prefWidth="154.0" styleClass="save-button" text="Thêm vật tư" textFill="WHITE">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -705,7 +705,7 @@
                   </StackPane>
                   <AnchorPane fx:id="medicalSuppliesContainer" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container">
                      <children>
-                        <TableView fx:id="medicalSuppliesTable" layoutX="10.0" layoutY="14.0" onMouseClicked="#selectEmployee" prefHeight="508.0" prefWidth="1098.0" stylesheets="@../../resources/css/style.css" AnchorPane.leftAnchor="9.599999999999909" AnchorPane.rightAnchor="10.0">
+                        <TableView fx:id="medicalSuppliesTable" layoutX="10.0" layoutY="14.0" onMouseClicked="#selectMedicalSupplies" prefHeight="508.0" prefWidth="1098.0" stylesheets="@../../resources/css/style.css" AnchorPane.leftAnchor="9.599999999999909" AnchorPane.rightAnchor="10.0">
                            <columns>
                               <TableColumn fx:id="medicalSuppliesOrder" editable="false" prefWidth="60.799991607666016" sortable="false" styleClass="column-text-size" text="STT" />
                               <TableColumn id="lastColumn" fx:id="medicalSuppliesName" editable="false" prefWidth="251.1999969482422" sortable="false" styleClass="column-text-size" text="Tên vật tư" />

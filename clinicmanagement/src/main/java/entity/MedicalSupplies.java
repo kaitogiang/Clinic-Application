@@ -117,4 +117,32 @@ public class MedicalSupplies {
 	public void setOrderNumber(int orderNumber) {
 		this.orderNumer.set(orderNumber);
 	}
+	
+	public void setNameValue(String name) {
+		this.name.set(name);
+	}
+	
+	public void setQuantityValue(int quantity) {
+		this.quantity.set(quantity);
+	}
+	
+	public void setSpoiledQuantity(int spoiledQuantity) {
+		this.spoiledQuantity.set(spoiledQuantity);
+	}
+	
+	public void setPriceValue(float price) {
+		this.price.set(price);
+	}
+	
+	public void setTotalValue(float total) {
+		this.total.set(total);
+	}
+	
+	public void setAllValue(String name, int quantity, int spoiledQuantity, float price, float total) {
+		this.name.set(name);
+		this.quantity.set(quantity);
+		this.spoiledQuantity.set(spoiledQuantity);
+		this.price.set(price);
+		this.total.set(total);
+	}
 }

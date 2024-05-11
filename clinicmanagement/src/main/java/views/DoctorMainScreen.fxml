@@ -253,7 +253,7 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                   </TableView>
-                  <AnchorPane fx:id="diagnosticContainer" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container" visible="false">
+                  <AnchorPane fx:id="diagnosticContainer" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 20px;" styleClass="personal-container">
                      <children>
                         <TabPane layoutX="14.0" layoutY="15.2" prefHeight="394.0" prefWidth="604.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="15.0">
                           <tabs>
@@ -434,7 +434,7 @@
                         </TextArea>
                      </children>
                   </AnchorPane>
-                  <AnchorPane fx:id="prescriptionContainer" prefHeight="200.0" prefWidth="200.0">
+                  <AnchorPane fx:id="prescriptionContainer" prefHeight="200.0" prefWidth="200.0" visible="false">
                      <children>
                         <VBox layoutX="9.0" layoutY="3.2" prefHeight="418.0" prefWidth="716.0" styleClass="diagnostic-pane" AnchorPane.bottomAnchor="-3.0" AnchorPane.topAnchor="3.0">
                            <children>

@@ -1323,6 +1323,9 @@ public class DoctorController implements Initializable{
   		} else if (prescription.isEmpty()) {
   			Message.showMessage("Hãy thêm thuốc vào trước khi tạo đơn thuốc", AlertType.ERROR);
   			return;
+  		} else if (testResultField.getText().isEmpty() && diagnosisField.getText().isEmpty() && noteField.getText().isEmpty()) {
+  			Message.showMessage("Vui lòng ghi nhận kết quả khám trước", AlertType.ERROR);
+  			return;
   		}
   		
   		System.out.println("DA TAO DON THUOC THANH CONG");

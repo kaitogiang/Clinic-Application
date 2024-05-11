@@ -654,6 +654,11 @@ public class AdminController implements Initializable{
                 		e.setOrderNumber(order++);
                 	}
                 }
+                if (change.wasAdded()) {
+                	//Thực hiện gán số thứ tự mới khi có phần tử mới thêm vào
+                	int order = medicalSuppliesList.size();
+                	medicalSuppliesList.getLast().setOrderNumber(order);
+                }
             }
         });
 		//Gọi hàm hiển thị bảng các vật tư y tế
@@ -1991,7 +1996,58 @@ public class AdminController implements Initializable{
   		
   		medicalSuppliesTable.setItems(medicalSuppliesList);
   	}
+  	//Hàm thêm phần tử vào MedicalSupplies dùng để truyền trong stage khác
+  	public void addMedicalSuppliesElement(MedicalSupplies mc) {
+  		medicalSuppliesList.add(mc);
+  	}
   	
+  	//Hàm lấy id của admin
+  	public String getAmdinId() {
+  		return admin.getAdminId();
+  	}
+  	
+  	//Hàm mở form nhập vật tư y tế mới
+  	public void addMedicalSupplies() {
+  		FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/MedicalSuppliesFormScreen.fxml"));
+			String css = this.getClass().getResource("/css/style.css").toExternalForm();
+			try {
+				//Nạp giao diện vào
+				AnchorPane main = loader.load();
+				MedicalSuppliesFormController controller = loader.getController();
+				controller.setData(null, this, false);
+				Scene scene = new Scene(main);
+				scene.getStylesheets().add(css);
+				Stage stage = new Stage();
+				stage.setScene(scene);
+				
+				stage.show();
+				
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+  	}
+  	
+  	 //Hàm chọn một vật tư y tế và hiển thị chi tiết
+    public void selectMedicalSupplies() {
+    	MedicalSupplies mc = medicalSuppliesTable.getSelectionModel().getSelectedItem();
+    	FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/MedicalSuppliesFormScreen.fxml"));
+		String css = this.getClass().getResource("/css/style.css").toExternalForm();
+		try {
+			//Nạp giao diện vào
+			AnchorPane main = loader.load();
+			MedicalSuppliesFormController controller = loader.getController();
+			controller.setData(mc, this, false);
+			Scene scene = new Scene(main);
+			scene.getStylesheets().add(css);
+			Stage stage = new Stage();
+			stage.setScene(scene);
+			
+			stage.show();
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+    }
   	
   	//logout
   	public void logout() {
