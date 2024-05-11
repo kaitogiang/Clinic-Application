@@ -104,6 +104,13 @@ public class SearchPrescriptionController implements Initializable{
     		informationContainer.setVisible(true);
     		defaultTextContainer.setVisible(false);
     		Patient patient = getPatientInfo();
+    		if (patient==null) {
+    			defaultTextContainer.setVisible(true);
+    			informationContainer.setVisible(false);
+    			diagnosis.setText("Chưa có dữ liệu");
+
+    			return;
+    		}
     		patientName.setText(patient.getPatientNameValue());
     		patientAge.setText(String.valueOf(patient.getPatientAgeValue())+" tuổi");
     		patientWeight.setText(String.valueOf(patient.getPatientWeightValue())+" kg");
@@ -125,6 +132,7 @@ public class SearchPrescriptionController implements Initializable{
 		diagnosis.setText("Chưa có dữ liệu");
 		diagnosis.setAlignment(Pos.CENTER);
 		prescriptionDetailList.clear();
+		patientId = "";
     }
     
     public ObservableList<PrescriptionDetail> searchPrescriptionDatabase(String id) {
